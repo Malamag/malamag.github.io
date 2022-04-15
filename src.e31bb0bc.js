@@ -117,120 +117,139 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"scripts/preprocess.js":[function(require,module,exports) {
+})({"scripts/helper.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.cleanNames = cleanNames;
+exports.appendAxes = appendAxes;
+exports.appendGraphLabels = appendGraphLabels;
+exports.drawButton = drawButton;
+exports.drawXAxis = drawXAxis;
+exports.drawYAxis = drawYAxis;
+exports.generateG = generateG;
+exports.placeTitle = placeTitle;
+exports.setCanvasSize = setCanvasSize;
 
 /**
- * Sanitizes the names from the data in the "Player" column.
+ * Generates the SVG element g which will contain the data visualisation.
  *
- * Ensures each word in the name begins with an uppercase letter followed by lowercase letters.
- *
- * @param {object[]} data The dataset with unsanitized names
- * @returns {object[]} The dataset with properly capitalized names
+ * @param {object} margin The desired margins around the graph
+ * @param id
+ * @param divName
+ * @param divId
+ * @param gId
+ * @returns {*} The d3 Selection for the created g element
  */
-function cleanNames(data) {
-  // TODO: Clean the player name data
-  data.forEach(function (element) {
-    element.Player = element.Player.charAt(0).toUpperCase() + element.Player.slice(1).toLowerCase();
+function generateG(margin, divId, gId) {
+  return d3.select(divId).select('svg').append('g').attr('id', gId).attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+}
+/**
+ * Sets the size of the SVG canvas containing the graph.
+ *
+ * @param svgId
+ * @param {number} width The desired width
+ * @param {number} height The desired height
+ */
+
+
+function setCanvasSize(svgId, width, height) {
+  d3.select(svgId).attr('width', width).attr('height', height);
+}
+/**
+ * Appends an SVG g element which will contain the axes.
+ *
+ * @param {*} g The d3 Selection of the graph's g SVG element
+ */
+
+
+function appendAxes(g) {
+  g.append('g').attr('class', 'x axis');
+  g.append('g').attr('class', 'y axis');
+}
+/**
+ * Appends the labels for the the y axis and the title of the graph.
+ *
+ * @param {*} g The d3 Selection of the graph's g SVG element
+ */
+
+
+function appendGraphLabels(g) {
+  g.append('text').text("Nombre d'accidents à Montréal").attr('class', 'y axis-text').attr('transform', 'rotate(-90)').attr('font-size', 12);
+  g.append('text').text('Date').attr('class', 'x axis-text').attr('font-size', 12);
+}
+/**
+ * Draws the X axis at the bottom of the diagram.
+ *
+ * @param g
+ * @param {*} xScale The scale to use to draw the axis
+ * @param {number} height The height of the graphic
+ */
+
+
+function drawXAxis(g, xScale, height) {
+  g.select('.x.axis').attr('transform', 'translate( 0, ' + height + ')').call(d3.axisBottom(xScale).tickSizeOuter(0));
+}
+/**
+ * Draws the Y axis to the left of the diagram.
+ *
+ * @param g
+ * @param {*} yScale The scale to use to draw the axis
+ */
+
+
+function drawYAxis(g, yScale) {
+  g.select('.y.axis').call(d3.axisLeft(yScale).tickSizeOuter(0));
+}
+/**
+ * Places the graph's title.
+ *
+ * @param {*} g The d3 Selection of the graph's g SVG element
+ */
+
+
+function placeTitle(g) {
+  g.append('text').attr('class', 'title').attr('x', 0).attr('y', -20).attr('font-size', 14);
+}
+/**
+ * Draws the button to toggle the display year.
+ *
+ * @param {*} g The d3 Selection of the graph's g SVG element
+ * @param {number} year The year to display
+ * @param vizName
+ * @param id
+ * @param {number} width The width of the graph, used to place the button
+ */
+
+
+function drawButton(g, width) {
+  var button = g.append('g').attr('class', 'button').attr('transform', 'translate(' + width + ', 140)').attr('width', 130).attr('height', 25);
+  button.append('rect').attr('width', 130).attr('height', 30).attr('fill', '#f4f6f4').on('mouseenter', function () {
+    d3.select(this).attr('stroke', '#362023');
+  }).on('mouseleave', function () {
+    d3.select(this).attr('stroke', '#f4f6f4');
   });
-  return data;
+  button.append('text').attr('x', 65).attr('y', 15).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('class', 'button-text').text('See next viz').attr('font-size', '10px').attr('fill', '#362023');
 }
-},{}],"../node_modules/d3/dist/package.js":[function(require,module,exports) {
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/namespaces.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.version = exports.unpkg = exports.scripts = exports.repository = exports.name = exports.module = exports.main = exports.license = exports.keywords = exports.jsdelivr = exports.homepage = exports.files = exports.devDependencies = exports.description = exports.dependencies = exports.author = void 0;
-var name = "d3";
-exports.name = name;
-var version = "5.16.0";
-exports.version = version;
-var description = "Data-Driven Documents";
-exports.description = description;
-var keywords = ["dom", "visualization", "svg", "animation", "canvas"];
-exports.keywords = keywords;
-var homepage = "https://d3js.org";
-exports.homepage = homepage;
-var license = "BSD-3-Clause";
-exports.license = license;
-var author = {
-  "name": "Mike Bostock",
-  "url": "https://bost.ocks.org/mike"
+exports.xhtml = exports.default = void 0;
+var xhtml = "http://www.w3.org/1999/xhtml";
+exports.xhtml = xhtml;
+var _default = {
+  svg: "http://www.w3.org/2000/svg",
+  xhtml: xhtml,
+  xlink: "http://www.w3.org/1999/xlink",
+  xml: "http://www.w3.org/XML/1998/namespace",
+  xmlns: "http://www.w3.org/2000/xmlns/"
 };
-exports.author = author;
-var main = "dist/d3.node.js";
-exports.main = main;
-var unpkg = "dist/d3.min.js";
-exports.unpkg = unpkg;
-var jsdelivr = "dist/d3.min.js";
-exports.jsdelivr = jsdelivr;
-var _module = "index.js";
-exports.module = _module;
-var repository = {
-  "type": "git",
-  "url": "https://github.com/d3/d3.git"
-};
-exports.repository = repository;
-var files = ["dist/**/*.js", "index.js"];
-exports.files = files;
-var scripts = {
-  "pretest": "rimraf dist && mkdir dist && json2module package.json > dist/package.js && rollup -c",
-  "test": "tape 'test/**/*-test.js'",
-  "prepublishOnly": "yarn test",
-  "postpublish": "git push && git push --tags && cd ../d3.github.com && git pull && cp ../d3/dist/d3.js d3.v5.js && cp ../d3/dist/d3.min.js d3.v5.min.js && git add d3.v5.js d3.v5.min.js && git commit -m \"d3 ${npm_package_version}\" && git push && cd - && cd ../d3-bower && git pull && cp ../d3/LICENSE ../d3/README.md ../d3/dist/d3.js ../d3/dist/d3.min.js . && git add -- LICENSE README.md d3.js d3.min.js && git commit -m \"${npm_package_version}\" && git tag -am \"${npm_package_version}\" v${npm_package_version} && git push && git push --tags && cd - && zip -j dist/d3.zip -- LICENSE README.md API.md CHANGES.md dist/d3.js dist/d3.min.js"
-};
-exports.scripts = scripts;
-var devDependencies = {
-  "json2module": "0.0",
-  "rimraf": "2",
-  "rollup": "1",
-  "rollup-plugin-ascii": "0.0",
-  "rollup-plugin-node-resolve": "3",
-  "rollup-plugin-terser": "5",
-  "tape": "4"
-};
-exports.devDependencies = devDependencies;
-var dependencies = {
-  "d3-array": "1",
-  "d3-axis": "1",
-  "d3-brush": "1",
-  "d3-chord": "1",
-  "d3-collection": "1",
-  "d3-color": "1",
-  "d3-contour": "1",
-  "d3-dispatch": "1",
-  "d3-drag": "1",
-  "d3-dsv": "1",
-  "d3-ease": "1",
-  "d3-fetch": "1",
-  "d3-force": "1",
-  "d3-format": "1",
-  "d3-geo": "1",
-  "d3-hierarchy": "1",
-  "d3-interpolate": "1",
-  "d3-path": "1",
-  "d3-polygon": "1",
-  "d3-quadtree": "1",
-  "d3-random": "1",
-  "d3-scale": "2",
-  "d3-scale-chromatic": "1",
-  "d3-selection": "1",
-  "d3-shape": "1",
-  "d3-time": "1",
-  "d3-time-format": "2",
-  "d3-timer": "1",
-  "d3-transition": "1",
-  "d3-voronoi": "1",
-  "d3-zoom": "1"
-};
-exports.dependencies = dependencies;
-},{}],"../node_modules/d3-array/src/ascending.js":[function(require,module,exports) {
+exports.default = _default;
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/namespace.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -238,191 +257,95 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = _default;
 
-function _default(a, b) {
-  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-}
-},{}],"../node_modules/d3-array/src/bisector.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-var _ascending = _interopRequireDefault(require("./ascending"));
+var _namespaces = _interopRequireDefault(require("./namespaces"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _default(compare) {
-  if (compare.length === 1) compare = ascendingComparator(compare);
-  return {
-    left: function (a, x, lo, hi) {
-      if (lo == null) lo = 0;
-      if (hi == null) hi = a.length;
+function _default(name) {
+  var prefix = name += "",
+      i = prefix.indexOf(":");
+  if (i >= 0 && (prefix = name.slice(0, i)) !== "xmlns") name = name.slice(i + 1);
+  return _namespaces.default.hasOwnProperty(prefix) ? {
+    space: _namespaces.default[prefix],
+    local: name
+  } : name;
+}
+},{"./namespaces":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/namespaces.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/creator.js":[function(require,module,exports) {
+"use strict";
 
-      while (lo < hi) {
-        var mid = lo + hi >>> 1;
-        if (compare(a[mid], x) < 0) lo = mid + 1;else hi = mid;
-      }
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
 
-      return lo;
-    },
-    right: function (a, x, lo, hi) {
-      if (lo == null) lo = 0;
-      if (hi == null) hi = a.length;
+var _namespace = _interopRequireDefault(require("./namespace"));
 
-      while (lo < hi) {
-        var mid = lo + hi >>> 1;
-        if (compare(a[mid], x) > 0) hi = mid;else lo = mid + 1;
-      }
+var _namespaces = require("./namespaces");
 
-      return lo;
-    }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function creatorInherit(name) {
+  return function () {
+    var document = this.ownerDocument,
+        uri = this.namespaceURI;
+    return uri === _namespaces.xhtml && document.documentElement.namespaceURI === _namespaces.xhtml ? document.createElement(name) : document.createElementNS(uri, name);
   };
 }
 
-function ascendingComparator(f) {
-  return function (d, x) {
-    return (0, _ascending.default)(f(d), x);
+function creatorFixed(fullname) {
+  return function () {
+    return this.ownerDocument.createElementNS(fullname.space, fullname.local);
   };
 }
-},{"./ascending":"../node_modules/d3-array/src/ascending.js"}],"../node_modules/d3-array/src/bisect.js":[function(require,module,exports) {
+
+function _default(name) {
+  var fullname = (0, _namespace.default)(name);
+  return (fullname.local ? creatorFixed : creatorInherit)(fullname);
+}
+},{"./namespace":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/namespace.js","./namespaces":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/namespaces.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selector.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.bisectRight = exports.bisectLeft = void 0;
+exports.default = _default;
 
-var _ascending = _interopRequireDefault(require("./ascending"));
+function none() {}
 
-var _bisector = _interopRequireDefault(require("./bisector"));
+function _default(selector) {
+  return selector == null ? none : function () {
+    return this.querySelector(selector);
+  };
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/select.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _index = require("./index");
+
+var _selector = _interopRequireDefault(require("../selector"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ascendingBisect = (0, _bisector.default)(_ascending.default);
-var bisectRight = ascendingBisect.right;
-exports.bisectRight = bisectRight;
-var bisectLeft = ascendingBisect.left;
-exports.bisectLeft = bisectLeft;
-var _default = bisectRight;
-exports.default = _default;
-},{"./ascending":"../node_modules/d3-array/src/ascending.js","./bisector":"../node_modules/d3-array/src/bisector.js"}],"../node_modules/d3-array/src/pairs.js":[function(require,module,exports) {
-"use strict";
+function _default(select) {
+  if (typeof select !== "function") select = (0, _selector.default)(select);
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-exports.pair = pair;
-
-function _default(array, f) {
-  if (f == null) f = pair;
-  var i = 0,
-      n = array.length - 1,
-      p = array[0],
-      pairs = new Array(n < 0 ? 0 : n);
-
-  while (i < n) pairs[i] = f(p, p = array[++i]);
-
-  return pairs;
-}
-
-function pair(a, b) {
-  return [a, b];
-}
-},{}],"../node_modules/d3-array/src/cross.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-var _pairs = require("./pairs");
-
-function _default(values0, values1, reduce) {
-  var n0 = values0.length,
-      n1 = values1.length,
-      values = new Array(n0 * n1),
-      i0,
-      i1,
-      i,
-      value0;
-  if (reduce == null) reduce = _pairs.pair;
-
-  for (i0 = i = 0; i0 < n0; ++i0) {
-    for (value0 = values0[i0], i1 = 0; i1 < n1; ++i1, ++i) {
-      values[i] = reduce(value0, values1[i1]);
-    }
-  }
-
-  return values;
-}
-},{"./pairs":"../node_modules/d3-array/src/pairs.js"}],"../node_modules/d3-array/src/descending.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(a, b) {
-  return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
-}
-},{}],"../node_modules/d3-array/src/number.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(x) {
-  return x === null ? NaN : +x;
-}
-},{}],"../node_modules/d3-array/src/variance.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-var _number = _interopRequireDefault(require("./number"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _default(values, valueof) {
-  var n = values.length,
-      m = 0,
-      i = -1,
-      mean = 0,
-      value,
-      delta,
-      sum = 0;
-
-  if (valueof == null) {
-    while (++i < n) {
-      if (!isNaN(value = (0, _number.default)(values[i]))) {
-        delta = value - mean;
-        mean += delta / ++m;
-        sum += delta * (value - mean);
-      }
-    }
-  } else {
-    while (++i < n) {
-      if (!isNaN(value = (0, _number.default)(valueof(values[i], i, values)))) {
-        delta = value - mean;
-        mean += delta / ++m;
-        sum += delta * (value - mean);
+  for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
+    for (var group = groups[j], n = group.length, subgroup = subgroups[j] = new Array(n), node, subnode, i = 0; i < n; ++i) {
+      if ((node = group[i]) && (subnode = select.call(node, node.__data__, i, group))) {
+        if ("__data__" in node) subnode.__data__ = node.__data__;
+        subgroup[i] = subnode;
       }
     }
   }
 
-  if (m > 1) return sum / (m - 1);
+  return new _index.Selection(subgroups, this._parents);
 }
-},{"./number":"../node_modules/d3-array/src/number.js"}],"../node_modules/d3-array/src/deviation.js":[function(require,module,exports) {
+},{"./index":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/index.js","../selector":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selector.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selectorAll.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -430,76 +353,137 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = _default;
 
-var _variance = _interopRequireDefault(require("./variance"));
+function empty() {
+  return [];
+}
+
+function _default(selector) {
+  return selector == null ? empty : function () {
+    return this.querySelectorAll(selector);
+  };
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/selectAll.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _index = require("./index");
+
+var _selectorAll = _interopRequireDefault(require("../selectorAll"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _default(array, f) {
-  var v = (0, _variance.default)(array, f);
-  return v ? Math.sqrt(v) : v;
-}
-},{"./variance":"../node_modules/d3-array/src/variance.js"}],"../node_modules/d3-array/src/extent.js":[function(require,module,exports) {
-"use strict";
+function _default(select) {
+  if (typeof select !== "function") select = (0, _selectorAll.default)(select);
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(values, valueof) {
-  var n = values.length,
-      i = -1,
-      value,
-      min,
-      max;
-
-  if (valueof == null) {
-    while (++i < n) {
-      // Find the first comparable value.
-      if ((value = values[i]) != null && value >= value) {
-        min = max = value;
-
-        while (++i < n) {
-          // Compare the remaining values.
-          if ((value = values[i]) != null) {
-            if (min > value) min = value;
-            if (max < value) max = value;
-          }
-        }
-      }
-    }
-  } else {
-    while (++i < n) {
-      // Find the first comparable value.
-      if ((value = valueof(values[i], i, values)) != null && value >= value) {
-        min = max = value;
-
-        while (++i < n) {
-          // Compare the remaining values.
-          if ((value = valueof(values[i], i, values)) != null) {
-            if (min > value) min = value;
-            if (max < value) max = value;
-          }
-        }
+  for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) {
+    for (var group = groups[j], n = group.length, node, i = 0; i < n; ++i) {
+      if (node = group[i]) {
+        subgroups.push(select.call(node, node.__data__, i, group));
+        parents.push(node);
       }
     }
   }
 
-  return [min, max];
+  return new _index.Selection(subgroups, parents);
 }
-},{}],"../node_modules/d3-array/src/array.js":[function(require,module,exports) {
+},{"./index":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/index.js","../selectorAll":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selectorAll.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/matcher.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.slice = exports.map = void 0;
-var array = Array.prototype;
-var slice = array.slice;
-exports.slice = slice;
-var map = array.map;
-exports.map = map;
-},{}],"../node_modules/d3-array/src/constant.js":[function(require,module,exports) {
+exports.default = _default;
+
+function _default(selector) {
+  return function () {
+    return this.matches(selector);
+  };
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/filter.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _index = require("./index");
+
+var _matcher = _interopRequireDefault(require("../matcher"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(match) {
+  if (typeof match !== "function") match = (0, _matcher.default)(match);
+
+  for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
+    for (var group = groups[j], n = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n; ++i) {
+      if ((node = group[i]) && match.call(node, node.__data__, i, group)) {
+        subgroup.push(node);
+      }
+    }
+  }
+
+  return new _index.Selection(subgroups, this._parents);
+}
+},{"./index":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/index.js","../matcher":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/matcher.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/sparse.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(update) {
+  return new Array(update.length);
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/enter.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.EnterNode = EnterNode;
+exports.default = _default;
+
+var _sparse = _interopRequireDefault(require("./sparse"));
+
+var _index = require("./index");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default() {
+  return new _index.Selection(this._enter || this._groups.map(_sparse.default), this._parents);
+}
+
+function EnterNode(parent, datum) {
+  this.ownerDocument = parent.ownerDocument;
+  this.namespaceURI = parent.namespaceURI;
+  this._next = null;
+  this._parent = parent;
+  this.__data__ = datum;
+}
+
+EnterNode.prototype = {
+  constructor: EnterNode,
+  appendChild: function (child) {
+    return this._parent.insertBefore(child, this._next);
+  },
+  insertBefore: function (child, next) {
+    return this._parent.insertBefore(child, next);
+  },
+  querySelector: function (selector) {
+    return this._parent.querySelector(selector);
+  },
+  querySelectorAll: function (selector) {
+    return this._parent.querySelectorAll(selector);
+  }
+};
+},{"./sparse":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/sparse.js","./index":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/index.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/constant.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -512,7 +496,7 @@ function _default(x) {
     return x;
   };
 }
-},{}],"../node_modules/d3-array/src/identity.js":[function(require,module,exports) {
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/data.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -520,86 +504,130 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = _default;
 
-function _default(x) {
-  return x;
+var _index = require("./index");
+
+var _enter = require("./enter");
+
+var _constant = _interopRequireDefault(require("../constant"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var keyPrefix = "$"; // Protect against keys like “__proto__”.
+
+function bindIndex(parent, group, enter, update, exit, data) {
+  var i = 0,
+      node,
+      groupLength = group.length,
+      dataLength = data.length; // Put any non-null nodes that fit into update.
+  // Put any null nodes into enter.
+  // Put any remaining data into enter.
+
+  for (; i < dataLength; ++i) {
+    if (node = group[i]) {
+      node.__data__ = data[i];
+      update[i] = node;
+    } else {
+      enter[i] = new _enter.EnterNode(parent, data[i]);
+    }
+  } // Put any non-null nodes that don’t fit into exit.
+
+
+  for (; i < groupLength; ++i) {
+    if (node = group[i]) {
+      exit[i] = node;
+    }
+  }
 }
-},{}],"../node_modules/d3-array/src/range.js":[function(require,module,exports) {
-"use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
+function bindKey(parent, group, enter, update, exit, data, key) {
+  var i,
+      node,
+      nodeByKeyValue = {},
+      groupLength = group.length,
+      dataLength = data.length,
+      keyValues = new Array(groupLength),
+      keyValue; // Compute the key for each node.
+  // If multiple nodes have the same key, the duplicates are added to exit.
 
-function _default(start, stop, step) {
-  start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
-  var i = -1,
-      n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
-      range = new Array(n);
+  for (i = 0; i < groupLength; ++i) {
+    if (node = group[i]) {
+      keyValues[i] = keyValue = keyPrefix + key.call(node, node.__data__, i, group);
 
-  while (++i < n) {
-    range[i] = start + i * step;
+      if (keyValue in nodeByKeyValue) {
+        exit[i] = node;
+      } else {
+        nodeByKeyValue[keyValue] = node;
+      }
+    }
+  } // Compute the key for each datum.
+  // If there a node associated with this key, join and add it to update.
+  // If there is not (or the key is a duplicate), add it to enter.
+
+
+  for (i = 0; i < dataLength; ++i) {
+    keyValue = keyPrefix + key.call(parent, data[i], i, data);
+
+    if (node = nodeByKeyValue[keyValue]) {
+      update[i] = node;
+      node.__data__ = data[i];
+      nodeByKeyValue[keyValue] = null;
+    } else {
+      enter[i] = new _enter.EnterNode(parent, data[i]);
+    }
+  } // Add any remaining nodes that were not bound to data to exit.
+
+
+  for (i = 0; i < groupLength; ++i) {
+    if ((node = group[i]) && nodeByKeyValue[keyValues[i]] === node) {
+      exit[i] = node;
+    }
+  }
+}
+
+function _default(value, key) {
+  if (!value) {
+    data = new Array(this.size()), j = -1;
+    this.each(function (d) {
+      data[++j] = d;
+    });
+    return data;
   }
 
-  return range;
-}
-},{}],"../node_modules/d3-array/src/ticks.js":[function(require,module,exports) {
-"use strict";
+  var bind = key ? bindKey : bindIndex,
+      parents = this._parents,
+      groups = this._groups;
+  if (typeof value !== "function") value = (0, _constant.default)(value);
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-exports.tickIncrement = tickIncrement;
-exports.tickStep = tickStep;
-var e10 = Math.sqrt(50),
-    e5 = Math.sqrt(10),
-    e2 = Math.sqrt(2);
+  for (var m = groups.length, update = new Array(m), enter = new Array(m), exit = new Array(m), j = 0; j < m; ++j) {
+    var parent = parents[j],
+        group = groups[j],
+        groupLength = group.length,
+        data = value.call(parent, parent && parent.__data__, j, parents),
+        dataLength = data.length,
+        enterGroup = enter[j] = new Array(dataLength),
+        updateGroup = update[j] = new Array(dataLength),
+        exitGroup = exit[j] = new Array(groupLength);
+    bind(parent, group, enterGroup, updateGroup, exitGroup, data, key); // Now connect the enter nodes to their following update node, such that
+    // appendChild can insert the materialized enter node before this node,
+    // rather than at the end of the parent node.
 
-function _default(start, stop, count) {
-  var reverse,
-      i = -1,
-      n,
-      ticks,
-      step;
-  stop = +stop, start = +start, count = +count;
-  if (start === stop && count > 0) return [start];
-  if (reverse = stop < start) n = start, start = stop, stop = n;
-  if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step)) return [];
+    for (var i0 = 0, i1 = 0, previous, next; i0 < dataLength; ++i0) {
+      if (previous = enterGroup[i0]) {
+        if (i0 >= i1) i1 = i0 + 1;
 
-  if (step > 0) {
-    start = Math.ceil(start / step);
-    stop = Math.floor(stop / step);
-    ticks = new Array(n = Math.ceil(stop - start + 1));
+        while (!(next = updateGroup[i1]) && ++i1 < dataLength);
 
-    while (++i < n) ticks[i] = (start + i) * step;
-  } else {
-    start = Math.floor(start * step);
-    stop = Math.ceil(stop * step);
-    ticks = new Array(n = Math.ceil(start - stop + 1));
-
-    while (++i < n) ticks[i] = (start - i) / step;
+        previous._next = next || null;
+      }
+    }
   }
 
-  if (reverse) ticks.reverse();
-  return ticks;
+  update = new _index.Selection(update, parents);
+  update._enter = enter;
+  update._exit = exit;
+  return update;
 }
-
-function tickIncrement(start, stop, count) {
-  var step = (stop - start) / Math.max(0, count),
-      power = Math.floor(Math.log(step) / Math.LN10),
-      error = step / Math.pow(10, power);
-  return power >= 0 ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power) : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
-}
-
-function tickStep(start, stop, count) {
-  var step0 = Math.abs(stop - start) / Math.max(0, count),
-      step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)),
-      error = step0 / step1;
-  if (error >= e10) step1 *= 10;else if (error >= e5) step1 *= 5;else if (error >= e2) step1 *= 2;
-  return stop < start ? -step1 : step1;
-}
-},{}],"../node_modules/d3-array/src/threshold/sturges.js":[function(require,module,exports) {
+},{"./index":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/index.js","./enter":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/enter.js","../constant":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/constant.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/exit.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -607,103 +635,16 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = _default;
 
-function _default(values) {
-  return Math.ceil(Math.log(values.length) / Math.LN2) + 1;
-}
-},{}],"../node_modules/d3-array/src/histogram.js":[function(require,module,exports) {
-"use strict";
+var _sparse = _interopRequireDefault(require("./sparse"));
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-var _array = require("./array");
-
-var _bisect = _interopRequireDefault(require("./bisect"));
-
-var _constant = _interopRequireDefault(require("./constant"));
-
-var _extent = _interopRequireDefault(require("./extent"));
-
-var _identity = _interopRequireDefault(require("./identity"));
-
-var _range = _interopRequireDefault(require("./range"));
-
-var _ticks = require("./ticks");
-
-var _sturges = _interopRequireDefault(require("./threshold/sturges"));
+var _index = require("./index");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _default() {
-  var value = _identity.default,
-      domain = _extent.default,
-      threshold = _sturges.default;
-
-  function histogram(data) {
-    var i,
-        n = data.length,
-        x,
-        values = new Array(n);
-
-    for (i = 0; i < n; ++i) {
-      values[i] = value(data[i], i, data);
-    }
-
-    var xz = domain(values),
-        x0 = xz[0],
-        x1 = xz[1],
-        tz = threshold(values, x0, x1); // Convert number of thresholds into uniform thresholds.
-
-    if (!Array.isArray(tz)) {
-      tz = (0, _ticks.tickStep)(x0, x1, tz);
-      tz = (0, _range.default)(Math.ceil(x0 / tz) * tz, x1, tz); // exclusive
-    } // Remove any thresholds outside the domain.
-
-
-    var m = tz.length;
-
-    while (tz[0] <= x0) tz.shift(), --m;
-
-    while (tz[m - 1] > x1) tz.pop(), --m;
-
-    var bins = new Array(m + 1),
-        bin; // Initialize bins.
-
-    for (i = 0; i <= m; ++i) {
-      bin = bins[i] = [];
-      bin.x0 = i > 0 ? tz[i - 1] : x0;
-      bin.x1 = i < m ? tz[i] : x1;
-    } // Assign data to bins by value, ignoring any outside the domain.
-
-
-    for (i = 0; i < n; ++i) {
-      x = values[i];
-
-      if (x0 <= x && x <= x1) {
-        bins[(0, _bisect.default)(tz, x, 0, m)].push(data[i]);
-      }
-    }
-
-    return bins;
-  }
-
-  histogram.value = function (_) {
-    return arguments.length ? (value = typeof _ === "function" ? _ : (0, _constant.default)(_), histogram) : value;
-  };
-
-  histogram.domain = function (_) {
-    return arguments.length ? (domain = typeof _ === "function" ? _ : (0, _constant.default)([_[0], _[1]]), histogram) : domain;
-  };
-
-  histogram.thresholds = function (_) {
-    return arguments.length ? (threshold = typeof _ === "function" ? _ : Array.isArray(_) ? (0, _constant.default)(_array.slice.call(_)) : (0, _constant.default)(_), histogram) : threshold;
-  };
-
-  return histogram;
+  return new _index.Selection(this._exit || this._groups.map(_sparse.default), this._parents);
 }
-},{"./array":"../node_modules/d3-array/src/array.js","./bisect":"../node_modules/d3-array/src/bisect.js","./constant":"../node_modules/d3-array/src/constant.js","./extent":"../node_modules/d3-array/src/extent.js","./identity":"../node_modules/d3-array/src/identity.js","./range":"../node_modules/d3-array/src/range.js","./ticks":"../node_modules/d3-array/src/ticks.js","./threshold/sturges":"../node_modules/d3-array/src/threshold/sturges.js"}],"../node_modules/d3-array/src/quantile.js":[function(require,module,exports) {
+},{"./sparse":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/sparse.js","./index":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/index.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/join.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -711,23 +652,16 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = _default;
 
-var _number = _interopRequireDefault(require("./number"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _default(values, p, valueof) {
-  if (valueof == null) valueof = _number.default;
-  if (!(n = values.length)) return;
-  if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
-  if (p >= 1) return +valueof(values[n - 1], n - 1, values);
-  var n,
-      i = (n - 1) * p,
-      i0 = Math.floor(i),
-      value0 = +valueof(values[i0], i0, values),
-      value1 = +valueof(values[i0 + 1], i0 + 1, values);
-  return value0 + (value1 - value0) * (i - i0);
+function _default(onenter, onupdate, onexit) {
+  var enter = this.enter(),
+      update = this,
+      exit = this.exit();
+  enter = typeof onenter === "function" ? onenter(enter) : enter.append(onenter + "");
+  if (onupdate != null) update = onupdate(update);
+  if (onexit == null) exit.remove();else onexit(exit);
+  return enter && update ? enter.merge(update).order() : update;
 }
-},{"./number":"../node_modules/d3-array/src/number.js"}],"../node_modules/d3-array/src/threshold/freedmanDiaconis.js":[function(require,module,exports) {
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/merge.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -735,624 +669,883 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = _default;
 
-var _array = require("../array");
+var _index = require("./index");
 
-var _ascending = _interopRequireDefault(require("../ascending"));
-
-var _number = _interopRequireDefault(require("../number"));
-
-var _quantile = _interopRequireDefault(require("../quantile"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _default(values, min, max) {
-  values = _array.map.call(values, _number.default).sort(_ascending.default);
-  return Math.ceil((max - min) / (2 * ((0, _quantile.default)(values, 0.75) - (0, _quantile.default)(values, 0.25)) * Math.pow(values.length, -1 / 3)));
-}
-},{"../array":"../node_modules/d3-array/src/array.js","../ascending":"../node_modules/d3-array/src/ascending.js","../number":"../node_modules/d3-array/src/number.js","../quantile":"../node_modules/d3-array/src/quantile.js"}],"../node_modules/d3-array/src/threshold/scott.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-var _deviation = _interopRequireDefault(require("../deviation"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _default(values, min, max) {
-  return Math.ceil((max - min) / (3.5 * (0, _deviation.default)(values) * Math.pow(values.length, -1 / 3)));
-}
-},{"../deviation":"../node_modules/d3-array/src/deviation.js"}],"../node_modules/d3-array/src/max.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(values, valueof) {
-  var n = values.length,
-      i = -1,
-      value,
-      max;
-
-  if (valueof == null) {
-    while (++i < n) {
-      // Find the first comparable value.
-      if ((value = values[i]) != null && value >= value) {
-        max = value;
-
-        while (++i < n) {
-          // Compare the remaining values.
-          if ((value = values[i]) != null && value > max) {
-            max = value;
-          }
-        }
-      }
-    }
-  } else {
-    while (++i < n) {
-      // Find the first comparable value.
-      if ((value = valueof(values[i], i, values)) != null && value >= value) {
-        max = value;
-
-        while (++i < n) {
-          // Compare the remaining values.
-          if ((value = valueof(values[i], i, values)) != null && value > max) {
-            max = value;
-          }
-        }
+function _default(selection) {
+  for (var groups0 = this._groups, groups1 = selection._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
+    for (var group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = new Array(n), node, i = 0; i < n; ++i) {
+      if (node = group0[i] || group1[i]) {
+        merge[i] = node;
       }
     }
   }
 
-  return max;
-}
-},{}],"../node_modules/d3-array/src/mean.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-var _number = _interopRequireDefault(require("./number"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _default(values, valueof) {
-  var n = values.length,
-      m = n,
-      i = -1,
-      value,
-      sum = 0;
-
-  if (valueof == null) {
-    while (++i < n) {
-      if (!isNaN(value = (0, _number.default)(values[i]))) sum += value;else --m;
-    }
-  } else {
-    while (++i < n) {
-      if (!isNaN(value = (0, _number.default)(valueof(values[i], i, values)))) sum += value;else --m;
-    }
+  for (; j < m0; ++j) {
+    merges[j] = groups0[j];
   }
 
-  if (m) return sum / m;
+  return new _index.Selection(merges, this._parents);
 }
-},{"./number":"../node_modules/d3-array/src/number.js"}],"../node_modules/d3-array/src/median.js":[function(require,module,exports) {
+},{"./index":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/index.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/order.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = _default;
-
-var _ascending = _interopRequireDefault(require("./ascending"));
-
-var _number = _interopRequireDefault(require("./number"));
-
-var _quantile = _interopRequireDefault(require("./quantile"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _default(values, valueof) {
-  var n = values.length,
-      i = -1,
-      value,
-      numbers = [];
-
-  if (valueof == null) {
-    while (++i < n) {
-      if (!isNaN(value = (0, _number.default)(values[i]))) {
-        numbers.push(value);
-      }
-    }
-  } else {
-    while (++i < n) {
-      if (!isNaN(value = (0, _number.default)(valueof(values[i], i, values)))) {
-        numbers.push(value);
-      }
-    }
-  }
-
-  return (0, _quantile.default)(numbers.sort(_ascending.default), 0.5);
-}
-},{"./ascending":"../node_modules/d3-array/src/ascending.js","./number":"../node_modules/d3-array/src/number.js","./quantile":"../node_modules/d3-array/src/quantile.js"}],"../node_modules/d3-array/src/merge.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(arrays) {
-  var n = arrays.length,
-      m,
-      i = -1,
-      j = 0,
-      merged,
-      array;
-
-  while (++i < n) j += arrays[i].length;
-
-  merged = new Array(j);
-
-  while (--n >= 0) {
-    array = arrays[n];
-    m = array.length;
-
-    while (--m >= 0) {
-      merged[--j] = array[m];
-    }
-  }
-
-  return merged;
-}
-},{}],"../node_modules/d3-array/src/min.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(values, valueof) {
-  var n = values.length,
-      i = -1,
-      value,
-      min;
-
-  if (valueof == null) {
-    while (++i < n) {
-      // Find the first comparable value.
-      if ((value = values[i]) != null && value >= value) {
-        min = value;
-
-        while (++i < n) {
-          // Compare the remaining values.
-          if ((value = values[i]) != null && min > value) {
-            min = value;
-          }
-        }
-      }
-    }
-  } else {
-    while (++i < n) {
-      // Find the first comparable value.
-      if ((value = valueof(values[i], i, values)) != null && value >= value) {
-        min = value;
-
-        while (++i < n) {
-          // Compare the remaining values.
-          if ((value = valueof(values[i], i, values)) != null && min > value) {
-            min = value;
-          }
-        }
-      }
-    }
-  }
-
-  return min;
-}
-},{}],"../node_modules/d3-array/src/permute.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(array, indexes) {
-  var i = indexes.length,
-      permutes = new Array(i);
-
-  while (i--) permutes[i] = array[indexes[i]];
-
-  return permutes;
-}
-},{}],"../node_modules/d3-array/src/scan.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-var _ascending = _interopRequireDefault(require("./ascending"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _default(values, compare) {
-  if (!(n = values.length)) return;
-  var n,
-      i = 0,
-      j = 0,
-      xi,
-      xj = values[j];
-  if (compare == null) compare = _ascending.default;
-
-  while (++i < n) {
-    if (compare(xi = values[i], xj) < 0 || compare(xj, xj) !== 0) {
-      xj = xi, j = i;
-    }
-  }
-
-  if (compare(xj, xj) === 0) return j;
-}
-},{"./ascending":"../node_modules/d3-array/src/ascending.js"}],"../node_modules/d3-array/src/shuffle.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(array, i0, i1) {
-  var m = (i1 == null ? array.length : i1) - (i0 = i0 == null ? 0 : +i0),
-      t,
-      i;
-
-  while (m) {
-    i = Math.random() * m-- | 0;
-    t = array[m + i0];
-    array[m + i0] = array[i + i0];
-    array[i + i0] = t;
-  }
-
-  return array;
-}
-},{}],"../node_modules/d3-array/src/sum.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(values, valueof) {
-  var n = values.length,
-      i = -1,
-      value,
-      sum = 0;
-
-  if (valueof == null) {
-    while (++i < n) {
-      if (value = +values[i]) sum += value; // Note: zero and null are equivalent.
-    }
-  } else {
-    while (++i < n) {
-      if (value = +valueof(values[i], i, values)) sum += value;
-    }
-  }
-
-  return sum;
-}
-},{}],"../node_modules/d3-array/src/transpose.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-var _min = _interopRequireDefault(require("./min"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _default(matrix) {
-  if (!(n = matrix.length)) return [];
-
-  for (var i = -1, m = (0, _min.default)(matrix, length), transpose = new Array(m); ++i < m;) {
-    for (var j = -1, n, row = transpose[i] = new Array(n); ++j < n;) {
-      row[j] = matrix[j][i];
-    }
-  }
-
-  return transpose;
-}
-
-function length(d) {
-  return d.length;
-}
-},{"./min":"../node_modules/d3-array/src/min.js"}],"../node_modules/d3-array/src/zip.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-var _transpose = _interopRequireDefault(require("./transpose"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _default() {
-  return (0, _transpose.default)(arguments);
+  for (var groups = this._groups, j = -1, m = groups.length; ++j < m;) {
+    for (var group = groups[j], i = group.length - 1, next = group[i], node; --i >= 0;) {
+      if (node = group[i]) {
+        if (next && node.compareDocumentPosition(next) ^ 4) next.parentNode.insertBefore(node, next);
+        next = node;
+      }
+    }
+  }
+
+  return this;
 }
-},{"./transpose":"../node_modules/d3-array/src/transpose.js"}],"../node_modules/d3-array/src/index.js":[function(require,module,exports) {
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/sort.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "ascending", {
-  enumerable: true,
-  get: function () {
-    return _ascending.default;
-  }
-});
-Object.defineProperty(exports, "bisect", {
-  enumerable: true,
-  get: function () {
-    return _bisect.default;
-  }
-});
-Object.defineProperty(exports, "bisectLeft", {
-  enumerable: true,
-  get: function () {
-    return _bisect.bisectLeft;
-  }
-});
-Object.defineProperty(exports, "bisectRight", {
-  enumerable: true,
-  get: function () {
-    return _bisect.bisectRight;
-  }
-});
-Object.defineProperty(exports, "bisector", {
-  enumerable: true,
-  get: function () {
-    return _bisector.default;
-  }
-});
-Object.defineProperty(exports, "cross", {
-  enumerable: true,
-  get: function () {
-    return _cross.default;
-  }
-});
-Object.defineProperty(exports, "descending", {
-  enumerable: true,
-  get: function () {
-    return _descending.default;
-  }
-});
-Object.defineProperty(exports, "deviation", {
-  enumerable: true,
-  get: function () {
-    return _deviation.default;
-  }
-});
-Object.defineProperty(exports, "extent", {
-  enumerable: true,
-  get: function () {
-    return _extent.default;
-  }
-});
-Object.defineProperty(exports, "histogram", {
-  enumerable: true,
-  get: function () {
-    return _histogram.default;
-  }
-});
-Object.defineProperty(exports, "max", {
-  enumerable: true,
-  get: function () {
-    return _max.default;
-  }
-});
-Object.defineProperty(exports, "mean", {
-  enumerable: true,
-  get: function () {
-    return _mean.default;
-  }
-});
-Object.defineProperty(exports, "median", {
-  enumerable: true,
-  get: function () {
-    return _median.default;
-  }
-});
-Object.defineProperty(exports, "merge", {
-  enumerable: true,
-  get: function () {
-    return _merge.default;
-  }
-});
-Object.defineProperty(exports, "min", {
-  enumerable: true,
-  get: function () {
-    return _min.default;
-  }
-});
-Object.defineProperty(exports, "pairs", {
-  enumerable: true,
-  get: function () {
-    return _pairs.default;
-  }
-});
-Object.defineProperty(exports, "permute", {
-  enumerable: true,
-  get: function () {
-    return _permute.default;
-  }
-});
-Object.defineProperty(exports, "quantile", {
-  enumerable: true,
-  get: function () {
-    return _quantile.default;
-  }
-});
-Object.defineProperty(exports, "range", {
-  enumerable: true,
-  get: function () {
-    return _range.default;
-  }
-});
-Object.defineProperty(exports, "scan", {
-  enumerable: true,
-  get: function () {
-    return _scan.default;
-  }
-});
-Object.defineProperty(exports, "shuffle", {
-  enumerable: true,
-  get: function () {
-    return _shuffle.default;
-  }
-});
-Object.defineProperty(exports, "sum", {
-  enumerable: true,
-  get: function () {
-    return _sum.default;
-  }
-});
-Object.defineProperty(exports, "thresholdFreedmanDiaconis", {
-  enumerable: true,
-  get: function () {
-    return _freedmanDiaconis.default;
-  }
-});
-Object.defineProperty(exports, "thresholdScott", {
-  enumerable: true,
-  get: function () {
-    return _scott.default;
-  }
-});
-Object.defineProperty(exports, "thresholdSturges", {
-  enumerable: true,
-  get: function () {
-    return _sturges.default;
-  }
-});
-Object.defineProperty(exports, "tickIncrement", {
-  enumerable: true,
-  get: function () {
-    return _ticks.tickIncrement;
-  }
-});
-Object.defineProperty(exports, "tickStep", {
-  enumerable: true,
-  get: function () {
-    return _ticks.tickStep;
-  }
-});
-Object.defineProperty(exports, "ticks", {
-  enumerable: true,
-  get: function () {
-    return _ticks.default;
-  }
-});
-Object.defineProperty(exports, "transpose", {
-  enumerable: true,
-  get: function () {
-    return _transpose.default;
-  }
-});
-Object.defineProperty(exports, "variance", {
-  enumerable: true,
-  get: function () {
-    return _variance.default;
-  }
-});
-Object.defineProperty(exports, "zip", {
-  enumerable: true,
-  get: function () {
-    return _zip.default;
-  }
-});
+exports.default = _default;
 
-var _bisect = _interopRequireWildcard(require("./bisect"));
+var _index = require("./index");
 
-var _ascending = _interopRequireDefault(require("./ascending"));
+function _default(compare) {
+  if (!compare) compare = ascending;
 
-var _bisector = _interopRequireDefault(require("./bisector"));
+  function compareNode(a, b) {
+    return a && b ? compare(a.__data__, b.__data__) : !a - !b;
+  }
 
-var _cross = _interopRequireDefault(require("./cross"));
+  for (var groups = this._groups, m = groups.length, sortgroups = new Array(m), j = 0; j < m; ++j) {
+    for (var group = groups[j], n = group.length, sortgroup = sortgroups[j] = new Array(n), node, i = 0; i < n; ++i) {
+      if (node = group[i]) {
+        sortgroup[i] = node;
+      }
+    }
 
-var _descending = _interopRequireDefault(require("./descending"));
+    sortgroup.sort(compareNode);
+  }
 
-var _deviation = _interopRequireDefault(require("./deviation"));
+  return new _index.Selection(sortgroups, this._parents).order();
+}
 
-var _extent = _interopRequireDefault(require("./extent"));
+function ascending(a, b) {
+  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+}
+},{"./index":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/index.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/call.js":[function(require,module,exports) {
+"use strict";
 
-var _histogram = _interopRequireDefault(require("./histogram"));
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
 
-var _freedmanDiaconis = _interopRequireDefault(require("./threshold/freedmanDiaconis"));
+function _default() {
+  var callback = arguments[0];
+  arguments[0] = this;
+  callback.apply(null, arguments);
+  return this;
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/nodes.js":[function(require,module,exports) {
+"use strict";
 
-var _scott = _interopRequireDefault(require("./threshold/scott"));
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
 
-var _sturges = _interopRequireDefault(require("./threshold/sturges"));
+function _default() {
+  var nodes = new Array(this.size()),
+      i = -1;
+  this.each(function () {
+    nodes[++i] = this;
+  });
+  return nodes;
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/node.js":[function(require,module,exports) {
+"use strict";
 
-var _max = _interopRequireDefault(require("./max"));
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
 
-var _mean = _interopRequireDefault(require("./mean"));
+function _default() {
+  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
+    for (var group = groups[j], i = 0, n = group.length; i < n; ++i) {
+      var node = group[i];
+      if (node) return node;
+    }
+  }
 
-var _median = _interopRequireDefault(require("./median"));
+  return null;
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/size.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default() {
+  var size = 0;
+  this.each(function () {
+    ++size;
+  });
+  return size;
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/empty.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default() {
+  return !this.node();
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/each.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(callback) {
+  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
+    for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
+      if (node = group[i]) callback.call(node, node.__data__, i, group);
+    }
+  }
+
+  return this;
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/attr.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _namespace = _interopRequireDefault(require("../namespace"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function attrRemove(name) {
+  return function () {
+    this.removeAttribute(name);
+  };
+}
+
+function attrRemoveNS(fullname) {
+  return function () {
+    this.removeAttributeNS(fullname.space, fullname.local);
+  };
+}
+
+function attrConstant(name, value) {
+  return function () {
+    this.setAttribute(name, value);
+  };
+}
+
+function attrConstantNS(fullname, value) {
+  return function () {
+    this.setAttributeNS(fullname.space, fullname.local, value);
+  };
+}
+
+function attrFunction(name, value) {
+  return function () {
+    var v = value.apply(this, arguments);
+    if (v == null) this.removeAttribute(name);else this.setAttribute(name, v);
+  };
+}
+
+function attrFunctionNS(fullname, value) {
+  return function () {
+    var v = value.apply(this, arguments);
+    if (v == null) this.removeAttributeNS(fullname.space, fullname.local);else this.setAttributeNS(fullname.space, fullname.local, v);
+  };
+}
+
+function _default(name, value) {
+  var fullname = (0, _namespace.default)(name);
+
+  if (arguments.length < 2) {
+    var node = this.node();
+    return fullname.local ? node.getAttributeNS(fullname.space, fullname.local) : node.getAttribute(fullname);
+  }
+
+  return this.each((value == null ? fullname.local ? attrRemoveNS : attrRemove : typeof value === "function" ? fullname.local ? attrFunctionNS : attrFunction : fullname.local ? attrConstantNS : attrConstant)(fullname, value));
+}
+},{"../namespace":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/namespace.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/window.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(node) {
+  return node.ownerDocument && node.ownerDocument.defaultView // node is a Node
+  || node.document && node // node is a Window
+  || node.defaultView; // node is a Document
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/style.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+exports.styleValue = styleValue;
+
+var _window = _interopRequireDefault(require("../window"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function styleRemove(name) {
+  return function () {
+    this.style.removeProperty(name);
+  };
+}
+
+function styleConstant(name, value, priority) {
+  return function () {
+    this.style.setProperty(name, value, priority);
+  };
+}
+
+function styleFunction(name, value, priority) {
+  return function () {
+    var v = value.apply(this, arguments);
+    if (v == null) this.style.removeProperty(name);else this.style.setProperty(name, v, priority);
+  };
+}
+
+function _default(name, value, priority) {
+  return arguments.length > 1 ? this.each((value == null ? styleRemove : typeof value === "function" ? styleFunction : styleConstant)(name, value, priority == null ? "" : priority)) : styleValue(this.node(), name);
+}
+
+function styleValue(node, name) {
+  return node.style.getPropertyValue(name) || (0, _window.default)(node).getComputedStyle(node, null).getPropertyValue(name);
+}
+},{"../window":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/window.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/property.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function propertyRemove(name) {
+  return function () {
+    delete this[name];
+  };
+}
+
+function propertyConstant(name, value) {
+  return function () {
+    this[name] = value;
+  };
+}
+
+function propertyFunction(name, value) {
+  return function () {
+    var v = value.apply(this, arguments);
+    if (v == null) delete this[name];else this[name] = v;
+  };
+}
+
+function _default(name, value) {
+  return arguments.length > 1 ? this.each((value == null ? propertyRemove : typeof value === "function" ? propertyFunction : propertyConstant)(name, value)) : this.node()[name];
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/classed.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function classArray(string) {
+  return string.trim().split(/^|\s+/);
+}
+
+function classList(node) {
+  return node.classList || new ClassList(node);
+}
+
+function ClassList(node) {
+  this._node = node;
+  this._names = classArray(node.getAttribute("class") || "");
+}
+
+ClassList.prototype = {
+  add: function (name) {
+    var i = this._names.indexOf(name);
+
+    if (i < 0) {
+      this._names.push(name);
+
+      this._node.setAttribute("class", this._names.join(" "));
+    }
+  },
+  remove: function (name) {
+    var i = this._names.indexOf(name);
+
+    if (i >= 0) {
+      this._names.splice(i, 1);
+
+      this._node.setAttribute("class", this._names.join(" "));
+    }
+  },
+  contains: function (name) {
+    return this._names.indexOf(name) >= 0;
+  }
+};
+
+function classedAdd(node, names) {
+  var list = classList(node),
+      i = -1,
+      n = names.length;
+
+  while (++i < n) list.add(names[i]);
+}
+
+function classedRemove(node, names) {
+  var list = classList(node),
+      i = -1,
+      n = names.length;
+
+  while (++i < n) list.remove(names[i]);
+}
+
+function classedTrue(names) {
+  return function () {
+    classedAdd(this, names);
+  };
+}
+
+function classedFalse(names) {
+  return function () {
+    classedRemove(this, names);
+  };
+}
+
+function classedFunction(names, value) {
+  return function () {
+    (value.apply(this, arguments) ? classedAdd : classedRemove)(this, names);
+  };
+}
+
+function _default(name, value) {
+  var names = classArray(name + "");
+
+  if (arguments.length < 2) {
+    var list = classList(this.node()),
+        i = -1,
+        n = names.length;
+
+    while (++i < n) if (!list.contains(names[i])) return false;
+
+    return true;
+  }
+
+  return this.each((typeof value === "function" ? classedFunction : value ? classedTrue : classedFalse)(names, value));
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/text.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function textRemove() {
+  this.textContent = "";
+}
+
+function textConstant(value) {
+  return function () {
+    this.textContent = value;
+  };
+}
+
+function textFunction(value) {
+  return function () {
+    var v = value.apply(this, arguments);
+    this.textContent = v == null ? "" : v;
+  };
+}
+
+function _default(value) {
+  return arguments.length ? this.each(value == null ? textRemove : (typeof value === "function" ? textFunction : textConstant)(value)) : this.node().textContent;
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/html.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function htmlRemove() {
+  this.innerHTML = "";
+}
+
+function htmlConstant(value) {
+  return function () {
+    this.innerHTML = value;
+  };
+}
+
+function htmlFunction(value) {
+  return function () {
+    var v = value.apply(this, arguments);
+    this.innerHTML = v == null ? "" : v;
+  };
+}
+
+function _default(value) {
+  return arguments.length ? this.each(value == null ? htmlRemove : (typeof value === "function" ? htmlFunction : htmlConstant)(value)) : this.node().innerHTML;
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/raise.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function raise() {
+  if (this.nextSibling) this.parentNode.appendChild(this);
+}
+
+function _default() {
+  return this.each(raise);
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/lower.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function lower() {
+  if (this.previousSibling) this.parentNode.insertBefore(this, this.parentNode.firstChild);
+}
+
+function _default() {
+  return this.each(lower);
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/append.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _creator = _interopRequireDefault(require("../creator"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(name) {
+  var create = typeof name === "function" ? name : (0, _creator.default)(name);
+  return this.select(function () {
+    return this.appendChild(create.apply(this, arguments));
+  });
+}
+},{"../creator":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/creator.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/insert.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _creator = _interopRequireDefault(require("../creator"));
+
+var _selector = _interopRequireDefault(require("../selector"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function constantNull() {
+  return null;
+}
+
+function _default(name, before) {
+  var create = typeof name === "function" ? name : (0, _creator.default)(name),
+      select = before == null ? constantNull : typeof before === "function" ? before : (0, _selector.default)(before);
+  return this.select(function () {
+    return this.insertBefore(create.apply(this, arguments), select.apply(this, arguments) || null);
+  });
+}
+},{"../creator":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/creator.js","../selector":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selector.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/remove.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function remove() {
+  var parent = this.parentNode;
+  if (parent) parent.removeChild(this);
+}
+
+function _default() {
+  return this.each(remove);
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/clone.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function selection_cloneShallow() {
+  return this.parentNode.insertBefore(this.cloneNode(false), this.nextSibling);
+}
+
+function selection_cloneDeep() {
+  return this.parentNode.insertBefore(this.cloneNode(true), this.nextSibling);
+}
+
+function _default(deep) {
+  return this.select(deep ? selection_cloneDeep : selection_cloneShallow);
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/datum.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(value) {
+  return arguments.length ? this.property("__data__", value) : this.node().__data__;
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/on.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.customEvent = customEvent;
+exports.default = _default;
+exports.event = void 0;
+var filterEvents = {};
+var event = null;
+exports.event = event;
+
+if (typeof document !== "undefined") {
+  var element = document.documentElement;
+
+  if (!("onmouseenter" in element)) {
+    filterEvents = {
+      mouseenter: "mouseover",
+      mouseleave: "mouseout"
+    };
+  }
+}
+
+function filterContextListener(listener, index, group) {
+  listener = contextListener(listener, index, group);
+  return function (event) {
+    var related = event.relatedTarget;
+
+    if (!related || related !== this && !(related.compareDocumentPosition(this) & 8)) {
+      listener.call(this, event);
+    }
+  };
+}
+
+function contextListener(listener, index, group) {
+  return function (event1) {
+    var event0 = event; // Events can be reentrant (e.g., focus).
+
+    exports.event = event = event1;
+
+    try {
+      listener.call(this, this.__data__, index, group);
+    } finally {
+      exports.event = event = event0;
+    }
+  };
+}
+
+function parseTypenames(typenames) {
+  return typenames.trim().split(/^|\s+/).map(function (t) {
+    var name = "",
+        i = t.indexOf(".");
+    if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
+    return {
+      type: t,
+      name: name
+    };
+  });
+}
+
+function onRemove(typename) {
+  return function () {
+    var on = this.__on;
+    if (!on) return;
+
+    for (var j = 0, i = -1, m = on.length, o; j < m; ++j) {
+      if (o = on[j], (!typename.type || o.type === typename.type) && o.name === typename.name) {
+        this.removeEventListener(o.type, o.listener, o.capture);
+      } else {
+        on[++i] = o;
+      }
+    }
+
+    if (++i) on.length = i;else delete this.__on;
+  };
+}
+
+function onAdd(typename, value, capture) {
+  var wrap = filterEvents.hasOwnProperty(typename.type) ? filterContextListener : contextListener;
+  return function (d, i, group) {
+    var on = this.__on,
+        o,
+        listener = wrap(value, i, group);
+    if (on) for (var j = 0, m = on.length; j < m; ++j) {
+      if ((o = on[j]).type === typename.type && o.name === typename.name) {
+        this.removeEventListener(o.type, o.listener, o.capture);
+        this.addEventListener(o.type, o.listener = listener, o.capture = capture);
+        o.value = value;
+        return;
+      }
+    }
+    this.addEventListener(typename.type, listener, capture);
+    o = {
+      type: typename.type,
+      name: typename.name,
+      value: value,
+      listener: listener,
+      capture: capture
+    };
+    if (!on) this.__on = [o];else on.push(o);
+  };
+}
+
+function _default(typename, value, capture) {
+  var typenames = parseTypenames(typename + ""),
+      i,
+      n = typenames.length,
+      t;
+
+  if (arguments.length < 2) {
+    var on = this.node().__on;
+
+    if (on) for (var j = 0, m = on.length, o; j < m; ++j) {
+      for (i = 0, o = on[j]; i < n; ++i) {
+        if ((t = typenames[i]).type === o.type && t.name === o.name) {
+          return o.value;
+        }
+      }
+    }
+    return;
+  }
+
+  on = value ? onAdd : onRemove;
+  if (capture == null) capture = false;
+
+  for (i = 0; i < n; ++i) this.each(on(typenames[i], value, capture));
+
+  return this;
+}
+
+function customEvent(event1, listener, that, args) {
+  var event0 = event;
+  event1.sourceEvent = event;
+  exports.event = event = event1;
+
+  try {
+    return listener.apply(that, args);
+  } finally {
+    exports.event = event = event0;
+  }
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/dispatch.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _window = _interopRequireDefault(require("../window"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function dispatchEvent(node, type, params) {
+  var window = (0, _window.default)(node),
+      event = window.CustomEvent;
+
+  if (typeof event === "function") {
+    event = new event(type, params);
+  } else {
+    event = window.document.createEvent("Event");
+    if (params) event.initEvent(type, params.bubbles, params.cancelable), event.detail = params.detail;else event.initEvent(type, false, false);
+  }
+
+  node.dispatchEvent(event);
+}
+
+function dispatchConstant(type, params) {
+  return function () {
+    return dispatchEvent(this, type, params);
+  };
+}
+
+function dispatchFunction(type, params) {
+  return function () {
+    return dispatchEvent(this, type, params.apply(this, arguments));
+  };
+}
+
+function _default(type, params) {
+  return this.each((typeof params === "function" ? dispatchFunction : dispatchConstant)(type, params));
+}
+},{"../window":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/window.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Selection = Selection;
+exports.root = exports.default = void 0;
+
+var _select = _interopRequireDefault(require("./select"));
+
+var _selectAll = _interopRequireDefault(require("./selectAll"));
+
+var _filter = _interopRequireDefault(require("./filter"));
+
+var _data = _interopRequireDefault(require("./data"));
+
+var _enter = _interopRequireDefault(require("./enter"));
+
+var _exit = _interopRequireDefault(require("./exit"));
+
+var _join = _interopRequireDefault(require("./join"));
 
 var _merge = _interopRequireDefault(require("./merge"));
 
-var _min = _interopRequireDefault(require("./min"));
+var _order = _interopRequireDefault(require("./order"));
 
-var _pairs = _interopRequireDefault(require("./pairs"));
+var _sort = _interopRequireDefault(require("./sort"));
 
-var _permute = _interopRequireDefault(require("./permute"));
+var _call = _interopRequireDefault(require("./call"));
 
-var _quantile = _interopRequireDefault(require("./quantile"));
+var _nodes = _interopRequireDefault(require("./nodes"));
 
-var _range = _interopRequireDefault(require("./range"));
+var _node = _interopRequireDefault(require("./node"));
 
-var _scan = _interopRequireDefault(require("./scan"));
+var _size = _interopRequireDefault(require("./size"));
 
-var _shuffle = _interopRequireDefault(require("./shuffle"));
+var _empty = _interopRequireDefault(require("./empty"));
 
-var _sum = _interopRequireDefault(require("./sum"));
+var _each = _interopRequireDefault(require("./each"));
 
-var _ticks = _interopRequireWildcard(require("./ticks"));
+var _attr = _interopRequireDefault(require("./attr"));
 
-var _transpose = _interopRequireDefault(require("./transpose"));
+var _style = _interopRequireDefault(require("./style"));
 
-var _variance = _interopRequireDefault(require("./variance"));
+var _property = _interopRequireDefault(require("./property"));
 
-var _zip = _interopRequireDefault(require("./zip"));
+var _classed = _interopRequireDefault(require("./classed"));
+
+var _text = _interopRequireDefault(require("./text"));
+
+var _html = _interopRequireDefault(require("./html"));
+
+var _raise = _interopRequireDefault(require("./raise"));
+
+var _lower = _interopRequireDefault(require("./lower"));
+
+var _append = _interopRequireDefault(require("./append"));
+
+var _insert = _interopRequireDefault(require("./insert"));
+
+var _remove = _interopRequireDefault(require("./remove"));
+
+var _clone = _interopRequireDefault(require("./clone"));
+
+var _datum = _interopRequireDefault(require("./datum"));
+
+var _on = _interopRequireDefault(require("./on"));
+
+var _dispatch = _interopRequireDefault(require("./dispatch"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+var root = [null];
+exports.root = root;
 
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-},{"./bisect":"../node_modules/d3-array/src/bisect.js","./ascending":"../node_modules/d3-array/src/ascending.js","./bisector":"../node_modules/d3-array/src/bisector.js","./cross":"../node_modules/d3-array/src/cross.js","./descending":"../node_modules/d3-array/src/descending.js","./deviation":"../node_modules/d3-array/src/deviation.js","./extent":"../node_modules/d3-array/src/extent.js","./histogram":"../node_modules/d3-array/src/histogram.js","./threshold/freedmanDiaconis":"../node_modules/d3-array/src/threshold/freedmanDiaconis.js","./threshold/scott":"../node_modules/d3-array/src/threshold/scott.js","./threshold/sturges":"../node_modules/d3-array/src/threshold/sturges.js","./max":"../node_modules/d3-array/src/max.js","./mean":"../node_modules/d3-array/src/mean.js","./median":"../node_modules/d3-array/src/median.js","./merge":"../node_modules/d3-array/src/merge.js","./min":"../node_modules/d3-array/src/min.js","./pairs":"../node_modules/d3-array/src/pairs.js","./permute":"../node_modules/d3-array/src/permute.js","./quantile":"../node_modules/d3-array/src/quantile.js","./range":"../node_modules/d3-array/src/range.js","./scan":"../node_modules/d3-array/src/scan.js","./shuffle":"../node_modules/d3-array/src/shuffle.js","./sum":"../node_modules/d3-array/src/sum.js","./ticks":"../node_modules/d3-array/src/ticks.js","./transpose":"../node_modules/d3-array/src/transpose.js","./variance":"../node_modules/d3-array/src/variance.js","./zip":"../node_modules/d3-array/src/zip.js"}],"../node_modules/d3-axis/src/array.js":[function(require,module,exports) {
-"use strict";
+function Selection(groups, parents) {
+  this._groups = groups;
+  this._parents = parents;
+}
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.slice = void 0;
-var slice = Array.prototype.slice;
-exports.slice = slice;
-},{}],"../node_modules/d3-axis/src/identity.js":[function(require,module,exports) {
+function selection() {
+  return new Selection([[document.documentElement]], root);
+}
+
+Selection.prototype = selection.prototype = {
+  constructor: Selection,
+  select: _select.default,
+  selectAll: _selectAll.default,
+  filter: _filter.default,
+  data: _data.default,
+  enter: _enter.default,
+  exit: _exit.default,
+  join: _join.default,
+  merge: _merge.default,
+  order: _order.default,
+  sort: _sort.default,
+  call: _call.default,
+  nodes: _nodes.default,
+  node: _node.default,
+  size: _size.default,
+  empty: _empty.default,
+  each: _each.default,
+  attr: _attr.default,
+  style: _style.default,
+  property: _property.default,
+  classed: _classed.default,
+  text: _text.default,
+  html: _html.default,
+  raise: _raise.default,
+  lower: _lower.default,
+  append: _append.default,
+  insert: _insert.default,
+  remove: _remove.default,
+  clone: _clone.default,
+  datum: _datum.default,
+  on: _on.default,
+  dispatch: _dispatch.default
+};
+var _default = selection;
+exports.default = _default;
+},{"./select":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/select.js","./selectAll":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/selectAll.js","./filter":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/filter.js","./data":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/data.js","./enter":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/enter.js","./exit":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/exit.js","./join":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/join.js","./merge":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/merge.js","./order":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/order.js","./sort":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/sort.js","./call":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/call.js","./nodes":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/nodes.js","./node":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/node.js","./size":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/size.js","./empty":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/empty.js","./each":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/each.js","./attr":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/attr.js","./style":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/style.js","./property":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/property.js","./classed":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/classed.js","./text":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/text.js","./html":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/html.js","./raise":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/raise.js","./lower":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/lower.js","./append":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/append.js","./insert":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/insert.js","./remove":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/remove.js","./clone":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/clone.js","./datum":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/datum.js","./on":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/on.js","./dispatch":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/dispatch.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/select.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1360,204 +1553,342 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = _default;
 
-function _default(x) {
-  return x;
+var _index = require("./selection/index");
+
+function _default(selector) {
+  return typeof selector === "string" ? new _index.Selection([[document.querySelector(selector)]], [document.documentElement]) : new _index.Selection([[selector]], _index.root);
 }
-},{}],"../node_modules/d3-axis/src/axis.js":[function(require,module,exports) {
+},{"./selection/index":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/index.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/create.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.axisBottom = axisBottom;
-exports.axisLeft = axisLeft;
-exports.axisRight = axisRight;
-exports.axisTop = axisTop;
+exports.default = _default;
 
-var _array = require("./array");
+var _creator = _interopRequireDefault(require("./creator"));
 
-var _identity = _interopRequireDefault(require("./identity"));
+var _select = _interopRequireDefault(require("./select"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var top = 1,
-    right = 2,
-    bottom = 3,
-    left = 4,
-    epsilon = 1e-6;
-
-function translateX(x) {
-  return "translate(" + (x + 0.5) + ",0)";
+function _default(name) {
+  return (0, _select.default)((0, _creator.default)(name).call(document.documentElement));
 }
-
-function translateY(y) {
-  return "translate(0," + (y + 0.5) + ")";
-}
-
-function number(scale) {
-  return function (d) {
-    return +scale(d);
-  };
-}
-
-function center(scale) {
-  var offset = Math.max(0, scale.bandwidth() - 1) / 2; // Adjust for 0.5px offset.
-
-  if (scale.round()) offset = Math.round(offset);
-  return function (d) {
-    return +scale(d) + offset;
-  };
-}
-
-function entering() {
-  return !this.__axis;
-}
-
-function axis(orient, scale) {
-  var tickArguments = [],
-      tickValues = null,
-      tickFormat = null,
-      tickSizeInner = 6,
-      tickSizeOuter = 6,
-      tickPadding = 3,
-      k = orient === top || orient === left ? -1 : 1,
-      x = orient === left || orient === right ? "x" : "y",
-      transform = orient === top || orient === bottom ? translateX : translateY;
-
-  function axis(context) {
-    var values = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues,
-        format = tickFormat == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : _identity.default : tickFormat,
-        spacing = Math.max(tickSizeInner, 0) + tickPadding,
-        range = scale.range(),
-        range0 = +range[0] + 0.5,
-        range1 = +range[range.length - 1] + 0.5,
-        position = (scale.bandwidth ? center : number)(scale.copy()),
-        selection = context.selection ? context.selection() : context,
-        path = selection.selectAll(".domain").data([null]),
-        tick = selection.selectAll(".tick").data(values, scale).order(),
-        tickExit = tick.exit(),
-        tickEnter = tick.enter().append("g").attr("class", "tick"),
-        line = tick.select("line"),
-        text = tick.select("text");
-    path = path.merge(path.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor"));
-    tick = tick.merge(tickEnter);
-    line = line.merge(tickEnter.append("line").attr("stroke", "currentColor").attr(x + "2", k * tickSizeInner));
-    text = text.merge(tickEnter.append("text").attr("fill", "currentColor").attr(x, k * spacing).attr("dy", orient === top ? "0em" : orient === bottom ? "0.71em" : "0.32em"));
-
-    if (context !== selection) {
-      path = path.transition(context);
-      tick = tick.transition(context);
-      line = line.transition(context);
-      text = text.transition(context);
-      tickExit = tickExit.transition(context).attr("opacity", epsilon).attr("transform", function (d) {
-        return isFinite(d = position(d)) ? transform(d) : this.getAttribute("transform");
-      });
-      tickEnter.attr("opacity", epsilon).attr("transform", function (d) {
-        var p = this.parentNode.__axis;
-        return transform(p && isFinite(p = p(d)) ? p : position(d));
-      });
-    }
-
-    tickExit.remove();
-    path.attr("d", orient === left || orient == right ? tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H0.5V" + range1 + "H" + k * tickSizeOuter : "M0.5," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V0.5H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + ",0.5H" + range1);
-    tick.attr("opacity", 1).attr("transform", function (d) {
-      return transform(position(d));
-    });
-    line.attr(x + "2", k * tickSizeInner);
-    text.attr(x, k * spacing).text(format);
-    selection.filter(entering).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", orient === right ? "start" : orient === left ? "end" : "middle");
-    selection.each(function () {
-      this.__axis = position;
-    });
-  }
-
-  axis.scale = function (_) {
-    return arguments.length ? (scale = _, axis) : scale;
-  };
-
-  axis.ticks = function () {
-    return tickArguments = _array.slice.call(arguments), axis;
-  };
-
-  axis.tickArguments = function (_) {
-    return arguments.length ? (tickArguments = _ == null ? [] : _array.slice.call(_), axis) : tickArguments.slice();
-  };
-
-  axis.tickValues = function (_) {
-    return arguments.length ? (tickValues = _ == null ? null : _array.slice.call(_), axis) : tickValues && tickValues.slice();
-  };
-
-  axis.tickFormat = function (_) {
-    return arguments.length ? (tickFormat = _, axis) : tickFormat;
-  };
-
-  axis.tickSize = function (_) {
-    return arguments.length ? (tickSizeInner = tickSizeOuter = +_, axis) : tickSizeInner;
-  };
-
-  axis.tickSizeInner = function (_) {
-    return arguments.length ? (tickSizeInner = +_, axis) : tickSizeInner;
-  };
-
-  axis.tickSizeOuter = function (_) {
-    return arguments.length ? (tickSizeOuter = +_, axis) : tickSizeOuter;
-  };
-
-  axis.tickPadding = function (_) {
-    return arguments.length ? (tickPadding = +_, axis) : tickPadding;
-  };
-
-  return axis;
-}
-
-function axisTop(scale) {
-  return axis(top, scale);
-}
-
-function axisRight(scale) {
-  return axis(right, scale);
-}
-
-function axisBottom(scale) {
-  return axis(bottom, scale);
-}
-
-function axisLeft(scale) {
-  return axis(left, scale);
-}
-},{"./array":"../node_modules/d3-axis/src/array.js","./identity":"../node_modules/d3-axis/src/identity.js"}],"../node_modules/d3-axis/src/index.js":[function(require,module,exports) {
+},{"./creator":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/creator.js","./select":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/select.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/local.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "axisBottom", {
+exports.default = local;
+var nextId = 0;
+
+function local() {
+  return new Local();
+}
+
+function Local() {
+  this._ = "@" + (++nextId).toString(36);
+}
+
+Local.prototype = local.prototype = {
+  constructor: Local,
+  get: function (node) {
+    var id = this._;
+
+    while (!(id in node)) if (!(node = node.parentNode)) return;
+
+    return node[id];
+  },
+  set: function (node, value) {
+    return node[this._] = value;
+  },
+  remove: function (node) {
+    return this._ in node && delete node[this._];
+  },
+  toString: function () {
+    return this._;
+  }
+};
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/sourceEvent.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _on = require("./selection/on");
+
+function _default() {
+  var current = _on.event,
+      source;
+
+  while (source = current.sourceEvent) current = source;
+
+  return current;
+}
+},{"./selection/on":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/on.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/point.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(node, event) {
+  var svg = node.ownerSVGElement || node;
+
+  if (svg.createSVGPoint) {
+    var point = svg.createSVGPoint();
+    point.x = event.clientX, point.y = event.clientY;
+    point = point.matrixTransform(node.getScreenCTM().inverse());
+    return [point.x, point.y];
+  }
+
+  var rect = node.getBoundingClientRect();
+  return [event.clientX - rect.left - node.clientLeft, event.clientY - rect.top - node.clientTop];
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/mouse.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _sourceEvent = _interopRequireDefault(require("./sourceEvent"));
+
+var _point = _interopRequireDefault(require("./point"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(node) {
+  var event = (0, _sourceEvent.default)();
+  if (event.changedTouches) event = event.changedTouches[0];
+  return (0, _point.default)(node, event);
+}
+},{"./sourceEvent":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/sourceEvent.js","./point":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/point.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selectAll.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _index = require("./selection/index");
+
+function _default(selector) {
+  return typeof selector === "string" ? new _index.Selection([document.querySelectorAll(selector)], [document.documentElement]) : new _index.Selection([selector == null ? [] : selector], _index.root);
+}
+},{"./selection/index":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/index.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/touch.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _sourceEvent = _interopRequireDefault(require("./sourceEvent"));
+
+var _point = _interopRequireDefault(require("./point"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(node, touches, identifier) {
+  if (arguments.length < 3) identifier = touches, touches = (0, _sourceEvent.default)().changedTouches;
+
+  for (var i = 0, n = touches ? touches.length : 0, touch; i < n; ++i) {
+    if ((touch = touches[i]).identifier === identifier) {
+      return (0, _point.default)(node, touch);
+    }
+  }
+
+  return null;
+}
+},{"./sourceEvent":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/sourceEvent.js","./point":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/point.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/touches.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _sourceEvent = _interopRequireDefault(require("./sourceEvent"));
+
+var _point = _interopRequireDefault(require("./point"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(node, touches) {
+  if (touches == null) touches = (0, _sourceEvent.default)().touches;
+
+  for (var i = 0, n = touches ? touches.length : 0, points = new Array(n); i < n; ++i) {
+    points[i] = (0, _point.default)(node, touches[i]);
+  }
+
+  return points;
+}
+},{"./sourceEvent":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/sourceEvent.js","./point":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/point.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "clientPoint", {
   enumerable: true,
   get: function () {
-    return _axis.axisBottom;
+    return _point.default;
   }
 });
-Object.defineProperty(exports, "axisLeft", {
+Object.defineProperty(exports, "create", {
   enumerable: true,
   get: function () {
-    return _axis.axisLeft;
+    return _create.default;
   }
 });
-Object.defineProperty(exports, "axisRight", {
+Object.defineProperty(exports, "creator", {
   enumerable: true,
   get: function () {
-    return _axis.axisRight;
+    return _creator.default;
   }
 });
-Object.defineProperty(exports, "axisTop", {
+Object.defineProperty(exports, "customEvent", {
   enumerable: true,
   get: function () {
-    return _axis.axisTop;
+    return _on.customEvent;
+  }
+});
+Object.defineProperty(exports, "event", {
+  enumerable: true,
+  get: function () {
+    return _on.event;
+  }
+});
+Object.defineProperty(exports, "local", {
+  enumerable: true,
+  get: function () {
+    return _local.default;
+  }
+});
+Object.defineProperty(exports, "matcher", {
+  enumerable: true,
+  get: function () {
+    return _matcher.default;
+  }
+});
+Object.defineProperty(exports, "mouse", {
+  enumerable: true,
+  get: function () {
+    return _mouse.default;
+  }
+});
+Object.defineProperty(exports, "namespace", {
+  enumerable: true,
+  get: function () {
+    return _namespace.default;
+  }
+});
+Object.defineProperty(exports, "namespaces", {
+  enumerable: true,
+  get: function () {
+    return _namespaces.default;
+  }
+});
+Object.defineProperty(exports, "select", {
+  enumerable: true,
+  get: function () {
+    return _select.default;
+  }
+});
+Object.defineProperty(exports, "selectAll", {
+  enumerable: true,
+  get: function () {
+    return _selectAll.default;
+  }
+});
+Object.defineProperty(exports, "selection", {
+  enumerable: true,
+  get: function () {
+    return _index.default;
+  }
+});
+Object.defineProperty(exports, "selector", {
+  enumerable: true,
+  get: function () {
+    return _selector.default;
+  }
+});
+Object.defineProperty(exports, "selectorAll", {
+  enumerable: true,
+  get: function () {
+    return _selectorAll.default;
+  }
+});
+Object.defineProperty(exports, "style", {
+  enumerable: true,
+  get: function () {
+    return _style.styleValue;
+  }
+});
+Object.defineProperty(exports, "touch", {
+  enumerable: true,
+  get: function () {
+    return _touch.default;
+  }
+});
+Object.defineProperty(exports, "touches", {
+  enumerable: true,
+  get: function () {
+    return _touches.default;
+  }
+});
+Object.defineProperty(exports, "window", {
+  enumerable: true,
+  get: function () {
+    return _window.default;
   }
 });
 
-var _axis = require("./axis");
-},{"./axis":"../node_modules/d3-axis/src/axis.js"}],"../node_modules/d3-dispatch/src/dispatch.js":[function(require,module,exports) {
+var _create = _interopRequireDefault(require("./create"));
+
+var _creator = _interopRequireDefault(require("./creator"));
+
+var _local = _interopRequireDefault(require("./local"));
+
+var _matcher = _interopRequireDefault(require("./matcher"));
+
+var _mouse = _interopRequireDefault(require("./mouse"));
+
+var _namespace = _interopRequireDefault(require("./namespace"));
+
+var _namespaces = _interopRequireDefault(require("./namespaces"));
+
+var _point = _interopRequireDefault(require("./point"));
+
+var _select = _interopRequireDefault(require("./select"));
+
+var _selectAll = _interopRequireDefault(require("./selectAll"));
+
+var _index = _interopRequireDefault(require("./selection/index"));
+
+var _selector = _interopRequireDefault(require("./selector"));
+
+var _selectorAll = _interopRequireDefault(require("./selectorAll"));
+
+var _style = require("./selection/style");
+
+var _touch = _interopRequireDefault(require("./touch"));
+
+var _touches = _interopRequireDefault(require("./touches"));
+
+var _window = _interopRequireDefault(require("./window"));
+
+var _on = require("./selection/on");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+},{"./create":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/create.js","./creator":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/creator.js","./local":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/local.js","./matcher":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/matcher.js","./mouse":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/mouse.js","./namespace":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/namespace.js","./namespaces":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/namespaces.js","./point":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/point.js","./select":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/select.js","./selectAll":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selectAll.js","./selection/index":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/index.js","./selector":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selector.js","./selectorAll":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selectorAll.js","./selection/style":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/style.js","./touch":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/touch.js","./touches":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/touches.js","./window":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/window.js","./selection/on":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/selection/on.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-dispatch/src/dispatch.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1570,7 +1901,7 @@ var noop = {
 
 function dispatch() {
   for (var i = 0, n = arguments.length, _ = {}, t; i < n; ++i) {
-    if (!(t = arguments[i] + "") || t in _ || /[\s.]/.test(t)) throw new Error("illegal type: " + t);
+    if (!(t = arguments[i] + "") || t in _) throw new Error("illegal type: " + t);
     _[t] = [];
   }
 
@@ -1665,7 +1996,7 @@ function set(type, name, callback) {
 
 var _default = dispatch;
 exports.default = _default;
-},{}],"../node_modules/d3-dispatch/src/index.js":[function(require,module,exports) {
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-dispatch/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1678,10 +2009,6310 @@ Object.defineProperty(exports, "dispatch", {
   }
 });
 
-var _dispatch = _interopRequireDefault(require("./dispatch.js"));
+var _dispatch = _interopRequireDefault(require("./src/dispatch"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./dispatch.js":"../node_modules/d3-dispatch/src/dispatch.js"}],"../node_modules/d3-selection/src/namespaces.js":[function(require,module,exports) {
+},{"./src/dispatch":"../node_modules/d3-svg-annotation/node_modules/d3-dispatch/src/dispatch.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-drag/src/noevent.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+exports.nopropagation = nopropagation;
+
+var _d3Selection = require("d3-selection");
+
+function nopropagation() {
+  _d3Selection.event.stopImmediatePropagation();
+}
+
+function _default() {
+  _d3Selection.event.preventDefault();
+
+  _d3Selection.event.stopImmediatePropagation();
+}
+},{"d3-selection":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/index.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-drag/src/nodrag.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+exports.yesdrag = yesdrag;
+
+var _d3Selection = require("d3-selection");
+
+var _noevent = _interopRequireDefault(require("./noevent"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(view) {
+  var root = view.document.documentElement,
+      selection = (0, _d3Selection.select)(view).on("dragstart.drag", _noevent.default, true);
+
+  if ("onselectstart" in root) {
+    selection.on("selectstart.drag", _noevent.default, true);
+  } else {
+    root.__noselect = root.style.MozUserSelect;
+    root.style.MozUserSelect = "none";
+  }
+}
+
+function yesdrag(view, noclick) {
+  var root = view.document.documentElement,
+      selection = (0, _d3Selection.select)(view).on("dragstart.drag", null);
+
+  if (noclick) {
+    selection.on("click.drag", _noevent.default, true);
+    setTimeout(function () {
+      selection.on("click.drag", null);
+    }, 0);
+  }
+
+  if ("onselectstart" in root) {
+    selection.on("selectstart.drag", null);
+  } else {
+    root.style.MozUserSelect = root.__noselect;
+    delete root.__noselect;
+  }
+}
+},{"d3-selection":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/index.js","./noevent":"../node_modules/d3-svg-annotation/node_modules/d3-drag/src/noevent.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-drag/src/constant.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(x) {
+  return function () {
+    return x;
+  };
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-drag/src/event.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = DragEvent;
+
+function DragEvent(target, type, subject, id, active, x, y, dx, dy, dispatch) {
+  this.target = target;
+  this.type = type;
+  this.subject = subject;
+  this.identifier = id;
+  this.active = active;
+  this.x = x;
+  this.y = y;
+  this.dx = dx;
+  this.dy = dy;
+  this._ = dispatch;
+}
+
+DragEvent.prototype.on = function () {
+  var value = this._.on.apply(this._, arguments);
+
+  return value === this._ ? this : value;
+};
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-drag/src/drag.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _d3Dispatch = require("d3-dispatch");
+
+var _d3Selection = require("d3-selection");
+
+var _nodrag = _interopRequireWildcard(require("./nodrag"));
+
+var _noevent = _interopRequireWildcard(require("./noevent"));
+
+var _constant = _interopRequireDefault(require("./constant"));
+
+var _event = _interopRequireDefault(require("./event"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+// Ignore right-click, since that should open the context menu.
+function defaultFilter() {
+  return !_d3Selection.event.button;
+}
+
+function defaultContainer() {
+  return this.parentNode;
+}
+
+function defaultSubject(d) {
+  return d == null ? {
+    x: _d3Selection.event.x,
+    y: _d3Selection.event.y
+  } : d;
+}
+
+function defaultTouchable() {
+  return "ontouchstart" in this;
+}
+
+function _default() {
+  var filter = defaultFilter,
+      container = defaultContainer,
+      subject = defaultSubject,
+      touchable = defaultTouchable,
+      gestures = {},
+      listeners = (0, _d3Dispatch.dispatch)("start", "drag", "end"),
+      active = 0,
+      mousedownx,
+      mousedowny,
+      mousemoving,
+      touchending,
+      clickDistance2 = 0;
+
+  function drag(selection) {
+    selection.on("mousedown.drag", mousedowned).filter(touchable).on("touchstart.drag", touchstarted).on("touchmove.drag", touchmoved).on("touchend.drag touchcancel.drag", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
+  }
+
+  function mousedowned() {
+    if (touchending || !filter.apply(this, arguments)) return;
+    var gesture = beforestart("mouse", container.apply(this, arguments), _d3Selection.mouse, this, arguments);
+    if (!gesture) return;
+    (0, _d3Selection.select)(_d3Selection.event.view).on("mousemove.drag", mousemoved, true).on("mouseup.drag", mouseupped, true);
+    (0, _nodrag.default)(_d3Selection.event.view);
+    (0, _noevent.nopropagation)();
+    mousemoving = false;
+    mousedownx = _d3Selection.event.clientX;
+    mousedowny = _d3Selection.event.clientY;
+    gesture("start");
+  }
+
+  function mousemoved() {
+    (0, _noevent.default)();
+
+    if (!mousemoving) {
+      var dx = _d3Selection.event.clientX - mousedownx,
+          dy = _d3Selection.event.clientY - mousedowny;
+      mousemoving = dx * dx + dy * dy > clickDistance2;
+    }
+
+    gestures.mouse("drag");
+  }
+
+  function mouseupped() {
+    (0, _d3Selection.select)(_d3Selection.event.view).on("mousemove.drag mouseup.drag", null);
+    (0, _nodrag.yesdrag)(_d3Selection.event.view, mousemoving);
+    (0, _noevent.default)();
+    gestures.mouse("end");
+  }
+
+  function touchstarted() {
+    if (!filter.apply(this, arguments)) return;
+    var touches = _d3Selection.event.changedTouches,
+        c = container.apply(this, arguments),
+        n = touches.length,
+        i,
+        gesture;
+
+    for (i = 0; i < n; ++i) {
+      if (gesture = beforestart(touches[i].identifier, c, _d3Selection.touch, this, arguments)) {
+        (0, _noevent.nopropagation)();
+        gesture("start");
+      }
+    }
+  }
+
+  function touchmoved() {
+    var touches = _d3Selection.event.changedTouches,
+        n = touches.length,
+        i,
+        gesture;
+
+    for (i = 0; i < n; ++i) {
+      if (gesture = gestures[touches[i].identifier]) {
+        (0, _noevent.default)();
+        gesture("drag");
+      }
+    }
+  }
+
+  function touchended() {
+    var touches = _d3Selection.event.changedTouches,
+        n = touches.length,
+        i,
+        gesture;
+    if (touchending) clearTimeout(touchending);
+    touchending = setTimeout(function () {
+      touchending = null;
+    }, 500); // Ghost clicks are delayed!
+
+    for (i = 0; i < n; ++i) {
+      if (gesture = gestures[touches[i].identifier]) {
+        (0, _noevent.nopropagation)();
+        gesture("end");
+      }
+    }
+  }
+
+  function beforestart(id, container, point, that, args) {
+    var p = point(container, id),
+        s,
+        dx,
+        dy,
+        sublisteners = listeners.copy();
+    if (!(0, _d3Selection.customEvent)(new _event.default(drag, "beforestart", s, id, active, p[0], p[1], 0, 0, sublisteners), function () {
+      if ((_d3Selection.event.subject = s = subject.apply(that, args)) == null) return false;
+      dx = s.x - p[0] || 0;
+      dy = s.y - p[1] || 0;
+      return true;
+    })) return;
+    return function gesture(type) {
+      var p0 = p,
+          n;
+
+      switch (type) {
+        case "start":
+          gestures[id] = gesture, n = active++;
+          break;
+
+        case "end":
+          delete gestures[id], --active;
+        // nobreak
+
+        case "drag":
+          p = point(container, id), n = active;
+          break;
+      }
+
+      (0, _d3Selection.customEvent)(new _event.default(drag, type, s, id, n, p[0] + dx, p[1] + dy, p[0] - p0[0], p[1] - p0[1], sublisteners), sublisteners.apply, sublisteners, [type, that, args]);
+    };
+  }
+
+  drag.filter = function (_) {
+    return arguments.length ? (filter = typeof _ === "function" ? _ : (0, _constant.default)(!!_), drag) : filter;
+  };
+
+  drag.container = function (_) {
+    return arguments.length ? (container = typeof _ === "function" ? _ : (0, _constant.default)(_), drag) : container;
+  };
+
+  drag.subject = function (_) {
+    return arguments.length ? (subject = typeof _ === "function" ? _ : (0, _constant.default)(_), drag) : subject;
+  };
+
+  drag.touchable = function (_) {
+    return arguments.length ? (touchable = typeof _ === "function" ? _ : (0, _constant.default)(!!_), drag) : touchable;
+  };
+
+  drag.on = function () {
+    var value = listeners.on.apply(listeners, arguments);
+    return value === listeners ? drag : value;
+  };
+
+  drag.clickDistance = function (_) {
+    return arguments.length ? (clickDistance2 = (_ = +_) * _, drag) : Math.sqrt(clickDistance2);
+  };
+
+  return drag;
+}
+},{"d3-dispatch":"../node_modules/d3-svg-annotation/node_modules/d3-dispatch/index.js","d3-selection":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/index.js","./nodrag":"../node_modules/d3-svg-annotation/node_modules/d3-drag/src/nodrag.js","./noevent":"../node_modules/d3-svg-annotation/node_modules/d3-drag/src/noevent.js","./constant":"../node_modules/d3-svg-annotation/node_modules/d3-drag/src/constant.js","./event":"../node_modules/d3-svg-annotation/node_modules/d3-drag/src/event.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-drag/src/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "drag", {
+  enumerable: true,
+  get: function () {
+    return _drag.default;
+  }
+});
+Object.defineProperty(exports, "dragDisable", {
+  enumerable: true,
+  get: function () {
+    return _nodrag.default;
+  }
+});
+Object.defineProperty(exports, "dragEnable", {
+  enumerable: true,
+  get: function () {
+    return _nodrag.yesdrag;
+  }
+});
+
+var _drag = _interopRequireDefault(require("./drag"));
+
+var _nodrag = _interopRequireWildcard(require("./nodrag"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+},{"./drag":"../node_modules/d3-svg-annotation/node_modules/d3-drag/src/drag.js","./nodrag":"../node_modules/d3-svg-annotation/node_modules/d3-drag/src/nodrag.js"}],"../node_modules/d3-path/src/path.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var pi = Math.PI,
+    tau = 2 * pi,
+    epsilon = 1e-6,
+    tauEpsilon = tau - epsilon;
+
+function Path() {
+  this._x0 = this._y0 = // start of current subpath
+  this._x1 = this._y1 = null; // end of current subpath
+
+  this._ = "";
+}
+
+function path() {
+  return new Path();
+}
+
+Path.prototype = path.prototype = {
+  constructor: Path,
+  moveTo: function (x, y) {
+    this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y);
+  },
+  closePath: function () {
+    if (this._x1 !== null) {
+      this._x1 = this._x0, this._y1 = this._y0;
+      this._ += "Z";
+    }
+  },
+  lineTo: function (x, y) {
+    this._ += "L" + (this._x1 = +x) + "," + (this._y1 = +y);
+  },
+  quadraticCurveTo: function (x1, y1, x, y) {
+    this._ += "Q" + +x1 + "," + +y1 + "," + (this._x1 = +x) + "," + (this._y1 = +y);
+  },
+  bezierCurveTo: function (x1, y1, x2, y2, x, y) {
+    this._ += "C" + +x1 + "," + +y1 + "," + +x2 + "," + +y2 + "," + (this._x1 = +x) + "," + (this._y1 = +y);
+  },
+  arcTo: function (x1, y1, x2, y2, r) {
+    x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
+    var x0 = this._x1,
+        y0 = this._y1,
+        x21 = x2 - x1,
+        y21 = y2 - y1,
+        x01 = x0 - x1,
+        y01 = y0 - y1,
+        l01_2 = x01 * x01 + y01 * y01; // Is the radius negative? Error.
+
+    if (r < 0) throw new Error("negative radius: " + r); // Is this path empty? Move to (x1,y1).
+
+    if (this._x1 === null) {
+      this._ += "M" + (this._x1 = x1) + "," + (this._y1 = y1);
+    } // Or, is (x1,y1) coincident with (x0,y0)? Do nothing.
+    else if (!(l01_2 > epsilon)) ; // Or, are (x0,y0), (x1,y1) and (x2,y2) collinear?
+    // Equivalently, is (x1,y1) coincident with (x2,y2)?
+    // Or, is the radius zero? Line to (x1,y1).
+    else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon) || !r) {
+      this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1);
+    } // Otherwise, draw an arc!
+    else {
+      var x20 = x2 - x0,
+          y20 = y2 - y0,
+          l21_2 = x21 * x21 + y21 * y21,
+          l20_2 = x20 * x20 + y20 * y20,
+          l21 = Math.sqrt(l21_2),
+          l01 = Math.sqrt(l01_2),
+          l = r * Math.tan((pi - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2),
+          t01 = l / l01,
+          t21 = l / l21; // If the start tangent is not coincident with (x0,y0), line to.
+
+      if (Math.abs(t01 - 1) > epsilon) {
+        this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01);
+      }
+
+      this._ += "A" + r + "," + r + ",0,0," + +(y01 * x20 > x01 * y20) + "," + (this._x1 = x1 + t21 * x21) + "," + (this._y1 = y1 + t21 * y21);
+    }
+  },
+  arc: function (x, y, r, a0, a1, ccw) {
+    x = +x, y = +y, r = +r, ccw = !!ccw;
+    var dx = r * Math.cos(a0),
+        dy = r * Math.sin(a0),
+        x0 = x + dx,
+        y0 = y + dy,
+        cw = 1 ^ ccw,
+        da = ccw ? a0 - a1 : a1 - a0; // Is the radius negative? Error.
+
+    if (r < 0) throw new Error("negative radius: " + r); // Is this path empty? Move to (x0,y0).
+
+    if (this._x1 === null) {
+      this._ += "M" + x0 + "," + y0;
+    } // Or, is (x0,y0) not coincident with the previous point? Line to (x0,y0).
+    else if (Math.abs(this._x1 - x0) > epsilon || Math.abs(this._y1 - y0) > epsilon) {
+      this._ += "L" + x0 + "," + y0;
+    } // Is this arc empty? We’re done.
+
+
+    if (!r) return; // Does the angle go the wrong way? Flip the direction.
+
+    if (da < 0) da = da % tau + tau; // Is this a complete circle? Draw two arcs to complete the circle.
+
+    if (da > tauEpsilon) {
+      this._ += "A" + r + "," + r + ",0,1," + cw + "," + (x - dx) + "," + (y - dy) + "A" + r + "," + r + ",0,1," + cw + "," + (this._x1 = x0) + "," + (this._y1 = y0);
+    } // Is this arc non-empty? Draw an arc!
+    else if (da > epsilon) {
+      this._ += "A" + r + "," + r + ",0," + +(da >= pi) + "," + cw + "," + (this._x1 = x + r * Math.cos(a1)) + "," + (this._y1 = y + r * Math.sin(a1));
+    }
+  },
+  rect: function (x, y, w, h) {
+    this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y) + "h" + +w + "v" + +h + "h" + -w + "Z";
+  },
+  toString: function () {
+    return this._;
+  }
+};
+var _default = path;
+exports.default = _default;
+},{}],"../node_modules/d3-path/src/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "path", {
+  enumerable: true,
+  get: function () {
+    return _path.default;
+  }
+});
+
+var _path = _interopRequireDefault(require("./path.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+},{"./path.js":"../node_modules/d3-path/src/path.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/constant.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(x) {
+  return function constant() {
+    return x;
+  };
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/math.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.tau = exports.pi = exports.halfPi = exports.epsilon = void 0;
+var epsilon = 1e-12;
+exports.epsilon = epsilon;
+var pi = Math.PI;
+exports.pi = pi;
+var halfPi = pi / 2;
+exports.halfPi = halfPi;
+var tau = 2 * pi;
+exports.tau = tau;
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/arc.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _d3Path = require("d3-path");
+
+var _constant = _interopRequireDefault(require("./constant"));
+
+var _math = require("./math");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function arcInnerRadius(d) {
+  return d.innerRadius;
+}
+
+function arcOuterRadius(d) {
+  return d.outerRadius;
+}
+
+function arcStartAngle(d) {
+  return d.startAngle;
+}
+
+function arcEndAngle(d) {
+  return d.endAngle;
+}
+
+function arcPadAngle(d) {
+  return d && d.padAngle; // Note: optional!
+}
+
+function asin(x) {
+  return x >= 1 ? _math.halfPi : x <= -1 ? -_math.halfPi : Math.asin(x);
+}
+
+function intersect(x0, y0, x1, y1, x2, y2, x3, y3) {
+  var x10 = x1 - x0,
+      y10 = y1 - y0,
+      x32 = x3 - x2,
+      y32 = y3 - y2,
+      t = (x32 * (y0 - y2) - y32 * (x0 - x2)) / (y32 * x10 - x32 * y10);
+  return [x0 + t * x10, y0 + t * y10];
+} // Compute perpendicular offset line of length rc.
+// http://mathworld.wolfram.com/Circle-LineIntersection.html
+
+
+function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
+  var x01 = x0 - x1,
+      y01 = y0 - y1,
+      lo = (cw ? rc : -rc) / Math.sqrt(x01 * x01 + y01 * y01),
+      ox = lo * y01,
+      oy = -lo * x01,
+      x11 = x0 + ox,
+      y11 = y0 + oy,
+      x10 = x1 + ox,
+      y10 = y1 + oy,
+      x00 = (x11 + x10) / 2,
+      y00 = (y11 + y10) / 2,
+      dx = x10 - x11,
+      dy = y10 - y11,
+      d2 = dx * dx + dy * dy,
+      r = r1 - rc,
+      D = x11 * y10 - x10 * y11,
+      d = (dy < 0 ? -1 : 1) * Math.sqrt(Math.max(0, r * r * d2 - D * D)),
+      cx0 = (D * dy - dx * d) / d2,
+      cy0 = (-D * dx - dy * d) / d2,
+      cx1 = (D * dy + dx * d) / d2,
+      cy1 = (-D * dx + dy * d) / d2,
+      dx0 = cx0 - x00,
+      dy0 = cy0 - y00,
+      dx1 = cx1 - x00,
+      dy1 = cy1 - y00; // Pick the closer of the two intersection points.
+  // TODO Is there a faster way to determine which intersection to use?
+
+  if (dx0 * dx0 + dy0 * dy0 > dx1 * dx1 + dy1 * dy1) cx0 = cx1, cy0 = cy1;
+  return {
+    cx: cx0,
+    cy: cy0,
+    x01: -ox,
+    y01: -oy,
+    x11: cx0 * (r1 / r - 1),
+    y11: cy0 * (r1 / r - 1)
+  };
+}
+
+function _default() {
+  var innerRadius = arcInnerRadius,
+      outerRadius = arcOuterRadius,
+      cornerRadius = (0, _constant.default)(0),
+      padRadius = null,
+      startAngle = arcStartAngle,
+      endAngle = arcEndAngle,
+      padAngle = arcPadAngle,
+      context = null;
+
+  function arc() {
+    var buffer,
+        r,
+        r0 = +innerRadius.apply(this, arguments),
+        r1 = +outerRadius.apply(this, arguments),
+        a0 = startAngle.apply(this, arguments) - _math.halfPi,
+        a1 = endAngle.apply(this, arguments) - _math.halfPi,
+        da = Math.abs(a1 - a0),
+        cw = a1 > a0;
+
+    if (!context) context = buffer = (0, _d3Path.path)(); // Ensure that the outer radius is always larger than the inner radius.
+
+    if (r1 < r0) r = r1, r1 = r0, r0 = r; // Is it a point?
+
+    if (!(r1 > _math.epsilon)) context.moveTo(0, 0); // Or is it a circle or annulus?
+    else if (da > _math.tau - _math.epsilon) {
+      context.moveTo(r1 * Math.cos(a0), r1 * Math.sin(a0));
+      context.arc(0, 0, r1, a0, a1, !cw);
+
+      if (r0 > _math.epsilon) {
+        context.moveTo(r0 * Math.cos(a1), r0 * Math.sin(a1));
+        context.arc(0, 0, r0, a1, a0, cw);
+      }
+    } // Or is it a circular or annular sector?
+    else {
+      var a01 = a0,
+          a11 = a1,
+          a00 = a0,
+          a10 = a1,
+          da0 = da,
+          da1 = da,
+          ap = padAngle.apply(this, arguments) / 2,
+          rp = ap > _math.epsilon && (padRadius ? +padRadius.apply(this, arguments) : Math.sqrt(r0 * r0 + r1 * r1)),
+          rc = Math.min(Math.abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments)),
+          rc0 = rc,
+          rc1 = rc,
+          t0,
+          t1; // Apply padding? Note that since r1 ≥ r0, da1 ≥ da0.
+
+      if (rp > _math.epsilon) {
+        var p0 = asin(rp / r0 * Math.sin(ap)),
+            p1 = asin(rp / r1 * Math.sin(ap));
+        if ((da0 -= p0 * 2) > _math.epsilon) p0 *= cw ? 1 : -1, a00 += p0, a10 -= p0;else da0 = 0, a00 = a10 = (a0 + a1) / 2;
+        if ((da1 -= p1 * 2) > _math.epsilon) p1 *= cw ? 1 : -1, a01 += p1, a11 -= p1;else da1 = 0, a01 = a11 = (a0 + a1) / 2;
+      }
+
+      var x01 = r1 * Math.cos(a01),
+          y01 = r1 * Math.sin(a01),
+          x10 = r0 * Math.cos(a10),
+          y10 = r0 * Math.sin(a10); // Apply rounded corners?
+
+      if (rc > _math.epsilon) {
+        var x11 = r1 * Math.cos(a11),
+            y11 = r1 * Math.sin(a11),
+            x00 = r0 * Math.cos(a00),
+            y00 = r0 * Math.sin(a00); // Restrict the corner radius according to the sector angle.
+
+        if (da < _math.pi) {
+          var oc = da0 > _math.epsilon ? intersect(x01, y01, x00, y00, x11, y11, x10, y10) : [x10, y10],
+              ax = x01 - oc[0],
+              ay = y01 - oc[1],
+              bx = x11 - oc[0],
+              by = y11 - oc[1],
+              kc = 1 / Math.sin(Math.acos((ax * bx + ay * by) / (Math.sqrt(ax * ax + ay * ay) * Math.sqrt(bx * bx + by * by))) / 2),
+              lc = Math.sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
+          rc0 = Math.min(rc, (r0 - lc) / (kc - 1));
+          rc1 = Math.min(rc, (r1 - lc) / (kc + 1));
+        }
+      } // Is the sector collapsed to a line?
+
+
+      if (!(da1 > _math.epsilon)) context.moveTo(x01, y01); // Does the sector’s outer ring have rounded corners?
+      else if (rc1 > _math.epsilon) {
+        t0 = cornerTangents(x00, y00, x01, y01, r1, rc1, cw);
+        t1 = cornerTangents(x11, y11, x10, y10, r1, rc1, cw);
+        context.moveTo(t0.cx + t0.x01, t0.cy + t0.y01); // Have the corners merged?
+
+        if (rc1 < rc) context.arc(t0.cx, t0.cy, rc1, Math.atan2(t0.y01, t0.x01), Math.atan2(t1.y01, t1.x01), !cw); // Otherwise, draw the two corners and the ring.
+        else {
+          context.arc(t0.cx, t0.cy, rc1, Math.atan2(t0.y01, t0.x01), Math.atan2(t0.y11, t0.x11), !cw);
+          context.arc(0, 0, r1, Math.atan2(t0.cy + t0.y11, t0.cx + t0.x11), Math.atan2(t1.cy + t1.y11, t1.cx + t1.x11), !cw);
+          context.arc(t1.cx, t1.cy, rc1, Math.atan2(t1.y11, t1.x11), Math.atan2(t1.y01, t1.x01), !cw);
+        }
+      } // Or is the outer ring just a circular arc?
+      else context.moveTo(x01, y01), context.arc(0, 0, r1, a01, a11, !cw); // Is there no inner ring, and it’s a circular sector?
+      // Or perhaps it’s an annular sector collapsed due to padding?
+
+      if (!(r0 > _math.epsilon) || !(da0 > _math.epsilon)) context.lineTo(x10, y10); // Does the sector’s inner ring (or point) have rounded corners?
+      else if (rc0 > _math.epsilon) {
+        t0 = cornerTangents(x10, y10, x11, y11, r0, -rc0, cw);
+        t1 = cornerTangents(x01, y01, x00, y00, r0, -rc0, cw);
+        context.lineTo(t0.cx + t0.x01, t0.cy + t0.y01); // Have the corners merged?
+
+        if (rc0 < rc) context.arc(t0.cx, t0.cy, rc0, Math.atan2(t0.y01, t0.x01), Math.atan2(t1.y01, t1.x01), !cw); // Otherwise, draw the two corners and the ring.
+        else {
+          context.arc(t0.cx, t0.cy, rc0, Math.atan2(t0.y01, t0.x01), Math.atan2(t0.y11, t0.x11), !cw);
+          context.arc(0, 0, r0, Math.atan2(t0.cy + t0.y11, t0.cx + t0.x11), Math.atan2(t1.cy + t1.y11, t1.cx + t1.x11), cw);
+          context.arc(t1.cx, t1.cy, rc0, Math.atan2(t1.y11, t1.x11), Math.atan2(t1.y01, t1.x01), !cw);
+        }
+      } // Or is the inner ring just a circular arc?
+      else context.arc(0, 0, r0, a10, a00, cw);
+    }
+    context.closePath();
+    if (buffer) return context = null, buffer + "" || null;
+  }
+
+  arc.centroid = function () {
+    var r = (+innerRadius.apply(this, arguments) + +outerRadius.apply(this, arguments)) / 2,
+        a = (+startAngle.apply(this, arguments) + +endAngle.apply(this, arguments)) / 2 - _math.pi / 2;
+    return [Math.cos(a) * r, Math.sin(a) * r];
+  };
+
+  arc.innerRadius = function (_) {
+    return arguments.length ? (innerRadius = typeof _ === "function" ? _ : (0, _constant.default)(+_), arc) : innerRadius;
+  };
+
+  arc.outerRadius = function (_) {
+    return arguments.length ? (outerRadius = typeof _ === "function" ? _ : (0, _constant.default)(+_), arc) : outerRadius;
+  };
+
+  arc.cornerRadius = function (_) {
+    return arguments.length ? (cornerRadius = typeof _ === "function" ? _ : (0, _constant.default)(+_), arc) : cornerRadius;
+  };
+
+  arc.padRadius = function (_) {
+    return arguments.length ? (padRadius = _ == null ? null : typeof _ === "function" ? _ : (0, _constant.default)(+_), arc) : padRadius;
+  };
+
+  arc.startAngle = function (_) {
+    return arguments.length ? (startAngle = typeof _ === "function" ? _ : (0, _constant.default)(+_), arc) : startAngle;
+  };
+
+  arc.endAngle = function (_) {
+    return arguments.length ? (endAngle = typeof _ === "function" ? _ : (0, _constant.default)(+_), arc) : endAngle;
+  };
+
+  arc.padAngle = function (_) {
+    return arguments.length ? (padAngle = typeof _ === "function" ? _ : (0, _constant.default)(+_), arc) : padAngle;
+  };
+
+  arc.context = function (_) {
+    return arguments.length ? (context = _ == null ? null : _, arc) : context;
+  };
+
+  return arc;
+}
+},{"d3-path":"../node_modules/d3-path/src/index.js","./constant":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/constant.js","./math":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/math.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/linear.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function Linear(context) {
+  this._context = context;
+}
+
+Linear.prototype = {
+  areaStart: function () {
+    this._line = 0;
+  },
+  areaEnd: function () {
+    this._line = NaN;
+  },
+  lineStart: function () {
+    this._point = 0;
+  },
+  lineEnd: function () {
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function (x, y) {
+    x = +x, y = +y;
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
+        break;
+
+      case 1:
+        this._point = 2;
+      // proceed
+
+      default:
+        this._context.lineTo(x, y);
+
+        break;
+    }
+  }
+};
+
+function _default(context) {
+  return new Linear(context);
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/point.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.x = x;
+exports.y = y;
+
+function x(p) {
+  return p[0];
+}
+
+function y(p) {
+  return p[1];
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/line.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _d3Path = require("d3-path");
+
+var _constant = _interopRequireDefault(require("./constant"));
+
+var _linear = _interopRequireDefault(require("./curve/linear"));
+
+var _point = require("./point");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default() {
+  var x = _point.x,
+      y = _point.y,
+      defined = (0, _constant.default)(true),
+      context = null,
+      curve = _linear.default,
+      output = null;
+
+  function line(data) {
+    var i,
+        n = data.length,
+        d,
+        defined0 = false,
+        buffer;
+    if (context == null) output = curve(buffer = (0, _d3Path.path)());
+
+    for (i = 0; i <= n; ++i) {
+      if (!(i < n && defined(d = data[i], i, data)) === defined0) {
+        if (defined0 = !defined0) output.lineStart();else output.lineEnd();
+      }
+
+      if (defined0) output.point(+x(d, i, data), +y(d, i, data));
+    }
+
+    if (buffer) return output = null, buffer + "" || null;
+  }
+
+  line.x = function (_) {
+    return arguments.length ? (x = typeof _ === "function" ? _ : (0, _constant.default)(+_), line) : x;
+  };
+
+  line.y = function (_) {
+    return arguments.length ? (y = typeof _ === "function" ? _ : (0, _constant.default)(+_), line) : y;
+  };
+
+  line.defined = function (_) {
+    return arguments.length ? (defined = typeof _ === "function" ? _ : (0, _constant.default)(!!_), line) : defined;
+  };
+
+  line.curve = function (_) {
+    return arguments.length ? (curve = _, context != null && (output = curve(context)), line) : curve;
+  };
+
+  line.context = function (_) {
+    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), line) : context;
+  };
+
+  return line;
+}
+},{"d3-path":"../node_modules/d3-path/src/index.js","./constant":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/constant.js","./curve/linear":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/linear.js","./point":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/point.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/area.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _d3Path = require("d3-path");
+
+var _constant = _interopRequireDefault(require("./constant"));
+
+var _linear = _interopRequireDefault(require("./curve/linear"));
+
+var _line = _interopRequireDefault(require("./line"));
+
+var _point = require("./point");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default() {
+  var x0 = _point.x,
+      x1 = null,
+      y0 = (0, _constant.default)(0),
+      y1 = _point.y,
+      defined = (0, _constant.default)(true),
+      context = null,
+      curve = _linear.default,
+      output = null;
+
+  function area(data) {
+    var i,
+        j,
+        k,
+        n = data.length,
+        d,
+        defined0 = false,
+        buffer,
+        x0z = new Array(n),
+        y0z = new Array(n);
+    if (context == null) output = curve(buffer = (0, _d3Path.path)());
+
+    for (i = 0; i <= n; ++i) {
+      if (!(i < n && defined(d = data[i], i, data)) === defined0) {
+        if (defined0 = !defined0) {
+          j = i;
+          output.areaStart();
+          output.lineStart();
+        } else {
+          output.lineEnd();
+          output.lineStart();
+
+          for (k = i - 1; k >= j; --k) {
+            output.point(x0z[k], y0z[k]);
+          }
+
+          output.lineEnd();
+          output.areaEnd();
+        }
+      }
+
+      if (defined0) {
+        x0z[i] = +x0(d, i, data), y0z[i] = +y0(d, i, data);
+        output.point(x1 ? +x1(d, i, data) : x0z[i], y1 ? +y1(d, i, data) : y0z[i]);
+      }
+    }
+
+    if (buffer) return output = null, buffer + "" || null;
+  }
+
+  function arealine() {
+    return (0, _line.default)().defined(defined).curve(curve).context(context);
+  }
+
+  area.x = function (_) {
+    return arguments.length ? (x0 = typeof _ === "function" ? _ : (0, _constant.default)(+_), x1 = null, area) : x0;
+  };
+
+  area.x0 = function (_) {
+    return arguments.length ? (x0 = typeof _ === "function" ? _ : (0, _constant.default)(+_), area) : x0;
+  };
+
+  area.x1 = function (_) {
+    return arguments.length ? (x1 = _ == null ? null : typeof _ === "function" ? _ : (0, _constant.default)(+_), area) : x1;
+  };
+
+  area.y = function (_) {
+    return arguments.length ? (y0 = typeof _ === "function" ? _ : (0, _constant.default)(+_), y1 = null, area) : y0;
+  };
+
+  area.y0 = function (_) {
+    return arguments.length ? (y0 = typeof _ === "function" ? _ : (0, _constant.default)(+_), area) : y0;
+  };
+
+  area.y1 = function (_) {
+    return arguments.length ? (y1 = _ == null ? null : typeof _ === "function" ? _ : (0, _constant.default)(+_), area) : y1;
+  };
+
+  area.lineX0 = area.lineY0 = function () {
+    return arealine().x(x0).y(y0);
+  };
+
+  area.lineY1 = function () {
+    return arealine().x(x0).y(y1);
+  };
+
+  area.lineX1 = function () {
+    return arealine().x(x1).y(y0);
+  };
+
+  area.defined = function (_) {
+    return arguments.length ? (defined = typeof _ === "function" ? _ : (0, _constant.default)(!!_), area) : defined;
+  };
+
+  area.curve = function (_) {
+    return arguments.length ? (curve = _, context != null && (output = curve(context)), area) : curve;
+  };
+
+  area.context = function (_) {
+    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), area) : context;
+  };
+
+  return area;
+}
+},{"d3-path":"../node_modules/d3-path/src/index.js","./constant":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/constant.js","./curve/linear":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/linear.js","./line":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/line.js","./point":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/point.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/descending.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(a, b) {
+  return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/identity.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(d) {
+  return d;
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/pie.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _constant = _interopRequireDefault(require("./constant"));
+
+var _descending = _interopRequireDefault(require("./descending"));
+
+var _identity = _interopRequireDefault(require("./identity"));
+
+var _math = require("./math");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default() {
+  var value = _identity.default,
+      sortValues = _descending.default,
+      sort = null,
+      startAngle = (0, _constant.default)(0),
+      endAngle = (0, _constant.default)(_math.tau),
+      padAngle = (0, _constant.default)(0);
+
+  function pie(data) {
+    var i,
+        n = data.length,
+        j,
+        k,
+        sum = 0,
+        index = new Array(n),
+        arcs = new Array(n),
+        a0 = +startAngle.apply(this, arguments),
+        da = Math.min(_math.tau, Math.max(-_math.tau, endAngle.apply(this, arguments) - a0)),
+        a1,
+        p = Math.min(Math.abs(da) / n, padAngle.apply(this, arguments)),
+        pa = p * (da < 0 ? -1 : 1),
+        v;
+
+    for (i = 0; i < n; ++i) {
+      if ((v = arcs[index[i] = i] = +value(data[i], i, data)) > 0) {
+        sum += v;
+      }
+    } // Optionally sort the arcs by previously-computed values or by data.
+
+
+    if (sortValues != null) index.sort(function (i, j) {
+      return sortValues(arcs[i], arcs[j]);
+    });else if (sort != null) index.sort(function (i, j) {
+      return sort(data[i], data[j]);
+    }); // Compute the arcs! They are stored in the original data's order.
+
+    for (i = 0, k = sum ? (da - n * pa) / sum : 0; i < n; ++i, a0 = a1) {
+      j = index[i], v = arcs[j], a1 = a0 + (v > 0 ? v * k : 0) + pa, arcs[j] = {
+        data: data[j],
+        index: i,
+        value: v,
+        startAngle: a0,
+        endAngle: a1,
+        padAngle: p
+      };
+    }
+
+    return arcs;
+  }
+
+  pie.value = function (_) {
+    return arguments.length ? (value = typeof _ === "function" ? _ : (0, _constant.default)(+_), pie) : value;
+  };
+
+  pie.sortValues = function (_) {
+    return arguments.length ? (sortValues = _, sort = null, pie) : sortValues;
+  };
+
+  pie.sort = function (_) {
+    return arguments.length ? (sort = _, sortValues = null, pie) : sort;
+  };
+
+  pie.startAngle = function (_) {
+    return arguments.length ? (startAngle = typeof _ === "function" ? _ : (0, _constant.default)(+_), pie) : startAngle;
+  };
+
+  pie.endAngle = function (_) {
+    return arguments.length ? (endAngle = typeof _ === "function" ? _ : (0, _constant.default)(+_), pie) : endAngle;
+  };
+
+  pie.padAngle = function (_) {
+    return arguments.length ? (padAngle = typeof _ === "function" ? _ : (0, _constant.default)(+_), pie) : padAngle;
+  };
+
+  return pie;
+}
+},{"./constant":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/constant.js","./descending":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/descending.js","./identity":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/identity.js","./math":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/math.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/radial.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.curveRadialLinear = void 0;
+exports.default = curveRadial;
+
+var _linear = _interopRequireDefault(require("./linear"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var curveRadialLinear = curveRadial(_linear.default);
+exports.curveRadialLinear = curveRadialLinear;
+
+function Radial(curve) {
+  this._curve = curve;
+}
+
+Radial.prototype = {
+  areaStart: function () {
+    this._curve.areaStart();
+  },
+  areaEnd: function () {
+    this._curve.areaEnd();
+  },
+  lineStart: function () {
+    this._curve.lineStart();
+  },
+  lineEnd: function () {
+    this._curve.lineEnd();
+  },
+  point: function (a, r) {
+    this._curve.point(r * Math.sin(a), r * -Math.cos(a));
+  }
+};
+
+function curveRadial(curve) {
+  function radial(context) {
+    return new Radial(curve(context));
+  }
+
+  radial._curve = curve;
+  return radial;
+}
+},{"./linear":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/linear.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/radialLine.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+exports.radialLine = radialLine;
+
+var _radial = _interopRequireWildcard(require("./curve/radial"));
+
+var _line = _interopRequireDefault(require("./line"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function radialLine(l) {
+  var c = l.curve;
+  l.angle = l.x, delete l.x;
+  l.radius = l.y, delete l.y;
+
+  l.curve = function (_) {
+    return arguments.length ? c((0, _radial.default)(_)) : c()._curve;
+  };
+
+  return l;
+}
+
+function _default() {
+  return radialLine((0, _line.default)().curve(_radial.curveRadialLinear));
+}
+},{"./curve/radial":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/radial.js","./line":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/line.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/radialArea.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _radial = _interopRequireWildcard(require("./curve/radial"));
+
+var _area = _interopRequireDefault(require("./area"));
+
+var _radialLine = require("./radialLine");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _default() {
+  var a = (0, _area.default)().curve(_radial.curveRadialLinear),
+      c = a.curve,
+      x0 = a.lineX0,
+      x1 = a.lineX1,
+      y0 = a.lineY0,
+      y1 = a.lineY1;
+  a.angle = a.x, delete a.x;
+  a.startAngle = a.x0, delete a.x0;
+  a.endAngle = a.x1, delete a.x1;
+  a.radius = a.y, delete a.y;
+  a.innerRadius = a.y0, delete a.y0;
+  a.outerRadius = a.y1, delete a.y1;
+  a.lineStartAngle = function () {
+    return (0, _radialLine.radialLine)(x0());
+  }, delete a.lineX0;
+  a.lineEndAngle = function () {
+    return (0, _radialLine.radialLine)(x1());
+  }, delete a.lineX1;
+  a.lineInnerRadius = function () {
+    return (0, _radialLine.radialLine)(y0());
+  }, delete a.lineY0;
+  a.lineOuterRadius = function () {
+    return (0, _radialLine.radialLine)(y1());
+  }, delete a.lineY1;
+
+  a.curve = function (_) {
+    return arguments.length ? c((0, _radial.default)(_)) : c()._curve;
+  };
+
+  return a;
+}
+},{"./curve/radial":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/radial.js","./area":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/area.js","./radialLine":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/radialLine.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/circle.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _math = require("../math");
+
+var _default = {
+  draw: function (context, size) {
+    var r = Math.sqrt(size / _math.pi);
+    context.moveTo(r, 0);
+    context.arc(0, 0, r, 0, _math.tau);
+  }
+};
+exports.default = _default;
+},{"../math":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/math.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/cross.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = {
+  draw: function (context, size) {
+    var r = Math.sqrt(size / 5) / 2;
+    context.moveTo(-3 * r, -r);
+    context.lineTo(-r, -r);
+    context.lineTo(-r, -3 * r);
+    context.lineTo(r, -3 * r);
+    context.lineTo(r, -r);
+    context.lineTo(3 * r, -r);
+    context.lineTo(3 * r, r);
+    context.lineTo(r, r);
+    context.lineTo(r, 3 * r);
+    context.lineTo(-r, 3 * r);
+    context.lineTo(-r, r);
+    context.lineTo(-3 * r, r);
+    context.closePath();
+  }
+};
+exports.default = _default;
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/diamond.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var tan30 = Math.sqrt(1 / 3),
+    tan30_2 = tan30 * 2;
+var _default = {
+  draw: function (context, size) {
+    var y = Math.sqrt(size / tan30_2),
+        x = y * tan30;
+    context.moveTo(0, -y);
+    context.lineTo(x, 0);
+    context.lineTo(0, y);
+    context.lineTo(-x, 0);
+    context.closePath();
+  }
+};
+exports.default = _default;
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/star.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _math = require("../math");
+
+var ka = 0.89081309152928522810,
+    kr = Math.sin(_math.pi / 10) / Math.sin(7 * _math.pi / 10),
+    kx = Math.sin(_math.tau / 10) * kr,
+    ky = -Math.cos(_math.tau / 10) * kr;
+var _default = {
+  draw: function (context, size) {
+    var r = Math.sqrt(size * ka),
+        x = kx * r,
+        y = ky * r;
+    context.moveTo(0, -r);
+    context.lineTo(x, y);
+
+    for (var i = 1; i < 5; ++i) {
+      var a = _math.tau * i / 5,
+          c = Math.cos(a),
+          s = Math.sin(a);
+      context.lineTo(s * r, -c * r);
+      context.lineTo(c * x - s * y, s * x + c * y);
+    }
+
+    context.closePath();
+  }
+};
+exports.default = _default;
+},{"../math":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/math.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/square.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = {
+  draw: function (context, size) {
+    var w = Math.sqrt(size),
+        x = -w / 2;
+    context.rect(x, x, w, w);
+  }
+};
+exports.default = _default;
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/triangle.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var sqrt3 = Math.sqrt(3);
+var _default = {
+  draw: function (context, size) {
+    var y = -Math.sqrt(size / (sqrt3 * 3));
+    context.moveTo(0, y * 2);
+    context.lineTo(-sqrt3 * y, -y);
+    context.lineTo(sqrt3 * y, -y);
+    context.closePath();
+  }
+};
+exports.default = _default;
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/wye.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var c = -0.5,
+    s = Math.sqrt(3) / 2,
+    k = 1 / Math.sqrt(12),
+    a = (k / 2 + 1) * 3;
+var _default = {
+  draw: function (context, size) {
+    var r = Math.sqrt(size / a),
+        x0 = r / 2,
+        y0 = r * k,
+        x1 = x0,
+        y1 = r * k + r,
+        x2 = -x1,
+        y2 = y1;
+    context.moveTo(x0, y0);
+    context.lineTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.lineTo(c * x0 - s * y0, s * x0 + c * y0);
+    context.lineTo(c * x1 - s * y1, s * x1 + c * y1);
+    context.lineTo(c * x2 - s * y2, s * x2 + c * y2);
+    context.lineTo(c * x0 + s * y0, c * y0 - s * x0);
+    context.lineTo(c * x1 + s * y1, c * y1 - s * x1);
+    context.lineTo(c * x2 + s * y2, c * y2 - s * x2);
+    context.closePath();
+  }
+};
+exports.default = _default;
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+exports.symbols = void 0;
+
+var _d3Path = require("d3-path");
+
+var _circle = _interopRequireDefault(require("./symbol/circle"));
+
+var _cross = _interopRequireDefault(require("./symbol/cross"));
+
+var _diamond = _interopRequireDefault(require("./symbol/diamond"));
+
+var _star = _interopRequireDefault(require("./symbol/star"));
+
+var _square = _interopRequireDefault(require("./symbol/square"));
+
+var _triangle = _interopRequireDefault(require("./symbol/triangle"));
+
+var _wye = _interopRequireDefault(require("./symbol/wye"));
+
+var _constant = _interopRequireDefault(require("./constant"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var symbols = [_circle.default, _cross.default, _diamond.default, _square.default, _star.default, _triangle.default, _wye.default];
+exports.symbols = symbols;
+
+function _default() {
+  var type = (0, _constant.default)(_circle.default),
+      size = (0, _constant.default)(64),
+      context = null;
+
+  function symbol() {
+    var buffer;
+    if (!context) context = buffer = (0, _d3Path.path)();
+    type.apply(this, arguments).draw(context, +size.apply(this, arguments));
+    if (buffer) return context = null, buffer + "" || null;
+  }
+
+  symbol.type = function (_) {
+    return arguments.length ? (type = typeof _ === "function" ? _ : (0, _constant.default)(_), symbol) : type;
+  };
+
+  symbol.size = function (_) {
+    return arguments.length ? (size = typeof _ === "function" ? _ : (0, _constant.default)(+_), symbol) : size;
+  };
+
+  symbol.context = function (_) {
+    return arguments.length ? (context = _ == null ? null : _, symbol) : context;
+  };
+
+  return symbol;
+}
+},{"d3-path":"../node_modules/d3-path/src/index.js","./symbol/circle":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/circle.js","./symbol/cross":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/cross.js","./symbol/diamond":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/diamond.js","./symbol/star":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/star.js","./symbol/square":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/square.js","./symbol/triangle":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/triangle.js","./symbol/wye":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/wye.js","./constant":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/constant.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/noop.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default() {}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/basis.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Basis = Basis;
+exports.default = _default;
+exports.point = point;
+
+function point(that, x, y) {
+  that._context.bezierCurveTo((2 * that._x0 + that._x1) / 3, (2 * that._y0 + that._y1) / 3, (that._x0 + 2 * that._x1) / 3, (that._y0 + 2 * that._y1) / 3, (that._x0 + 4 * that._x1 + x) / 6, (that._y0 + 4 * that._y1 + y) / 6);
+}
+
+function Basis(context) {
+  this._context = context;
+}
+
+Basis.prototype = {
+  areaStart: function () {
+    this._line = 0;
+  },
+  areaEnd: function () {
+    this._line = NaN;
+  },
+  lineStart: function () {
+    this._x0 = this._x1 = this._y0 = this._y1 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function () {
+    switch (this._point) {
+      case 3:
+        point(this, this._x1, this._y1);
+      // proceed
+
+      case 2:
+        this._context.lineTo(this._x1, this._y1);
+
+        break;
+    }
+
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function (x, y) {
+    x = +x, y = +y;
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
+        break;
+
+      case 1:
+        this._point = 2;
+        break;
+
+      case 2:
+        this._point = 3;
+
+        this._context.lineTo((5 * this._x0 + this._x1) / 6, (5 * this._y0 + this._y1) / 6);
+
+      // proceed
+
+      default:
+        point(this, x, y);
+        break;
+    }
+
+    this._x0 = this._x1, this._x1 = x;
+    this._y0 = this._y1, this._y1 = y;
+  }
+};
+
+function _default(context) {
+  return new Basis(context);
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/basisClosed.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _noop = _interopRequireDefault(require("../noop"));
+
+var _basis = require("./basis");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function BasisClosed(context) {
+  this._context = context;
+}
+
+BasisClosed.prototype = {
+  areaStart: _noop.default,
+  areaEnd: _noop.default,
+  lineStart: function () {
+    this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function () {
+    switch (this._point) {
+      case 1:
+        {
+          this._context.moveTo(this._x2, this._y2);
+
+          this._context.closePath();
+
+          break;
+        }
+
+      case 2:
+        {
+          this._context.moveTo((this._x2 + 2 * this._x3) / 3, (this._y2 + 2 * this._y3) / 3);
+
+          this._context.lineTo((this._x3 + 2 * this._x2) / 3, (this._y3 + 2 * this._y2) / 3);
+
+          this._context.closePath();
+
+          break;
+        }
+
+      case 3:
+        {
+          this.point(this._x2, this._y2);
+          this.point(this._x3, this._y3);
+          this.point(this._x4, this._y4);
+          break;
+        }
+    }
+  },
+  point: function (x, y) {
+    x = +x, y = +y;
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        this._x2 = x, this._y2 = y;
+        break;
+
+      case 1:
+        this._point = 2;
+        this._x3 = x, this._y3 = y;
+        break;
+
+      case 2:
+        this._point = 3;
+        this._x4 = x, this._y4 = y;
+
+        this._context.moveTo((this._x0 + 4 * this._x1 + x) / 6, (this._y0 + 4 * this._y1 + y) / 6);
+
+        break;
+
+      default:
+        (0, _basis.point)(this, x, y);
+        break;
+    }
+
+    this._x0 = this._x1, this._x1 = x;
+    this._y0 = this._y1, this._y1 = y;
+  }
+};
+
+function _default(context) {
+  return new BasisClosed(context);
+}
+},{"../noop":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/noop.js","./basis":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/basis.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/basisOpen.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _basis = require("./basis");
+
+function BasisOpen(context) {
+  this._context = context;
+}
+
+BasisOpen.prototype = {
+  areaStart: function () {
+    this._line = 0;
+  },
+  areaEnd: function () {
+    this._line = NaN;
+  },
+  lineStart: function () {
+    this._x0 = this._x1 = this._y0 = this._y1 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function () {
+    if (this._line || this._line !== 0 && this._point === 3) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function (x, y) {
+    x = +x, y = +y;
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        break;
+
+      case 1:
+        this._point = 2;
+        break;
+
+      case 2:
+        this._point = 3;
+        var x0 = (this._x0 + 4 * this._x1 + x) / 6,
+            y0 = (this._y0 + 4 * this._y1 + y) / 6;
+        this._line ? this._context.lineTo(x0, y0) : this._context.moveTo(x0, y0);
+        break;
+
+      case 3:
+        this._point = 4;
+      // proceed
+
+      default:
+        (0, _basis.point)(this, x, y);
+        break;
+    }
+
+    this._x0 = this._x1, this._x1 = x;
+    this._y0 = this._y1, this._y1 = y;
+  }
+};
+
+function _default(context) {
+  return new BasisOpen(context);
+}
+},{"./basis":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/basis.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/bundle.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _basis = require("./basis");
+
+function Bundle(context, beta) {
+  this._basis = new _basis.Basis(context);
+  this._beta = beta;
+}
+
+Bundle.prototype = {
+  lineStart: function () {
+    this._x = [];
+    this._y = [];
+
+    this._basis.lineStart();
+  },
+  lineEnd: function () {
+    var x = this._x,
+        y = this._y,
+        j = x.length - 1;
+
+    if (j > 0) {
+      var x0 = x[0],
+          y0 = y[0],
+          dx = x[j] - x0,
+          dy = y[j] - y0,
+          i = -1,
+          t;
+
+      while (++i <= j) {
+        t = i / j;
+
+        this._basis.point(this._beta * x[i] + (1 - this._beta) * (x0 + t * dx), this._beta * y[i] + (1 - this._beta) * (y0 + t * dy));
+      }
+    }
+
+    this._x = this._y = null;
+
+    this._basis.lineEnd();
+  },
+  point: function (x, y) {
+    this._x.push(+x);
+
+    this._y.push(+y);
+  }
+};
+
+var _default = function custom(beta) {
+  function bundle(context) {
+    return beta === 1 ? new _basis.Basis(context) : new Bundle(context, beta);
+  }
+
+  bundle.beta = function (beta) {
+    return custom(+beta);
+  };
+
+  return bundle;
+}(0.85);
+
+exports.default = _default;
+},{"./basis":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/basis.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/cardinal.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Cardinal = Cardinal;
+exports.default = void 0;
+exports.point = point;
+
+function point(that, x, y) {
+  that._context.bezierCurveTo(that._x1 + that._k * (that._x2 - that._x0), that._y1 + that._k * (that._y2 - that._y0), that._x2 + that._k * (that._x1 - x), that._y2 + that._k * (that._y1 - y), that._x2, that._y2);
+}
+
+function Cardinal(context, tension) {
+  this._context = context;
+  this._k = (1 - tension) / 6;
+}
+
+Cardinal.prototype = {
+  areaStart: function () {
+    this._line = 0;
+  },
+  areaEnd: function () {
+    this._line = NaN;
+  },
+  lineStart: function () {
+    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function () {
+    switch (this._point) {
+      case 2:
+        this._context.lineTo(this._x2, this._y2);
+
+        break;
+
+      case 3:
+        point(this, this._x1, this._y1);
+        break;
+    }
+
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function (x, y) {
+    x = +x, y = +y;
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
+        break;
+
+      case 1:
+        this._point = 2;
+        this._x1 = x, this._y1 = y;
+        break;
+
+      case 2:
+        this._point = 3;
+      // proceed
+
+      default:
+        point(this, x, y);
+        break;
+    }
+
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
+    this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+
+var _default = function custom(tension) {
+  function cardinal(context) {
+    return new Cardinal(context, tension);
+  }
+
+  cardinal.tension = function (tension) {
+    return custom(+tension);
+  };
+
+  return cardinal;
+}(0);
+
+exports.default = _default;
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/cardinalClosed.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CardinalClosed = CardinalClosed;
+exports.default = void 0;
+
+var _noop = _interopRequireDefault(require("../noop"));
+
+var _cardinal = require("./cardinal");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function CardinalClosed(context, tension) {
+  this._context = context;
+  this._k = (1 - tension) / 6;
+}
+
+CardinalClosed.prototype = {
+  areaStart: _noop.default,
+  areaEnd: _noop.default,
+  lineStart: function () {
+    this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._x5 = this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = this._y5 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function () {
+    switch (this._point) {
+      case 1:
+        {
+          this._context.moveTo(this._x3, this._y3);
+
+          this._context.closePath();
+
+          break;
+        }
+
+      case 2:
+        {
+          this._context.lineTo(this._x3, this._y3);
+
+          this._context.closePath();
+
+          break;
+        }
+
+      case 3:
+        {
+          this.point(this._x3, this._y3);
+          this.point(this._x4, this._y4);
+          this.point(this._x5, this._y5);
+          break;
+        }
+    }
+  },
+  point: function (x, y) {
+    x = +x, y = +y;
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        this._x3 = x, this._y3 = y;
+        break;
+
+      case 1:
+        this._point = 2;
+
+        this._context.moveTo(this._x4 = x, this._y4 = y);
+
+        break;
+
+      case 2:
+        this._point = 3;
+        this._x5 = x, this._y5 = y;
+        break;
+
+      default:
+        (0, _cardinal.point)(this, x, y);
+        break;
+    }
+
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
+    this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+
+var _default = function custom(tension) {
+  function cardinal(context) {
+    return new CardinalClosed(context, tension);
+  }
+
+  cardinal.tension = function (tension) {
+    return custom(+tension);
+  };
+
+  return cardinal;
+}(0);
+
+exports.default = _default;
+},{"../noop":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/noop.js","./cardinal":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/cardinal.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/cardinalOpen.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CardinalOpen = CardinalOpen;
+exports.default = void 0;
+
+var _cardinal = require("./cardinal");
+
+function CardinalOpen(context, tension) {
+  this._context = context;
+  this._k = (1 - tension) / 6;
+}
+
+CardinalOpen.prototype = {
+  areaStart: function () {
+    this._line = 0;
+  },
+  areaEnd: function () {
+    this._line = NaN;
+  },
+  lineStart: function () {
+    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function () {
+    if (this._line || this._line !== 0 && this._point === 3) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function (x, y) {
+    x = +x, y = +y;
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        break;
+
+      case 1:
+        this._point = 2;
+        break;
+
+      case 2:
+        this._point = 3;
+        this._line ? this._context.lineTo(this._x2, this._y2) : this._context.moveTo(this._x2, this._y2);
+        break;
+
+      case 3:
+        this._point = 4;
+      // proceed
+
+      default:
+        (0, _cardinal.point)(this, x, y);
+        break;
+    }
+
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
+    this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+
+var _default = function custom(tension) {
+  function cardinal(context) {
+    return new CardinalOpen(context, tension);
+  }
+
+  cardinal.tension = function (tension) {
+    return custom(+tension);
+  };
+
+  return cardinal;
+}(0);
+
+exports.default = _default;
+},{"./cardinal":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/cardinal.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/catmullRom.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+exports.point = point;
+
+var _math = require("../math");
+
+var _cardinal = require("./cardinal");
+
+function point(that, x, y) {
+  var x1 = that._x1,
+      y1 = that._y1,
+      x2 = that._x2,
+      y2 = that._y2;
+
+  if (that._l01_a > _math.epsilon) {
+    var a = 2 * that._l01_2a + 3 * that._l01_a * that._l12_a + that._l12_2a,
+        n = 3 * that._l01_a * (that._l01_a + that._l12_a);
+    x1 = (x1 * a - that._x0 * that._l12_2a + that._x2 * that._l01_2a) / n;
+    y1 = (y1 * a - that._y0 * that._l12_2a + that._y2 * that._l01_2a) / n;
+  }
+
+  if (that._l23_a > _math.epsilon) {
+    var b = 2 * that._l23_2a + 3 * that._l23_a * that._l12_a + that._l12_2a,
+        m = 3 * that._l23_a * (that._l23_a + that._l12_a);
+    x2 = (x2 * b + that._x1 * that._l23_2a - x * that._l12_2a) / m;
+    y2 = (y2 * b + that._y1 * that._l23_2a - y * that._l12_2a) / m;
+  }
+
+  that._context.bezierCurveTo(x1, y1, x2, y2, that._x2, that._y2);
+}
+
+function CatmullRom(context, alpha) {
+  this._context = context;
+  this._alpha = alpha;
+}
+
+CatmullRom.prototype = {
+  areaStart: function () {
+    this._line = 0;
+  },
+  areaEnd: function () {
+    this._line = NaN;
+  },
+  lineStart: function () {
+    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN;
+    this._l01_a = this._l12_a = this._l23_a = this._l01_2a = this._l12_2a = this._l23_2a = this._point = 0;
+  },
+  lineEnd: function () {
+    switch (this._point) {
+      case 2:
+        this._context.lineTo(this._x2, this._y2);
+
+        break;
+
+      case 3:
+        this.point(this._x2, this._y2);
+        break;
+    }
+
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function (x, y) {
+    x = +x, y = +y;
+
+    if (this._point) {
+      var x23 = this._x2 - x,
+          y23 = this._y2 - y;
+      this._l23_a = Math.sqrt(this._l23_2a = Math.pow(x23 * x23 + y23 * y23, this._alpha));
+    }
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
+        break;
+
+      case 1:
+        this._point = 2;
+        break;
+
+      case 2:
+        this._point = 3;
+      // proceed
+
+      default:
+        point(this, x, y);
+        break;
+    }
+
+    this._l01_a = this._l12_a, this._l12_a = this._l23_a;
+    this._l01_2a = this._l12_2a, this._l12_2a = this._l23_2a;
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
+    this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+
+var _default = function custom(alpha) {
+  function catmullRom(context) {
+    return alpha ? new CatmullRom(context, alpha) : new _cardinal.Cardinal(context, 0);
+  }
+
+  catmullRom.alpha = function (alpha) {
+    return custom(+alpha);
+  };
+
+  return catmullRom;
+}(0.5);
+
+exports.default = _default;
+},{"../math":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/math.js","./cardinal":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/cardinal.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/catmullRomClosed.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _cardinalClosed = require("./cardinalClosed");
+
+var _noop = _interopRequireDefault(require("../noop"));
+
+var _catmullRom = require("./catmullRom");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function CatmullRomClosed(context, alpha) {
+  this._context = context;
+  this._alpha = alpha;
+}
+
+CatmullRomClosed.prototype = {
+  areaStart: _noop.default,
+  areaEnd: _noop.default,
+  lineStart: function () {
+    this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._x5 = this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = this._y5 = NaN;
+    this._l01_a = this._l12_a = this._l23_a = this._l01_2a = this._l12_2a = this._l23_2a = this._point = 0;
+  },
+  lineEnd: function () {
+    switch (this._point) {
+      case 1:
+        {
+          this._context.moveTo(this._x3, this._y3);
+
+          this._context.closePath();
+
+          break;
+        }
+
+      case 2:
+        {
+          this._context.lineTo(this._x3, this._y3);
+
+          this._context.closePath();
+
+          break;
+        }
+
+      case 3:
+        {
+          this.point(this._x3, this._y3);
+          this.point(this._x4, this._y4);
+          this.point(this._x5, this._y5);
+          break;
+        }
+    }
+  },
+  point: function (x, y) {
+    x = +x, y = +y;
+
+    if (this._point) {
+      var x23 = this._x2 - x,
+          y23 = this._y2 - y;
+      this._l23_a = Math.sqrt(this._l23_2a = Math.pow(x23 * x23 + y23 * y23, this._alpha));
+    }
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        this._x3 = x, this._y3 = y;
+        break;
+
+      case 1:
+        this._point = 2;
+
+        this._context.moveTo(this._x4 = x, this._y4 = y);
+
+        break;
+
+      case 2:
+        this._point = 3;
+        this._x5 = x, this._y5 = y;
+        break;
+
+      default:
+        (0, _catmullRom.point)(this, x, y);
+        break;
+    }
+
+    this._l01_a = this._l12_a, this._l12_a = this._l23_a;
+    this._l01_2a = this._l12_2a, this._l12_2a = this._l23_2a;
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
+    this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+
+var _default = function custom(alpha) {
+  function catmullRom(context) {
+    return alpha ? new CatmullRomClosed(context, alpha) : new _cardinalClosed.CardinalClosed(context, 0);
+  }
+
+  catmullRom.alpha = function (alpha) {
+    return custom(+alpha);
+  };
+
+  return catmullRom;
+}(0.5);
+
+exports.default = _default;
+},{"./cardinalClosed":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/cardinalClosed.js","../noop":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/noop.js","./catmullRom":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/catmullRom.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/catmullRomOpen.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _cardinalOpen = require("./cardinalOpen");
+
+var _catmullRom = require("./catmullRom");
+
+function CatmullRomOpen(context, alpha) {
+  this._context = context;
+  this._alpha = alpha;
+}
+
+CatmullRomOpen.prototype = {
+  areaStart: function () {
+    this._line = 0;
+  },
+  areaEnd: function () {
+    this._line = NaN;
+  },
+  lineStart: function () {
+    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN;
+    this._l01_a = this._l12_a = this._l23_a = this._l01_2a = this._l12_2a = this._l23_2a = this._point = 0;
+  },
+  lineEnd: function () {
+    if (this._line || this._line !== 0 && this._point === 3) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function (x, y) {
+    x = +x, y = +y;
+
+    if (this._point) {
+      var x23 = this._x2 - x,
+          y23 = this._y2 - y;
+      this._l23_a = Math.sqrt(this._l23_2a = Math.pow(x23 * x23 + y23 * y23, this._alpha));
+    }
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        break;
+
+      case 1:
+        this._point = 2;
+        break;
+
+      case 2:
+        this._point = 3;
+        this._line ? this._context.lineTo(this._x2, this._y2) : this._context.moveTo(this._x2, this._y2);
+        break;
+
+      case 3:
+        this._point = 4;
+      // proceed
+
+      default:
+        (0, _catmullRom.point)(this, x, y);
+        break;
+    }
+
+    this._l01_a = this._l12_a, this._l12_a = this._l23_a;
+    this._l01_2a = this._l12_2a, this._l12_2a = this._l23_2a;
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
+    this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+
+var _default = function custom(alpha) {
+  function catmullRom(context) {
+    return alpha ? new CatmullRomOpen(context, alpha) : new _cardinalOpen.CardinalOpen(context, 0);
+  }
+
+  catmullRom.alpha = function (alpha) {
+    return custom(+alpha);
+  };
+
+  return catmullRom;
+}(0.5);
+
+exports.default = _default;
+},{"./cardinalOpen":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/cardinalOpen.js","./catmullRom":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/catmullRom.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/linearClosed.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _noop = _interopRequireDefault(require("../noop"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function LinearClosed(context) {
+  this._context = context;
+}
+
+LinearClosed.prototype = {
+  areaStart: _noop.default,
+  areaEnd: _noop.default,
+  lineStart: function () {
+    this._point = 0;
+  },
+  lineEnd: function () {
+    if (this._point) this._context.closePath();
+  },
+  point: function (x, y) {
+    x = +x, y = +y;
+    if (this._point) this._context.lineTo(x, y);else this._point = 1, this._context.moveTo(x, y);
+  }
+};
+
+function _default(context) {
+  return new LinearClosed(context);
+}
+},{"../noop":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/noop.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/monotone.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.monotoneX = monotoneX;
+exports.monotoneY = monotoneY;
+
+function sign(x) {
+  return x < 0 ? -1 : 1;
+} // Calculate the slopes of the tangents (Hermite-type interpolation) based on
+// the following paper: Steffen, M. 1990. A Simple Method for Monotonic
+// Interpolation in One Dimension. Astronomy and Astrophysics, Vol. 239, NO.
+// NOV(II), P. 443, 1990.
+
+
+function slope3(that, x2, y2) {
+  var h0 = that._x1 - that._x0,
+      h1 = x2 - that._x1,
+      s0 = (that._y1 - that._y0) / (h0 || h1 < 0 && -0),
+      s1 = (y2 - that._y1) / (h1 || h0 < 0 && -0),
+      p = (s0 * h1 + s1 * h0) / (h0 + h1);
+  return (sign(s0) + sign(s1)) * Math.min(Math.abs(s0), Math.abs(s1), 0.5 * Math.abs(p)) || 0;
+} // Calculate a one-sided slope.
+
+
+function slope2(that, t) {
+  var h = that._x1 - that._x0;
+  return h ? (3 * (that._y1 - that._y0) / h - t) / 2 : t;
+} // According to https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Representations
+// "you can express cubic Hermite interpolation in terms of cubic Bézier curves
+// with respect to the four values p0, p0 + m0 / 3, p1 - m1 / 3, p1".
+
+
+function point(that, t0, t1) {
+  var x0 = that._x0,
+      y0 = that._y0,
+      x1 = that._x1,
+      y1 = that._y1,
+      dx = (x1 - x0) / 3;
+
+  that._context.bezierCurveTo(x0 + dx, y0 + dx * t0, x1 - dx, y1 - dx * t1, x1, y1);
+}
+
+function MonotoneX(context) {
+  this._context = context;
+}
+
+MonotoneX.prototype = {
+  areaStart: function () {
+    this._line = 0;
+  },
+  areaEnd: function () {
+    this._line = NaN;
+  },
+  lineStart: function () {
+    this._x0 = this._x1 = this._y0 = this._y1 = this._t0 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function () {
+    switch (this._point) {
+      case 2:
+        this._context.lineTo(this._x1, this._y1);
+
+        break;
+
+      case 3:
+        point(this, this._t0, slope2(this, this._t0));
+        break;
+    }
+
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function (x, y) {
+    var t1 = NaN;
+    x = +x, y = +y;
+    if (x === this._x1 && y === this._y1) return; // Ignore coincident points.
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
+        break;
+
+      case 1:
+        this._point = 2;
+        break;
+
+      case 2:
+        this._point = 3;
+        point(this, slope2(this, t1 = slope3(this, x, y)), t1);
+        break;
+
+      default:
+        point(this, this._t0, t1 = slope3(this, x, y));
+        break;
+    }
+
+    this._x0 = this._x1, this._x1 = x;
+    this._y0 = this._y1, this._y1 = y;
+    this._t0 = t1;
+  }
+};
+
+function MonotoneY(context) {
+  this._context = new ReflectContext(context);
+}
+
+(MonotoneY.prototype = Object.create(MonotoneX.prototype)).point = function (x, y) {
+  MonotoneX.prototype.point.call(this, y, x);
+};
+
+function ReflectContext(context) {
+  this._context = context;
+}
+
+ReflectContext.prototype = {
+  moveTo: function (x, y) {
+    this._context.moveTo(y, x);
+  },
+  closePath: function () {
+    this._context.closePath();
+  },
+  lineTo: function (x, y) {
+    this._context.lineTo(y, x);
+  },
+  bezierCurveTo: function (x1, y1, x2, y2, x, y) {
+    this._context.bezierCurveTo(y1, x1, y2, x2, y, x);
+  }
+};
+
+function monotoneX(context) {
+  return new MonotoneX(context);
+}
+
+function monotoneY(context) {
+  return new MonotoneY(context);
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/natural.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function Natural(context) {
+  this._context = context;
+}
+
+Natural.prototype = {
+  areaStart: function () {
+    this._line = 0;
+  },
+  areaEnd: function () {
+    this._line = NaN;
+  },
+  lineStart: function () {
+    this._x = [];
+    this._y = [];
+  },
+  lineEnd: function () {
+    var x = this._x,
+        y = this._y,
+        n = x.length;
+
+    if (n) {
+      this._line ? this._context.lineTo(x[0], y[0]) : this._context.moveTo(x[0], y[0]);
+
+      if (n === 2) {
+        this._context.lineTo(x[1], y[1]);
+      } else {
+        var px = controlPoints(x),
+            py = controlPoints(y);
+
+        for (var i0 = 0, i1 = 1; i1 < n; ++i0, ++i1) {
+          this._context.bezierCurveTo(px[0][i0], py[0][i0], px[1][i0], py[1][i0], x[i1], y[i1]);
+        }
+      }
+    }
+
+    if (this._line || this._line !== 0 && n === 1) this._context.closePath();
+    this._line = 1 - this._line;
+    this._x = this._y = null;
+  },
+  point: function (x, y) {
+    this._x.push(+x);
+
+    this._y.push(+y);
+  }
+}; // See https://www.particleincell.com/2012/bezier-splines/ for derivation.
+
+function controlPoints(x) {
+  var i,
+      n = x.length - 1,
+      m,
+      a = new Array(n),
+      b = new Array(n),
+      r = new Array(n);
+  a[0] = 0, b[0] = 2, r[0] = x[0] + 2 * x[1];
+
+  for (i = 1; i < n - 1; ++i) a[i] = 1, b[i] = 4, r[i] = 4 * x[i] + 2 * x[i + 1];
+
+  a[n - 1] = 2, b[n - 1] = 7, r[n - 1] = 8 * x[n - 1] + x[n];
+
+  for (i = 1; i < n; ++i) m = a[i] / b[i - 1], b[i] -= m, r[i] -= m * r[i - 1];
+
+  a[n - 1] = r[n - 1] / b[n - 1];
+
+  for (i = n - 2; i >= 0; --i) a[i] = (r[i] - a[i + 1]) / b[i];
+
+  b[n - 1] = (x[n] + a[n - 1]) / 2;
+
+  for (i = 0; i < n - 1; ++i) b[i] = 2 * x[i + 1] - a[i + 1];
+
+  return [a, b];
+}
+
+function _default(context) {
+  return new Natural(context);
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/step.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+exports.stepAfter = stepAfter;
+exports.stepBefore = stepBefore;
+
+function Step(context, t) {
+  this._context = context;
+  this._t = t;
+}
+
+Step.prototype = {
+  areaStart: function () {
+    this._line = 0;
+  },
+  areaEnd: function () {
+    this._line = NaN;
+  },
+  lineStart: function () {
+    this._x = this._y = NaN;
+    this._point = 0;
+  },
+  lineEnd: function () {
+    if (0 < this._t && this._t < 1 && this._point === 2) this._context.lineTo(this._x, this._y);
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    if (this._line >= 0) this._t = 1 - this._t, this._line = 1 - this._line;
+  },
+  point: function (x, y) {
+    x = +x, y = +y;
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
+        break;
+
+      case 1:
+        this._point = 2;
+      // proceed
+
+      default:
+        {
+          if (this._t <= 0) {
+            this._context.lineTo(this._x, y);
+
+            this._context.lineTo(x, y);
+          } else {
+            var x1 = this._x * (1 - this._t) + x * this._t;
+
+            this._context.lineTo(x1, this._y);
+
+            this._context.lineTo(x1, y);
+          }
+
+          break;
+        }
+    }
+
+    this._x = x, this._y = y;
+  }
+};
+
+function _default(context) {
+  return new Step(context, 0.5);
+}
+
+function stepBefore(context) {
+  return new Step(context, 0);
+}
+
+function stepAfter(context) {
+  return new Step(context, 1);
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/array.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.slice = void 0;
+var slice = Array.prototype.slice;
+exports.slice = slice;
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/offset/none.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(series, order) {
+  if (!((n = series.length) > 1)) return;
+
+  for (var i = 1, s0, s1 = series[order[0]], n, m = s1.length; i < n; ++i) {
+    s0 = s1, s1 = series[order[i]];
+
+    for (var j = 0; j < m; ++j) {
+      s1[j][1] += s1[j][0] = isNaN(s0[j][1]) ? s0[j][0] : s0[j][1];
+    }
+  }
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/none.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(series) {
+  var n = series.length,
+      o = new Array(n);
+
+  while (--n >= 0) o[n] = n;
+
+  return o;
+}
+},{}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/stack.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _array = require("./array");
+
+var _constant = _interopRequireDefault(require("./constant"));
+
+var _none = _interopRequireDefault(require("./offset/none"));
+
+var _none2 = _interopRequireDefault(require("./order/none"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function stackValue(d, key) {
+  return d[key];
+}
+
+function _default() {
+  var keys = (0, _constant.default)([]),
+      order = _none2.default,
+      offset = _none.default,
+      value = stackValue;
+
+  function stack(data) {
+    var kz = keys.apply(this, arguments),
+        i,
+        m = data.length,
+        n = kz.length,
+        sz = new Array(n),
+        oz;
+
+    for (i = 0; i < n; ++i) {
+      for (var ki = kz[i], si = sz[i] = new Array(m), j = 0, sij; j < m; ++j) {
+        si[j] = sij = [0, +value(data[j], ki, j, data)];
+        sij.data = data[j];
+      }
+
+      si.key = ki;
+    }
+
+    for (i = 0, oz = order(sz); i < n; ++i) {
+      sz[oz[i]].index = i;
+    }
+
+    offset(sz, oz);
+    return sz;
+  }
+
+  stack.keys = function (_) {
+    return arguments.length ? (keys = typeof _ === "function" ? _ : (0, _constant.default)(_array.slice.call(_)), stack) : keys;
+  };
+
+  stack.value = function (_) {
+    return arguments.length ? (value = typeof _ === "function" ? _ : (0, _constant.default)(+_), stack) : value;
+  };
+
+  stack.order = function (_) {
+    return arguments.length ? (order = _ == null ? _none2.default : typeof _ === "function" ? _ : (0, _constant.default)(_array.slice.call(_)), stack) : order;
+  };
+
+  stack.offset = function (_) {
+    return arguments.length ? (offset = _ == null ? _none.default : _, stack) : offset;
+  };
+
+  return stack;
+}
+},{"./array":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/array.js","./constant":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/constant.js","./offset/none":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/offset/none.js","./order/none":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/none.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/offset/expand.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _none = _interopRequireDefault(require("./none"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(series, order) {
+  if (!((n = series.length) > 0)) return;
+
+  for (var i, n, j = 0, m = series[0].length, y; j < m; ++j) {
+    for (y = i = 0; i < n; ++i) y += series[i][j][1] || 0;
+
+    if (y) for (i = 0; i < n; ++i) series[i][j][1] /= y;
+  }
+
+  (0, _none.default)(series, order);
+}
+},{"./none":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/offset/none.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/offset/silhouette.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _none = _interopRequireDefault(require("./none"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(series, order) {
+  if (!((n = series.length) > 0)) return;
+
+  for (var j = 0, s0 = series[order[0]], n, m = s0.length; j < m; ++j) {
+    for (var i = 0, y = 0; i < n; ++i) y += series[i][j][1] || 0;
+
+    s0[j][1] += s0[j][0] = -y / 2;
+  }
+
+  (0, _none.default)(series, order);
+}
+},{"./none":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/offset/none.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/offset/wiggle.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _none = _interopRequireDefault(require("./none"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(series, order) {
+  if (!((n = series.length) > 0) || !((m = (s0 = series[order[0]]).length) > 0)) return;
+
+  for (var y = 0, j = 1, s0, m, n; j < m; ++j) {
+    for (var i = 0, s1 = 0, s2 = 0; i < n; ++i) {
+      var si = series[order[i]],
+          sij0 = si[j][1] || 0,
+          sij1 = si[j - 1][1] || 0,
+          s3 = (sij0 - sij1) / 2;
+
+      for (var k = 0; k < i; ++k) {
+        var sk = series[order[k]],
+            skj0 = sk[j][1] || 0,
+            skj1 = sk[j - 1][1] || 0;
+        s3 += skj0 - skj1;
+      }
+
+      s1 += sij0, s2 += s3 * sij0;
+    }
+
+    s0[j - 1][1] += s0[j - 1][0] = y;
+    if (s1) y -= s2 / s1;
+  }
+
+  s0[j - 1][1] += s0[j - 1][0] = y;
+  (0, _none.default)(series, order);
+}
+},{"./none":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/offset/none.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/ascending.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+exports.sum = sum;
+
+var _none = _interopRequireDefault(require("./none"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(series) {
+  var sums = series.map(sum);
+  return (0, _none.default)(series).sort(function (a, b) {
+    return sums[a] - sums[b];
+  });
+}
+
+function sum(series) {
+  var s = 0,
+      i = -1,
+      n = series.length,
+      v;
+
+  while (++i < n) if (v = +series[i][1]) s += v;
+
+  return s;
+}
+},{"./none":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/none.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/descending.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _ascending = _interopRequireDefault(require("./ascending"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(series) {
+  return (0, _ascending.default)(series).reverse();
+}
+},{"./ascending":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/ascending.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/insideOut.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _none = _interopRequireDefault(require("./none"));
+
+var _ascending = require("./ascending");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(series) {
+  var n = series.length,
+      i,
+      j,
+      sums = series.map(_ascending.sum),
+      order = (0, _none.default)(series).sort(function (a, b) {
+    return sums[b] - sums[a];
+  }),
+      top = 0,
+      bottom = 0,
+      tops = [],
+      bottoms = [];
+
+  for (i = 0; i < n; ++i) {
+    j = order[i];
+
+    if (top < bottom) {
+      top += sums[j];
+      tops.push(j);
+    } else {
+      bottom += sums[j];
+      bottoms.push(j);
+    }
+  }
+
+  return bottoms.reverse().concat(tops);
+}
+},{"./none":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/none.js","./ascending":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/ascending.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/reverse.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _none = _interopRequireDefault(require("./none"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(series) {
+  return (0, _none.default)(series).reverse();
+}
+},{"./none":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/none.js"}],"../node_modules/d3-svg-annotation/node_modules/d3-shape/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "arc", {
+  enumerable: true,
+  get: function () {
+    return _arc.default;
+  }
+});
+Object.defineProperty(exports, "area", {
+  enumerable: true,
+  get: function () {
+    return _area.default;
+  }
+});
+Object.defineProperty(exports, "curveBasis", {
+  enumerable: true,
+  get: function () {
+    return _basis.default;
+  }
+});
+Object.defineProperty(exports, "curveBasisClosed", {
+  enumerable: true,
+  get: function () {
+    return _basisClosed.default;
+  }
+});
+Object.defineProperty(exports, "curveBasisOpen", {
+  enumerable: true,
+  get: function () {
+    return _basisOpen.default;
+  }
+});
+Object.defineProperty(exports, "curveBundle", {
+  enumerable: true,
+  get: function () {
+    return _bundle.default;
+  }
+});
+Object.defineProperty(exports, "curveCardinal", {
+  enumerable: true,
+  get: function () {
+    return _cardinal.default;
+  }
+});
+Object.defineProperty(exports, "curveCardinalClosed", {
+  enumerable: true,
+  get: function () {
+    return _cardinalClosed.default;
+  }
+});
+Object.defineProperty(exports, "curveCardinalOpen", {
+  enumerable: true,
+  get: function () {
+    return _cardinalOpen.default;
+  }
+});
+Object.defineProperty(exports, "curveCatmullRom", {
+  enumerable: true,
+  get: function () {
+    return _catmullRom.default;
+  }
+});
+Object.defineProperty(exports, "curveCatmullRomClosed", {
+  enumerable: true,
+  get: function () {
+    return _catmullRomClosed.default;
+  }
+});
+Object.defineProperty(exports, "curveCatmullRomOpen", {
+  enumerable: true,
+  get: function () {
+    return _catmullRomOpen.default;
+  }
+});
+Object.defineProperty(exports, "curveLinear", {
+  enumerable: true,
+  get: function () {
+    return _linear.default;
+  }
+});
+Object.defineProperty(exports, "curveLinearClosed", {
+  enumerable: true,
+  get: function () {
+    return _linearClosed.default;
+  }
+});
+Object.defineProperty(exports, "curveMonotoneX", {
+  enumerable: true,
+  get: function () {
+    return _monotone.monotoneX;
+  }
+});
+Object.defineProperty(exports, "curveMonotoneY", {
+  enumerable: true,
+  get: function () {
+    return _monotone.monotoneY;
+  }
+});
+Object.defineProperty(exports, "curveNatural", {
+  enumerable: true,
+  get: function () {
+    return _natural.default;
+  }
+});
+Object.defineProperty(exports, "curveStep", {
+  enumerable: true,
+  get: function () {
+    return _step.default;
+  }
+});
+Object.defineProperty(exports, "curveStepAfter", {
+  enumerable: true,
+  get: function () {
+    return _step.stepAfter;
+  }
+});
+Object.defineProperty(exports, "curveStepBefore", {
+  enumerable: true,
+  get: function () {
+    return _step.stepBefore;
+  }
+});
+Object.defineProperty(exports, "line", {
+  enumerable: true,
+  get: function () {
+    return _line.default;
+  }
+});
+Object.defineProperty(exports, "pie", {
+  enumerable: true,
+  get: function () {
+    return _pie.default;
+  }
+});
+Object.defineProperty(exports, "radialArea", {
+  enumerable: true,
+  get: function () {
+    return _radialArea.default;
+  }
+});
+Object.defineProperty(exports, "radialLine", {
+  enumerable: true,
+  get: function () {
+    return _radialLine.default;
+  }
+});
+Object.defineProperty(exports, "stack", {
+  enumerable: true,
+  get: function () {
+    return _stack.default;
+  }
+});
+Object.defineProperty(exports, "stackOffsetExpand", {
+  enumerable: true,
+  get: function () {
+    return _expand.default;
+  }
+});
+Object.defineProperty(exports, "stackOffsetNone", {
+  enumerable: true,
+  get: function () {
+    return _none.default;
+  }
+});
+Object.defineProperty(exports, "stackOffsetSilhouette", {
+  enumerable: true,
+  get: function () {
+    return _silhouette.default;
+  }
+});
+Object.defineProperty(exports, "stackOffsetWiggle", {
+  enumerable: true,
+  get: function () {
+    return _wiggle.default;
+  }
+});
+Object.defineProperty(exports, "stackOrderAscending", {
+  enumerable: true,
+  get: function () {
+    return _ascending.default;
+  }
+});
+Object.defineProperty(exports, "stackOrderDescending", {
+  enumerable: true,
+  get: function () {
+    return _descending.default;
+  }
+});
+Object.defineProperty(exports, "stackOrderInsideOut", {
+  enumerable: true,
+  get: function () {
+    return _insideOut.default;
+  }
+});
+Object.defineProperty(exports, "stackOrderNone", {
+  enumerable: true,
+  get: function () {
+    return _none2.default;
+  }
+});
+Object.defineProperty(exports, "stackOrderReverse", {
+  enumerable: true,
+  get: function () {
+    return _reverse.default;
+  }
+});
+Object.defineProperty(exports, "symbol", {
+  enumerable: true,
+  get: function () {
+    return _symbol.default;
+  }
+});
+Object.defineProperty(exports, "symbolCircle", {
+  enumerable: true,
+  get: function () {
+    return _circle.default;
+  }
+});
+Object.defineProperty(exports, "symbolCross", {
+  enumerable: true,
+  get: function () {
+    return _cross.default;
+  }
+});
+Object.defineProperty(exports, "symbolDiamond", {
+  enumerable: true,
+  get: function () {
+    return _diamond.default;
+  }
+});
+Object.defineProperty(exports, "symbolSquare", {
+  enumerable: true,
+  get: function () {
+    return _square.default;
+  }
+});
+Object.defineProperty(exports, "symbolStar", {
+  enumerable: true,
+  get: function () {
+    return _star.default;
+  }
+});
+Object.defineProperty(exports, "symbolTriangle", {
+  enumerable: true,
+  get: function () {
+    return _triangle.default;
+  }
+});
+Object.defineProperty(exports, "symbolWye", {
+  enumerable: true,
+  get: function () {
+    return _wye.default;
+  }
+});
+Object.defineProperty(exports, "symbols", {
+  enumerable: true,
+  get: function () {
+    return _symbol.symbols;
+  }
+});
+
+var _arc = _interopRequireDefault(require("./src/arc"));
+
+var _area = _interopRequireDefault(require("./src/area"));
+
+var _line = _interopRequireDefault(require("./src/line"));
+
+var _pie = _interopRequireDefault(require("./src/pie"));
+
+var _radialArea = _interopRequireDefault(require("./src/radialArea"));
+
+var _radialLine = _interopRequireDefault(require("./src/radialLine"));
+
+var _symbol = _interopRequireWildcard(require("./src/symbol"));
+
+var _circle = _interopRequireDefault(require("./src/symbol/circle"));
+
+var _cross = _interopRequireDefault(require("./src/symbol/cross"));
+
+var _diamond = _interopRequireDefault(require("./src/symbol/diamond"));
+
+var _square = _interopRequireDefault(require("./src/symbol/square"));
+
+var _star = _interopRequireDefault(require("./src/symbol/star"));
+
+var _triangle = _interopRequireDefault(require("./src/symbol/triangle"));
+
+var _wye = _interopRequireDefault(require("./src/symbol/wye"));
+
+var _basisClosed = _interopRequireDefault(require("./src/curve/basisClosed"));
+
+var _basisOpen = _interopRequireDefault(require("./src/curve/basisOpen"));
+
+var _basis = _interopRequireDefault(require("./src/curve/basis"));
+
+var _bundle = _interopRequireDefault(require("./src/curve/bundle"));
+
+var _cardinalClosed = _interopRequireDefault(require("./src/curve/cardinalClosed"));
+
+var _cardinalOpen = _interopRequireDefault(require("./src/curve/cardinalOpen"));
+
+var _cardinal = _interopRequireDefault(require("./src/curve/cardinal"));
+
+var _catmullRomClosed = _interopRequireDefault(require("./src/curve/catmullRomClosed"));
+
+var _catmullRomOpen = _interopRequireDefault(require("./src/curve/catmullRomOpen"));
+
+var _catmullRom = _interopRequireDefault(require("./src/curve/catmullRom"));
+
+var _linearClosed = _interopRequireDefault(require("./src/curve/linearClosed"));
+
+var _linear = _interopRequireDefault(require("./src/curve/linear"));
+
+var _monotone = require("./src/curve/monotone");
+
+var _natural = _interopRequireDefault(require("./src/curve/natural"));
+
+var _step = _interopRequireWildcard(require("./src/curve/step"));
+
+var _stack = _interopRequireDefault(require("./src/stack"));
+
+var _expand = _interopRequireDefault(require("./src/offset/expand"));
+
+var _none = _interopRequireDefault(require("./src/offset/none"));
+
+var _silhouette = _interopRequireDefault(require("./src/offset/silhouette"));
+
+var _wiggle = _interopRequireDefault(require("./src/offset/wiggle"));
+
+var _ascending = _interopRequireDefault(require("./src/order/ascending"));
+
+var _descending = _interopRequireDefault(require("./src/order/descending"));
+
+var _insideOut = _interopRequireDefault(require("./src/order/insideOut"));
+
+var _none2 = _interopRequireDefault(require("./src/order/none"));
+
+var _reverse = _interopRequireDefault(require("./src/order/reverse"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+},{"./src/arc":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/arc.js","./src/area":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/area.js","./src/line":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/line.js","./src/pie":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/pie.js","./src/radialArea":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/radialArea.js","./src/radialLine":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/radialLine.js","./src/symbol":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol.js","./src/symbol/circle":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/circle.js","./src/symbol/cross":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/cross.js","./src/symbol/diamond":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/diamond.js","./src/symbol/square":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/square.js","./src/symbol/star":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/star.js","./src/symbol/triangle":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/triangle.js","./src/symbol/wye":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/symbol/wye.js","./src/curve/basisClosed":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/basisClosed.js","./src/curve/basisOpen":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/basisOpen.js","./src/curve/basis":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/basis.js","./src/curve/bundle":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/bundle.js","./src/curve/cardinalClosed":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/cardinalClosed.js","./src/curve/cardinalOpen":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/cardinalOpen.js","./src/curve/cardinal":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/cardinal.js","./src/curve/catmullRomClosed":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/catmullRomClosed.js","./src/curve/catmullRomOpen":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/catmullRomOpen.js","./src/curve/catmullRom":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/catmullRom.js","./src/curve/linearClosed":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/linearClosed.js","./src/curve/linear":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/linear.js","./src/curve/monotone":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/monotone.js","./src/curve/natural":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/natural.js","./src/curve/step":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/curve/step.js","./src/stack":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/stack.js","./src/offset/expand":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/offset/expand.js","./src/offset/none":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/offset/none.js","./src/offset/silhouette":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/offset/silhouette.js","./src/offset/wiggle":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/offset/wiggle.js","./src/order/ascending":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/ascending.js","./src/order/descending":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/descending.js","./src/order/insideOut":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/insideOut.js","./src/order/none":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/none.js","./src/order/reverse":"../node_modules/d3-svg-annotation/node_modules/d3-shape/src/order/reverse.js"}],"../node_modules/d3-svg-annotation/indexRollupNext.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.annotation = annotation;
+exports.default = exports.annotationXYThreshold = exports.annotationTypeBase = exports.annotationLabel = exports.annotationCustomType = exports.annotationCalloutRect = exports.annotationCalloutElbow = exports.annotationCalloutCurve = exports.annotationCalloutCircle = exports.annotationCallout = exports.annotationBadge = void 0;
+
+var _d3Selection = require("d3-selection");
+
+var _d3Drag = require("d3-drag");
+
+var _d3Shape = require("d3-shape");
+
+var _d3Dispatch = require("d3-dispatch");
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
+var get = function get(object, property, receiver) {
+  if (object === null) object = Function.prototype;
+  var desc = Object.getOwnPropertyDescriptor(object, property);
+
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent === null) {
+      return undefined;
+    } else {
+      return get(parent, property, receiver);
+    }
+  } else if ("value" in desc) {
+    return desc.value;
+  } else {
+    var getter = desc.get;
+
+    if (getter === undefined) {
+      return undefined;
+    }
+
+    return getter.call(receiver);
+  }
+};
+
+var inherits = function (subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+};
+
+var possibleConstructorReturn = function (self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return call && (typeof call === "object" || typeof call === "function") ? call : self;
+};
+
+var toConsumableArray = function (arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+    return arr2;
+  } else {
+    return Array.from(arr);
+  }
+};
+
+var Annotation = function () {
+  function Annotation(_ref) {
+    var _ref$x = _ref.x,
+        x = _ref$x === undefined ? 0 : _ref$x,
+        _ref$y = _ref.y,
+        y = _ref$y === undefined ? 0 : _ref$y,
+        nx = _ref.nx,
+        ny = _ref.ny,
+        _ref$dy = _ref.dy,
+        dy = _ref$dy === undefined ? 0 : _ref$dy,
+        _ref$dx = _ref.dx,
+        dx = _ref$dx === undefined ? 0 : _ref$dx,
+        _ref$color = _ref.color,
+        color = _ref$color === undefined ? "grey" : _ref$color,
+        data = _ref.data,
+        type = _ref.type,
+        subject = _ref.subject,
+        connector = _ref.connector,
+        note = _ref.note,
+        disable = _ref.disable,
+        id = _ref.id,
+        className = _ref.className;
+    classCallCheck(this, Annotation);
+    this._dx = nx !== undefined ? nx - x : dx;
+    this._dy = ny !== undefined ? ny - y : dy;
+    this._x = x;
+    this._y = y;
+    this._color = color;
+    this.id = id;
+    this._className = className || "";
+    this._type = type || "";
+    this.data = data;
+    this.note = note || {};
+    this.connector = connector || {};
+    this.subject = subject || {};
+    this.disable = disable || [];
+  }
+
+  createClass(Annotation, [{
+    key: "updatePosition",
+    value: function updatePosition() {
+      if (this.type.setPosition) {
+        this.type.setPosition();
+
+        if (this.type.subject && this.type.subject.selectAll(":not(.handle)").nodes().length !== 0) {
+          this.type.redrawSubject();
+        }
+      }
+    }
+  }, {
+    key: "clearComponents",
+    value: function clearComponents() {
+      this.type.clearComponents && this.type.clearComponents();
+    }
+  }, {
+    key: "updateOffset",
+    value: function updateOffset() {
+      if (this.type.setOffset) {
+        this.type.setOffset();
+
+        if (this.type.connector.selectAll(":not(.handle)").nodes().length !== 0) {
+          this.type.redrawConnector();
+        }
+
+        this.type.redrawNote();
+      }
+    }
+  }, {
+    key: "className",
+    get: function get$$1() {
+      return this._className;
+    },
+    set: function set$$1(className) {
+      this._className = className;
+      if (this.type.setClassName) this.type.setClassName();
+    }
+  }, {
+    key: "type",
+    get: function get$$1() {
+      return this._type;
+    },
+    set: function set$$1(type) {
+      this._type = type;
+      this.clearComponents();
+    }
+  }, {
+    key: "x",
+    get: function get$$1() {
+      return this._x;
+    },
+    set: function set$$1(x) {
+      this._x = x;
+      this.updatePosition();
+    }
+  }, {
+    key: "y",
+    get: function get$$1() {
+      return this._y;
+    },
+    set: function set$$1(y) {
+      this._y = y;
+      this.updatePosition();
+    }
+  }, {
+    key: "color",
+    get: function get$$1() {
+      return this._color;
+    },
+    set: function set$$1(color) {
+      this._color = color;
+      this.updatePosition();
+    }
+  }, {
+    key: "dx",
+    get: function get$$1() {
+      return this._dx;
+    },
+    set: function set$$1(dx) {
+      this._dx = dx;
+      this.updateOffset();
+    }
+  }, {
+    key: "dy",
+    get: function get$$1() {
+      return this._dy;
+    },
+    set: function set$$1(dy) {
+      this._dy = dy;
+      this.updateOffset();
+    }
+  }, {
+    key: "nx",
+    set: function set$$1(nx) {
+      this._dx = nx - this._x;
+      this.updateOffset();
+    }
+  }, {
+    key: "ny",
+    set: function set$$1(ny) {
+      this._dy = ny - this._y;
+      this.updateOffset();
+    }
+  }, {
+    key: "offset",
+    get: function get$$1() {
+      return {
+        x: this._dx,
+        y: this._dy
+      };
+    },
+    set: function set$$1(_ref2) {
+      var x = _ref2.x,
+          y = _ref2.y;
+      this._dx = x;
+      this._dy = y;
+      this.updateOffset();
+    }
+  }, {
+    key: "position",
+    get: function get$$1() {
+      return {
+        x: this._x,
+        y: this._y
+      };
+    },
+    set: function set$$1(_ref3) {
+      var x = _ref3.x,
+          y = _ref3.y;
+      this._x = x;
+      this._y = y;
+      this.updatePosition();
+    }
+  }, {
+    key: "translation",
+    get: function get$$1() {
+      return {
+        x: this._x + this._dx,
+        y: this._y + this._dy
+      };
+    }
+  }, {
+    key: "json",
+    get: function get$$1() {
+      var json = {
+        x: this._x,
+        y: this._y,
+        dx: this._dx,
+        dy: this._dy
+      };
+      if (this.data && Object.keys(this.data).length > 0) json.data = this.data;
+      if (this.type) json.type = this.type;
+      if (this._className) json.className = this._className;
+      if (Object.keys(this.connector).length > 0) json.connector = this.connector;
+      if (Object.keys(this.subject).length > 0) json.subject = this.subject;
+      if (Object.keys(this.note).length > 0) json.note = this.note;
+      return json;
+    }
+  }]);
+  return Annotation;
+}();
+
+var AnnotationCollection = function () {
+  function AnnotationCollection(_ref) {
+    var annotations = _ref.annotations,
+        accessors = _ref.accessors,
+        accessorsInverse = _ref.accessorsInverse;
+    classCallCheck(this, AnnotationCollection);
+    this.accessors = accessors;
+    this.accessorsInverse = accessorsInverse;
+    this.annotations = annotations;
+  }
+
+  createClass(AnnotationCollection, [{
+    key: "clearTypes",
+    value: function clearTypes(newSettings) {
+      this.annotations.forEach(function (d) {
+        d.type = undefined;
+        d.subject = newSettings && newSettings.subject || d.subject;
+        d.connector = newSettings && newSettings.connector || d.connector;
+        d.note = newSettings && newSettings.note || d.note;
+      });
+    }
+  }, {
+    key: "setPositionWithAccessors",
+    value: function setPositionWithAccessors() {
+      var _this = this;
+
+      this.annotations.forEach(function (d) {
+        d.type.setPositionWithAccessors(_this.accessors);
+      });
+    }
+  }, {
+    key: "editMode",
+    value: function editMode(_editMode) {
+      this.annotations.forEach(function (a) {
+        if (a.type) {
+          a.type.editMode = _editMode;
+          a.type.updateEditMode();
+        }
+      });
+    }
+  }, {
+    key: "updateDisable",
+    value: function updateDisable(disable) {
+      this.annotations.forEach(function (a) {
+        a.disable = disable;
+
+        if (a.type) {
+          disable.forEach(function (d) {
+            if (a.type[d]) {
+              a.type[d].remove && a.type[d].remove();
+              a.type[d] = undefined;
+            }
+          });
+        }
+      });
+    }
+  }, {
+    key: "updateTextWrap",
+    value: function updateTextWrap(textWrap) {
+      this.annotations.forEach(function (a) {
+        if (a.type && a.type.updateTextWrap) {
+          a.type.updateTextWrap(textWrap);
+        }
+      });
+    }
+  }, {
+    key: "updateText",
+    value: function updateText() {
+      this.annotations.forEach(function (a) {
+        if (a.type && a.type.drawText) {
+          a.type.drawText();
+        }
+      });
+    }
+  }, {
+    key: "updateNotePadding",
+    value: function updateNotePadding(notePadding) {
+      this.annotations.forEach(function (a) {
+        if (a.type) {
+          a.type.notePadding = notePadding;
+        }
+      });
+    }
+  }, {
+    key: "json",
+    get: function get$$1() {
+      var _this2 = this;
+
+      return this.annotations.map(function (a) {
+        var json = a.json;
+
+        if (_this2.accessorsInverse && a.data) {
+          json.data = {};
+          Object.keys(_this2.accessorsInverse).forEach(function (k) {
+            json.data[k] = _this2.accessorsInverse[k]({
+              x: a.x,
+              y: a.y
+            }); //TODO make this feasible to map back to data for other types of subjects
+          });
+        }
+
+        return json;
+      });
+    }
+  }, {
+    key: "noteNodes",
+    get: function get$$1() {
+      return this.annotations.map(function (a) {
+        return _extends({}, a.type.getNoteBBoxOffset(), {
+          positionX: a.x,
+          positionY: a.y
+        });
+      });
+    } //TODO: come back and rethink if a.x and a.y are applicable in all situations
+    // get connectorNodes() {
+    //   return this.annotations.map(a => ({ ...a.type.getConnectorBBox(), startX: a.x, startY: a.y}))
+    // }
+    // get subjectNodes() {
+    //   return this.annotations.map(a => ({ ...a.type.getSubjectBBox(), startX: a.x, startY: a.y}))
+    // }
+    // get annotationNodes() {
+    //   return this.annotations.map(a => ({ ...a.type.getAnnotationBBox(), startX: a.x, startY: a.y}))
+    // }
+
+  }]);
+  return AnnotationCollection;
+}();
+
+var pointHandle = function pointHandle(_ref) {
+  var _ref$cx = _ref.cx,
+      cx = _ref$cx === undefined ? 0 : _ref$cx,
+      _ref$cy = _ref.cy,
+      cy = _ref$cy === undefined ? 0 : _ref$cy;
+  return {
+    move: {
+      x: cx,
+      y: cy
+    }
+  };
+};
+
+var circleHandles = function circleHandles(_ref2) {
+  var _ref2$cx = _ref2.cx,
+      cx = _ref2$cx === undefined ? 0 : _ref2$cx,
+      _ref2$cy = _ref2.cy,
+      cy = _ref2$cy === undefined ? 0 : _ref2$cy,
+      r1 = _ref2.r1,
+      r2 = _ref2.r2,
+      padding = _ref2.padding;
+  var h = {
+    move: {
+      x: cx,
+      y: cy
+    }
+  };
+
+  if (r1 !== undefined) {
+    h.r1 = {
+      x: cx + r1 / Math.sqrt(2),
+      y: cy + r1 / Math.sqrt(2)
+    };
+  }
+
+  if (r2 !== undefined) {
+    h.r2 = {
+      x: cx + r2 / Math.sqrt(2),
+      y: cy + r2 / Math.sqrt(2)
+    };
+  }
+
+  if (padding !== undefined) {
+    h.padding = {
+      x: cx + r1 + padding,
+      y: cy
+    };
+  }
+
+  return h;
+}; //arc handles
+
+
+var addHandles = function addHandles(_ref5) {
+  var group = _ref5.group,
+      handles = _ref5.handles,
+      _ref5$r = _ref5.r,
+      r = _ref5$r === undefined ? 10 : _ref5$r; //give it a group and x,y to draw handles
+  //then give it instructions on what the handles change
+
+  var h = group.selectAll("circle.handle").data(handles);
+  h.enter().append("circle").attr("class", "handle").attr("fill", "grey").attr("fill-opacity", 0.1).attr("cursor", "move").attr("stroke-dasharray", 5).attr("stroke", "grey").call((0, _d3Drag.drag)().container((0, _d3Selection.select)("g.annotations").node()).on("start", function (d) {
+    return d.start && d.start(d);
+  }).on("drag", function (d) {
+    return d.drag && d.drag(d);
+  }).on("end", function (d) {
+    return d.end && d.end(d);
+  }));
+  group.selectAll("circle.handle").attr("cx", function (d) {
+    return d.x;
+  }).attr("cy", function (d) {
+    return d.y;
+  }).attr("r", function (d) {
+    return d.r || r;
+  }).attr("class", function (d) {
+    return "handle " + (d.className || "");
+  });
+  h.exit().remove();
+};
+
+var leftRightDynamic = function leftRightDynamic(align, y) {
+  if (align === "dynamic" || align === "left" || align === "right") {
+    if (y < 0) {
+      align = "top";
+    } else {
+      align = "bottom";
+    }
+  }
+
+  return align;
+};
+
+var topBottomDynamic = function topBottomDynamic(align, x) {
+  if (align === "dynamic" || align === "top" || align === "bottom") {
+    if (x < 0) {
+      align = "right";
+    } else {
+      align = "left";
+    }
+  }
+
+  return align;
+};
+
+var orientationTopBottom = ["topBottom", "top", "bottom"];
+var orientationLeftRight = ["leftRight", "left", "right"];
+
+var noteAlignment = function (_ref) {
+  var _ref$padding = _ref.padding,
+      padding = _ref$padding === undefined ? 0 : _ref$padding,
+      _ref$bbox = _ref.bbox,
+      bbox = _ref$bbox === undefined ? {
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0
+  } : _ref$bbox,
+      align = _ref.align,
+      orientation = _ref.orientation,
+      _ref$offset = _ref.offset,
+      offset = _ref$offset === undefined ? {
+    x: 0,
+    y: 0
+  } : _ref$offset;
+  var x = -bbox.x;
+  var y = 0; //-bbox.y
+
+  if (orientationTopBottom.indexOf(orientation) !== -1) {
+    align = topBottomDynamic(align, offset.x);
+
+    if (offset.y < 0 && orientation === "topBottom" || orientation === "top") {
+      y -= bbox.height + padding;
+    } else {
+      y += padding;
+    }
+
+    if (align === "middle") {
+      x -= bbox.width / 2;
+    } else if (align === "right") {
+      x -= bbox.width;
+    }
+  } else if (orientationLeftRight.indexOf(orientation) !== -1) {
+    align = leftRightDynamic(align, offset.y);
+
+    if (offset.x < 0 && orientation === "leftRight" || orientation === "left") {
+      x -= bbox.width + padding;
+    } else {
+      x += padding;
+    }
+
+    if (align === "middle") {
+      y -= bbox.height / 2;
+    } else if (align === "top") {
+      y -= bbox.height;
+    }
+  }
+
+  return {
+    x: x,
+    y: y
+  };
+};
+
+var lineBuilder = function lineBuilder(_ref) {
+  var data = _ref.data,
+      _ref$curve = _ref.curve,
+      curve = _ref$curve === undefined ? _d3Shape.curveLinear : _ref$curve,
+      canvasContext = _ref.canvasContext,
+      className = _ref.className,
+      classID = _ref.classID;
+  var lineGen = (0, _d3Shape.line)().curve(curve);
+  var builder = {
+    type: 'path',
+    className: className,
+    classID: classID,
+    data: data
+  };
+
+  if (canvasContext) {
+    lineGen.context(canvasContext);
+    builder.pathMethods = lineGen;
+  } else {
+    builder.attrs = {
+      d: lineGen(data)
+    };
+  }
+
+  return builder;
+};
+
+var arcBuilder = function arcBuilder(_ref2) {
+  var data = _ref2.data,
+      canvasContext = _ref2.canvasContext,
+      className = _ref2.className,
+      classID = _ref2.classID;
+  var builder = {
+    type: 'path',
+    className: className,
+    classID: classID,
+    data: data
+  };
+  var arcShape = (0, _d3Shape.arc)().innerRadius(data.innerRadius || 0).outerRadius(data.outerRadius || data.radius || 2).startAngle(data.startAngle || 0).endAngle(data.endAngle || 2 * Math.PI);
+
+  if (canvasContext) {
+    arcShape.context(canvasContext);
+    builder.pathMethods = lineGen;
+  } else {
+    builder.attrs = {
+      d: arcShape()
+    };
+  }
+
+  return builder;
+};
+
+var noteVertical = function (_ref) {
+  var align = _ref.align,
+      _ref$x = _ref.x,
+      x = _ref$x === undefined ? 0 : _ref$x,
+      _ref$y = _ref.y,
+      y = _ref$y === undefined ? 0 : _ref$y,
+      bbox = _ref.bbox,
+      offset = _ref.offset;
+  align = leftRightDynamic(align, offset.y);
+
+  if (align === "top") {
+    y -= bbox.height;
+  } else if (align === "middle") {
+    y -= bbox.height / 2;
+  }
+
+  var data = [[x, y], [x, y + bbox.height]];
+  return {
+    components: [lineBuilder({
+      data: data,
+      className: "note-line"
+    })]
+  };
+};
+
+var noteHorizontal = function (_ref) {
+  var align = _ref.align,
+      _ref$x = _ref.x,
+      x = _ref$x === undefined ? 0 : _ref$x,
+      _ref$y = _ref.y,
+      y = _ref$y === undefined ? 0 : _ref$y,
+      offset = _ref.offset,
+      bbox = _ref.bbox;
+  align = topBottomDynamic(align, offset.x);
+
+  if (align === "right") {
+    x -= bbox.width;
+  } else if (align === "middle") {
+    x -= bbox.width / 2;
+  }
+
+  var data = [[x, y], [x + bbox.width, y]];
+  return {
+    components: [lineBuilder({
+      data: data,
+      className: "note-line"
+    })]
+  };
+};
+
+var lineSetup = function lineSetup(_ref) {
+  var type = _ref.type,
+      subjectType = _ref.subjectType;
+  var annotation = type.annotation;
+  var offset = annotation.position;
+  var x1 = annotation.x - offset.x,
+      x2 = x1 + annotation.dx,
+      y1 = annotation.y - offset.y,
+      y2 = y1 + annotation.dy;
+  var subjectData = annotation.subject;
+
+  if (subjectType === "circle" && (subjectData.outerRadius || subjectData.radius)) {
+    var h = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    var angle = Math.asin(-y2 / h);
+    var r = subjectData.outerRadius || subjectData.radius + (subjectData.radiusPadding || 0);
+    x1 = Math.abs(Math.cos(angle) * r) * (x2 < 0 ? -1 : 1);
+    y1 = Math.abs(Math.sin(angle) * r) * (y2 < 0 ? -1 : 1);
+  }
+
+  if (subjectType === "rect") {
+    var width = subjectData.width,
+        height = subjectData.height;
+
+    if (width > 0 && annotation.dx > 0 || width < 0 && annotation.dx < 0) {
+      if (Math.abs(width) > Math.abs(annotation.dx)) x1 = width / 2;else x1 = width;
+    }
+
+    if (height > 0 && annotation.dy > 0 || height < 0 && annotation.dy < 0) {
+      if (Math.abs(height) > Math.abs(annotation.dy)) y1 = height / 2;else y1 = height;
+    }
+
+    if (x1 === width / 2 && y1 === height / 2) {
+      x1 = x2;
+      y1 = y2;
+    }
+  }
+
+  return [[x1, y1], [x2, y2]];
+};
+
+var connectorLine = function (connectorData) {
+  var data = lineSetup(connectorData);
+  return {
+    components: [lineBuilder({
+      data: data,
+      className: "connector"
+    })]
+  };
+};
+
+var connectorElbow = function (_ref) {
+  var type = _ref.type,
+      subjectType = _ref.subjectType;
+  var annotation = type.annotation;
+  var offset = annotation.position;
+  var x1 = annotation.x - offset.x,
+      x2 = x1 + annotation.dx,
+      y1 = annotation.y - offset.y,
+      y2 = y1 + annotation.dy;
+  var subjectData = annotation.subject;
+
+  if (subjectType === "rect") {
+    var width = subjectData.width,
+        height = subjectData.height;
+
+    if (width > 0 && annotation.dx > 0 || width < 0 && annotation.dx < 0) {
+      if (Math.abs(width) > Math.abs(annotation.dx)) x1 = width / 2;else x1 = width;
+    }
+
+    if (height > 0 && annotation.dy > 0 || height < 0 && annotation.dy < 0) {
+      if (Math.abs(height) > Math.abs(annotation.dy)) y1 = height / 2;else y1 = height;
+    }
+
+    if (x1 === width / 2 && y1 === height / 2) {
+      x1 = x2;
+      y1 = y2;
+    }
+  }
+
+  var data = [[x1, y1], [x2, y2]];
+  var diffY = y2 - y1;
+  var diffX = x2 - x1;
+  var xe = x2;
+  var ye = y2;
+  var opposite = y2 < y1 && x2 > x1 || x2 < x1 && y2 > y1 ? -1 : 1;
+
+  if (Math.abs(diffX) < Math.abs(diffY)) {
+    xe = x2;
+    ye = y1 + diffX * opposite;
+  } else {
+    ye = y2;
+    xe = x1 + diffY * opposite;
+  }
+
+  if (subjectType === "circle" && (subjectData.outerRadius || subjectData.radius)) {
+    var r = (subjectData.outerRadius || subjectData.radius) + (subjectData.radiusPadding || 0);
+    var length = r / Math.sqrt(2);
+
+    if (Math.abs(diffX) > length && Math.abs(diffY) > length) {
+      x1 = length * (x2 < 0 ? -1 : 1);
+      y1 = length * (y2 < 0 ? -1 : 1);
+      data = [[x1, y1], [xe, ye], [x2, y2]];
+    } else if (Math.abs(diffX) > Math.abs(diffY)) {
+      var angle = Math.asin(-y2 / r);
+      x1 = Math.abs(Math.cos(angle) * r) * (x2 < 0 ? -1 : 1);
+      data = [[x1, y2], [x2, y2]];
+    } else {
+      var _angle = Math.acos(x2 / r);
+
+      y1 = Math.abs(Math.sin(_angle) * r) * (y2 < 0 ? -1 : 1);
+      data = [[x2, y1], [x2, y2]];
+    }
+  } else {
+    data = [[x1, y1], [xe, ye], [x2, y2]];
+  }
+
+  return {
+    components: [lineBuilder({
+      data: data,
+      className: "connector"
+    })]
+  };
+};
+
+var connectorCurve = function (_ref) {
+  var type = _ref.type,
+      connectorData = _ref.connectorData,
+      subjectType = _ref.subjectType;
+
+  if (!connectorData) {
+    connectorData = {};
+  }
+
+  if (!connectorData.points || typeof connectorData.points === "number") {
+    connectorData.points = createPoints(type.annotation.offset, connectorData.points);
+  }
+
+  if (!connectorData.curve) {
+    connectorData.curve = _d3Shape.curveCatmullRom;
+  }
+
+  var handles = [];
+
+  if (type.editMode) {
+    var cHandles = connectorData.points.map(function (c, i) {
+      return _extends({}, pointHandle({
+        cx: c[0],
+        cy: c[1]
+      }), {
+        index: i
+      });
+    });
+
+    var updatePoint = function updatePoint(index) {
+      connectorData.points[index][0] += _d3Selection.event.dx;
+      connectorData.points[index][1] += _d3Selection.event.dy;
+      type.redrawConnector();
+    };
+
+    handles = type.mapHandles(cHandles.map(function (h) {
+      return _extends({}, h.move, {
+        drag: updatePoint.bind(type, h.index)
+      });
+    }));
+  }
+
+  var data = lineSetup({
+    type: type,
+    subjectType: subjectType
+  });
+  data = [data[0]].concat(toConsumableArray(connectorData.points), [data[1]]);
+  var components = [lineBuilder({
+    data: data,
+    curve: connectorData.curve,
+    className: "connector"
+  })];
+  return {
+    components: components,
+    handles: handles
+  };
+};
+
+var createPoints = function createPoints(offset) {
+  var anchors = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+  var diff = {
+    x: offset.x / (anchors + 1),
+    y: offset.y / (anchors + 1)
+  };
+  var p = [];
+  var i = 1;
+
+  for (; i <= anchors; i++) {
+    p.push([diff.x * i + i % 2 * 20, diff.y * i - i % 2 * 20]);
+  }
+
+  return p;
+};
+
+var connectorArrow = function (_ref) {
+  var annotation = _ref.annotation,
+      start = _ref.start,
+      end = _ref.end,
+      _ref$scale = _ref.scale,
+      scale = _ref$scale === undefined ? 1 : _ref$scale;
+  var offset = annotation.position;
+
+  if (!start) {
+    start = [annotation.dx, annotation.dy];
+  } else {
+    start = [-end[0] + start[0], -end[1] + start[1]];
+  }
+
+  if (!end) {
+    end = [annotation.x - offset.x, annotation.y - offset.y];
+  }
+
+  var x1 = end[0],
+      y1 = end[1];
+  var dx = start[0];
+  var dy = start[1];
+  var size = 10 * scale;
+  var angleOffset = 16 / 180 * Math.PI;
+  var angle = Math.atan(dy / dx);
+
+  if (dx < 0) {
+    angle += Math.PI;
+  }
+
+  var data = [[x1, y1], [Math.cos(angle + angleOffset) * size + x1, Math.sin(angle + angleOffset) * size + y1], [Math.cos(angle - angleOffset) * size + x1, Math.sin(angle - angleOffset) * size + y1], [x1, y1]]; //TODO add in reverse
+  // if (canvasContext.arrowReverse){
+  //   data = [[x1, y1],
+  //   [Math.cos(angle + angleOffset)*size, Math.sin(angle + angleOffset)*size],
+  //   [Math.cos(angle - angleOffset)*size, Math.sin(angle - angleOffset)*size],
+  //   [x1, y1]
+  //   ]
+  // } else {
+  //   data = [[x1, y1],
+  //   [Math.cos(angle + angleOffset)*size, Math.sin(angle + angleOffset)*size],
+  //   [Math.cos(angle - angleOffset)*size, Math.sin(angle - angleOffset)*size],
+  //   [x1, y1]
+  //   ]
+  // }
+
+  return {
+    components: [lineBuilder({
+      data: data,
+      className: "connector-end connector-arrow",
+      classID: "connector-end"
+    })]
+  };
+};
+
+var connectorDot = function (_ref) {
+  var line$$1 = _ref.line,
+      _ref$scale = _ref.scale,
+      scale = _ref$scale === undefined ? 1 : _ref$scale;
+  var dot = arcBuilder({
+    className: "connector-end connector-dot",
+    classID: "connector-end",
+    data: {
+      radius: 3 * Math.sqrt(scale)
+    }
+  });
+  dot.attrs.transform = "translate(" + line$$1.data[0][0] + ", " + line$$1.data[0][1] + ")";
+  return {
+    components: [dot]
+  };
+};
+
+var subjectCircle = function (_ref) {
+  var subjectData = _ref.subjectData,
+      type = _ref.type;
+
+  if (!subjectData.radius && !subjectData.outerRadius) {
+    subjectData.radius = 20;
+  }
+
+  var handles = [];
+  var c = arcBuilder({
+    data: subjectData,
+    className: "subject"
+  });
+
+  if (type.editMode) {
+    var h = circleHandles({
+      r1: c.data.outerRadius || c.data.radius,
+      r2: c.data.innerRadius,
+      padding: subjectData.radiusPadding
+    });
+
+    var updateRadius = function updateRadius(attr) {
+      var r = subjectData[attr] + _d3Selection.event.dx * Math.sqrt(2);
+      subjectData[attr] = r;
+      type.redrawSubject();
+      type.redrawConnector();
+    };
+
+    var cHandles = [_extends({}, h.r1, {
+      drag: updateRadius.bind(type, subjectData.outerRadius !== undefined ? "outerRadius" : "radius")
+    })];
+
+    if (subjectData.innerRadius) {
+      cHandles.push(_extends({}, h.r2, {
+        drag: updateRadius.bind(type, "innerRadius")
+      }));
+    }
+
+    handles = type.mapHandles(cHandles);
+  }
+
+  c.attrs["fill-opacity"] = 0;
+  return {
+    components: [c],
+    handles: handles
+  };
+};
+
+var subjectRect = function (_ref) {
+  var subjectData = _ref.subjectData,
+      type = _ref.type;
+
+  if (!subjectData.width) {
+    subjectData.width = 100;
+  }
+
+  if (!subjectData.height) {
+    subjectData.height = 100;
+  }
+
+  var handles = [];
+  var width = subjectData.width,
+      height = subjectData.height;
+  var data = [[0, 0], [width, 0], [width, height], [0, height], [0, 0]];
+  var rect = lineBuilder({
+    data: data,
+    className: "subject"
+  });
+
+  if (type.editMode) {
+    var updateWidth = function updateWidth() {
+      subjectData.width = _d3Selection.event.x;
+      type.redrawSubject();
+      type.redrawConnector();
+    };
+
+    var updateHeight = function updateHeight() {
+      subjectData.height = _d3Selection.event.y;
+      type.redrawSubject();
+      type.redrawConnector();
+    };
+
+    var rHandles = [{
+      x: width,
+      y: height / 2,
+      drag: updateWidth.bind(type)
+    }, {
+      x: width / 2,
+      y: height,
+      drag: updateHeight.bind(type)
+    }];
+    handles = type.mapHandles(rHandles);
+  }
+
+  rect.attrs["fill-opacity"] = 0.1;
+  return {
+    components: [rect],
+    handles: handles
+  };
+};
+
+var subjectThreshold = function (_ref) {
+  var subjectData = _ref.subjectData,
+      type = _ref.type;
+  var offset = type.annotation.position;
+  var x1 = (subjectData.x1 !== undefined ? subjectData.x1 : offset.x) - offset.x,
+      x2 = (subjectData.x2 !== undefined ? subjectData.x2 : offset.x) - offset.x,
+      y1 = (subjectData.y1 !== undefined ? subjectData.y1 : offset.y) - offset.y,
+      y2 = (subjectData.y2 !== undefined ? subjectData.y2 : offset.y) - offset.y;
+  var data = [[x1, y1], [x2, y2]];
+  return {
+    components: [lineBuilder({
+      data: data,
+      className: 'subject'
+    })]
+  };
+};
+
+var subjectBadge = function (_ref) {
+  var _ref$subjectData = _ref.subjectData,
+      subjectData = _ref$subjectData === undefined ? {} : _ref$subjectData,
+      _ref$type = _ref.type,
+      type = _ref$type === undefined ? {} : _ref$type;
+  var annotation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var typeSettings = type.typeSettings && type.typeSettings.subject;
+
+  if (!subjectData.radius) {
+    if (typeSettings && typeSettings.radius) {
+      subjectData.radius = typeSettings.radius;
+    } else {
+      subjectData.radius = 14;
+    }
+  }
+
+  if (!subjectData.x) {
+    if (typeSettings && typeSettings.x) {
+      subjectData.x = typeSettings.x;
+    }
+  }
+
+  if (!subjectData.y) {
+    if (typeSettings && typeSettings.y) {
+      subjectData.y = typeSettings.y;
+    }
+  }
+
+  var handles = [];
+  var components = [];
+  var radius = subjectData.radius;
+  var innerRadius = radius * 0.7;
+  var x = 0;
+  var y = 0;
+  var notCornerOffset = Math.sqrt(2) * radius;
+  var placement = {
+    xleftcorner: -radius,
+    xrightcorner: radius,
+    ytopcorner: -radius,
+    ybottomcorner: radius,
+    xleft: -notCornerOffset,
+    xright: notCornerOffset,
+    ytop: -notCornerOffset,
+    ybottom: notCornerOffset
+  };
+
+  if (subjectData.x && !subjectData.y) {
+    x = placement["x" + subjectData.x];
+  } else if (subjectData.y && !subjectData.x) {
+    y = placement["y" + subjectData.y];
+  } else if (subjectData.x && subjectData.y) {
+    x = placement["x" + subjectData.x + "corner"];
+    y = placement["y" + subjectData.y + "corner"];
+  }
+
+  var transform = "translate(" + x + ", " + y + ")";
+  var circlebg = arcBuilder({
+    className: "subject",
+    data: {
+      radius: radius
+    }
+  });
+  circlebg.attrs.transform = transform;
+  circlebg.attrs.fill = annotation.color;
+  circlebg.attrs["stroke-linecap"] = "round";
+  circlebg.attrs["stroke-width"] = "3px";
+  var circle = arcBuilder({
+    className: "subject-ring",
+    data: {
+      outerRadius: radius,
+      innerRadius: innerRadius
+    }
+  });
+  circle.attrs.transform = transform; // circle.attrs.fill = annotation.color
+
+  circle.attrs["stroke-width"] = "3px";
+  circle.attrs.fill = "white";
+  var pointer = void 0;
+
+  if (x && y || !x && !y) {
+    pointer = lineBuilder({
+      className: "subject-pointer",
+      data: [[0, 0], [x || 0, 0], [0, y || 0], [0, 0]]
+    });
+  } else if (x || y) {
+    var notCornerPointerXY = function notCornerPointerXY(v) {
+      var sign = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+      return v && v / Math.sqrt(2) / Math.sqrt(2) || sign * radius / Math.sqrt(2);
+    };
+
+    pointer = lineBuilder({
+      className: "subject-pointer",
+      data: [[0, 0], [notCornerPointerXY(x), notCornerPointerXY(y)], [notCornerPointerXY(x, -1), notCornerPointerXY(y, -1)], [0, 0]]
+    });
+  }
+
+  if (pointer) {
+    pointer.attrs.fill = annotation.color;
+    pointer.attrs["stroke-linecap"] = "round";
+    pointer.attrs["stroke-width"] = "3px";
+    components.push(pointer);
+  }
+
+  if (type.editMode) {
+    var dragBadge = function dragBadge() {
+      subjectData.x = _d3Selection.event.x < -radius * 2 ? "left" : _d3Selection.event.x > radius * 2 ? "right" : undefined;
+      subjectData.y = _d3Selection.event.y < -radius * 2 ? "top" : _d3Selection.event.y > radius * 2 ? "bottom" : undefined;
+      type.redrawSubject();
+    };
+
+    var bHandles = {
+      x: x * 2,
+      y: y * 2,
+      drag: dragBadge.bind(type)
+    };
+
+    if (!bHandles.x && !bHandles.y) {
+      bHandles.y = -radius;
+    }
+
+    handles = type.mapHandles([bHandles]);
+  }
+
+  var text = void 0;
+
+  if (subjectData.text) {
+    text = {
+      type: "text",
+      className: "badge-text",
+      attrs: {
+        fill: "white",
+        stroke: "none",
+        "font-size": ".7em",
+        text: subjectData.text,
+        "text-anchor": "middle",
+        dy: ".25em",
+        x: x,
+        y: y
+      }
+    };
+  }
+
+  components.push(circlebg);
+  components.push(circle);
+  components.push(text);
+  return {
+    components: components,
+    handles: handles
+  };
+}; //Note options
+//Connector options
+//Subject options
+
+
+var Type = function () {
+  function Type(_ref) {
+    var a = _ref.a,
+        annotation = _ref.annotation,
+        editMode = _ref.editMode,
+        dispatcher = _ref.dispatcher,
+        notePadding = _ref.notePadding,
+        accessors = _ref.accessors;
+    classCallCheck(this, Type);
+    this.a = a;
+    this.note = annotation.disable.indexOf("note") === -1 && a.select("g.annotation-note");
+    this.noteContent = this.note && a.select("g.annotation-note-content");
+    this.connector = annotation.disable.indexOf("connector") === -1 && a.select("g.annotation-connector");
+    this.subject = annotation.disable.indexOf("subject") === -1 && a.select("g.annotation-subject");
+    this.dispatcher = dispatcher;
+
+    if (dispatcher) {
+      var handler = addHandlers.bind(null, dispatcher, annotation);
+      handler({
+        component: this.note,
+        name: "note"
+      });
+      handler({
+        component: this.connector,
+        name: "connector"
+      });
+      handler({
+        component: this.subject,
+        name: "subject"
+      });
+    }
+
+    this.annotation = annotation;
+    this.editMode = annotation.editMode || editMode;
+    this.notePadding = notePadding !== undefined ? notePadding : 3;
+    this.offsetCornerX = 0;
+    this.offsetCornerY = 0;
+
+    if (accessors && annotation.data) {
+      this.init(accessors);
+    }
+  }
+
+  createClass(Type, [{
+    key: "init",
+    value: function init(accessors) {
+      if (!this.annotation.x) {
+        this.mapX(accessors);
+      }
+
+      if (!this.annotation.y) {
+        this.mapY(accessors);
+      }
+    }
+  }, {
+    key: "mapY",
+    value: function mapY(accessors) {
+      if (accessors.y) {
+        this.annotation.y = accessors.y(this.annotation.data);
+      }
+    }
+  }, {
+    key: "mapX",
+    value: function mapX(accessors) {
+      if (accessors.x) {
+        this.annotation.x = accessors.x(this.annotation.data);
+      }
+    }
+  }, {
+    key: "updateEditMode",
+    value: function updateEditMode() {
+      this.a.selectAll("circle.handle").remove();
+    }
+  }, {
+    key: "drawOnSVG",
+    value: function drawOnSVG(component, builders) {
+      var _this = this;
+
+      if (!Array.isArray(builders)) {
+        builders = [builders];
+      }
+
+      builders.filter(function (b) {
+        return b;
+      }).forEach(function (_ref2) {
+        var type = _ref2.type,
+            className = _ref2.className,
+            attrs = _ref2.attrs,
+            handles = _ref2.handles,
+            classID = _ref2.classID;
+
+        if (type === "handle") {
+          addHandles({
+            group: component,
+            r: attrs && attrs.r,
+            handles: handles
+          });
+        } else {
+          newWithClass(component, [_this.annotation], type, className, classID);
+          var el = component.select(type + "." + (classID || className));
+          var addAttrs = Object.keys(attrs);
+          var removeAttrs = [];
+          var currentAttrs = el.node().attributes;
+
+          for (var i = currentAttrs.length - 1; i >= 0; i--) {
+            var name = currentAttrs[i].name;
+            if (addAttrs.indexOf(name) === -1 && name !== "class") removeAttrs.push(name);
+          }
+
+          addAttrs.forEach(function (attr) {
+            if (attr === "text") {
+              el.text(attrs[attr]);
+            } else {
+              el.attr(attr, attrs[attr]);
+            }
+          });
+          removeAttrs.forEach(function (attr) {
+            return el.attr(attr, null);
+          });
+        }
+      });
+    } //TODO: how to extend this to a drawOnCanvas mode?
+
+  }, {
+    key: "getNoteBBox",
+    value: function getNoteBBox() {
+      return bboxWithoutHandles(this.note, ".annotation-note-content text");
+    }
+  }, {
+    key: "getNoteBBoxOffset",
+    value: function getNoteBBoxOffset() {
+      var bbox = bboxWithoutHandles(this.note, ".annotation-note-content");
+      var transform = this.noteContent.attr("transform").split(/\(|\,|\)/g);
+      bbox.offsetCornerX = parseFloat(transform[1]) + this.annotation.dx;
+      bbox.offsetCornerY = parseFloat(transform[2]) + this.annotation.dy;
+      bbox.offsetX = this.annotation.dx;
+      bbox.offsetY = this.annotation.dy;
+      return bbox;
+    }
+  }, {
+    key: "drawSubject",
+    value: function drawSubject() {
+      var _this2 = this;
+
+      var context = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var subjectData = this.annotation.subject;
+      var type = context.type;
+      var subjectParams = {
+        type: this,
+        subjectData: subjectData
+      };
+      var subject = {};
+      if (type === "circle") subject = subjectCircle(subjectParams);else if (type === "rect") subject = subjectRect(subjectParams);else if (type === "threshold") subject = subjectThreshold(subjectParams);else if (type === "badge") subject = subjectBadge(subjectParams, this.annotation);
+      var _subject = subject,
+          _subject$components = _subject.components,
+          components = _subject$components === undefined ? [] : _subject$components,
+          _subject$handles = _subject.handles,
+          handles = _subject$handles === undefined ? [] : _subject$handles;
+      components.forEach(function (c) {
+        if (c && c.attrs && !c.attrs.stroke) {
+          c.attrs.stroke = _this2.annotation.color;
+        }
+      });
+
+      if (this.editMode) {
+        handles = handles.concat(this.mapHandles([{
+          drag: this.dragSubject.bind(this)
+        }]));
+        components.push({
+          type: "handle",
+          handles: handles
+        });
+      }
+
+      return components;
+    }
+  }, {
+    key: "drawConnector",
+    value: function drawConnector() {
+      var _this3 = this;
+
+      var context = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var connectorData = this.annotation.connector;
+      var type = connectorData.type || context.type;
+      var connectorParams = {
+        type: this,
+        connectorData: connectorData
+      };
+      connectorParams.subjectType = this.typeSettings && this.typeSettings.subject && this.typeSettings.subject.type;
+      var connector = {};
+      if (type === "curve") connector = connectorCurve(connectorParams);else if (type === "elbow") connector = connectorElbow(connectorParams);else connector = connectorLine(connectorParams);
+      var _connector = connector,
+          _connector$components = _connector.components,
+          components = _connector$components === undefined ? [] : _connector$components,
+          _connector$handles = _connector.handles,
+          handles = _connector$handles === undefined ? [] : _connector$handles;
+      var line$$1 = components[0]; //TODO: genericize this into fill t/f stroke t/f
+
+      if (line$$1) {
+        line$$1.attrs.stroke = this.annotation.color;
+        line$$1.attrs.fill = "none";
+      }
+
+      var endType = connectorData.end || context.end;
+      var end = {};
+
+      if (endType === "arrow") {
+        var s = line$$1.data[1];
+        var e = line$$1.data[0];
+        var distance = Math.sqrt(Math.pow(s[0] - e[0], 2) + Math.pow(s[1] - e[1], 2));
+
+        if (distance < 5 && line$$1.data[2]) {
+          s = line$$1.data[2];
+        }
+
+        end = connectorArrow({
+          annotation: this.annotation,
+          start: s,
+          end: e,
+          scale: connectorData.endScale
+        });
+      } else if (endType === "dot") {
+        end = connectorDot({
+          line: line$$1,
+          scale: connectorData.endScale
+        });
+      } else if (!endType || endType === "none") {
+        this.connector && this.connector.select(".connector-end").remove();
+      }
+
+      if (end.components) {
+        end.components.forEach(function (c) {
+          c.attrs.fill = _this3.annotation.color;
+          c.attrs.stroke = _this3.annotation.color;
+        });
+        components = components.concat(end.components);
+      }
+
+      if (this.editMode) {
+        if (handles.length !== 0) components.push({
+          type: "handle",
+          handles: handles
+        });
+      }
+
+      return components;
+    }
+  }, {
+    key: "drawNote",
+    value: function drawNote() {
+      var _this4 = this;
+
+      var context = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var noteData = this.annotation.note;
+      var align = noteData.align || context.align || "dynamic";
+      var noteParams = {
+        bbox: context.bbox,
+        align: align,
+        offset: this.annotation.offset
+      };
+      var lineType = noteData.lineType || context.lineType;
+      var note = {};
+      if (lineType === "vertical") note = noteVertical(noteParams);else if (lineType === "horizontal") note = noteHorizontal(noteParams);
+      var _note = note,
+          _note$components = _note.components,
+          components = _note$components === undefined ? [] : _note$components,
+          _note$handles = _note.handles,
+          handles = _note$handles === undefined ? [] : _note$handles;
+      components.forEach(function (c) {
+        c.attrs.stroke = _this4.annotation.color;
+      });
+
+      if (this.editMode) {
+        handles = this.mapHandles([{
+          x: 0,
+          y: 0,
+          drag: this.dragNote.bind(this)
+        }]);
+        components.push({
+          type: "handle",
+          handles: handles
+        });
+        var dragging = this.dragNote.bind(this),
+            start = this.dragstarted.bind(this),
+            end = this.dragended.bind(this);
+        this.note.call((0, _d3Drag.drag)().container((0, _d3Selection.select)("g.annotations").node()).on("start", function (d) {
+          return start(d);
+        }).on("drag", function (d) {
+          return dragging(d);
+        }).on("end", function (d) {
+          return end(d);
+        }));
+      } else {
+        this.note.on("mousedown.drag", null);
+      }
+
+      return components;
+    }
+  }, {
+    key: "drawNoteContent",
+    value: function drawNoteContent(context) {
+      var noteData = this.annotation.note;
+      var padding = noteData.padding !== undefined ? noteData.padding : this.notePadding;
+      var orientation = noteData.orientation || context.orientation || "topBottom";
+      var lineType = noteData.lineType || context.lineType;
+      var align = noteData.align || context.align || "dynamic";
+      if (lineType === "vertical") orientation = "leftRight";else if (lineType === "horizontal") orientation = "topBottom";
+      var noteParams = {
+        padding: padding,
+        bbox: context.bbox,
+        offset: this.annotation.offset,
+        orientation: orientation,
+        align: align
+      };
+
+      var _noteAlignment = noteAlignment(noteParams),
+          x = _noteAlignment.x,
+          y = _noteAlignment.y;
+
+      this.offsetCornerX = x + this.annotation.dx;
+      this.offsetCornerY = y + this.annotation.dy;
+      this.note && this.noteContent.attr("transform", "translate(" + x + ", " + y + ")");
+      return [];
+    }
+  }, {
+    key: "drawOnScreen",
+    value: function drawOnScreen(component, drawFunction) {
+      return this.drawOnSVG(component, drawFunction);
+    }
+  }, {
+    key: "redrawSubject",
+    value: function redrawSubject() {
+      this.subject && this.drawOnScreen(this.subject, this.drawSubject());
+    }
+  }, {
+    key: "redrawConnector",
+    value: function redrawConnector() {
+      this.connector && this.drawOnScreen(this.connector, this.drawConnector());
+    }
+  }, {
+    key: "redrawNote",
+    value: function redrawNote() {
+      var bbox = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.getNoteBBox();
+      this.noteContent && this.drawOnScreen(this.noteContent, this.drawNoteContent({
+        bbox: bbox
+      }));
+      this.note && this.drawOnScreen(this.note, this.drawNote({
+        bbox: bbox
+      }));
+    }
+  }, {
+    key: "setPosition",
+    value: function setPosition() {
+      var position = this.annotation.position;
+      this.a.attr("transform", "translate(" + position.x + ", " + position.y + ")");
+    }
+  }, {
+    key: "clearComponents",
+    value: function clearComponents() {
+      this.subject && this.subject.select("*").remove();
+      this.connector && this.connector.select("*").remove(); // this.note && this.note.select("*").remove()
+    }
+  }, {
+    key: "setOffset",
+    value: function setOffset() {
+      if (this.note) {
+        var offset = this.annotation.offset;
+        this.note.attr("transform", "translate(" + offset.x + ", " + offset.y + ")");
+      }
+    }
+  }, {
+    key: "setPositionWithAccessors",
+    value: function setPositionWithAccessors(accessors) {
+      if (accessors && this.annotation.data) {
+        this.mapX(accessors);
+        this.mapY(accessors);
+      }
+
+      this.setPosition();
+    }
+  }, {
+    key: "setClassName",
+    value: function setClassName() {
+      this.a.attr("class", "annotation " + (this.className && this.className()) + " " + (this.editMode ? "editable" : "") + " " + (this.annotation.className || ""));
+    }
+  }, {
+    key: "draw",
+    value: function draw() {
+      this.setClassName();
+      this.setPosition();
+      this.setOffset();
+      this.redrawSubject();
+      this.redrawConnector();
+      this.redrawNote();
+    }
+  }, {
+    key: "dragstarted",
+    value: function dragstarted() {
+      _d3Selection.event.sourceEvent.stopPropagation();
+
+      this.dispatcher && this.dispatcher.call("dragstart", this.a, this.annotation);
+      this.a.classed("dragging", true);
+      this.a.selectAll("circle.handle").style("pointer-events", "none");
+    }
+  }, {
+    key: "dragended",
+    value: function dragended() {
+      this.dispatcher && this.dispatcher.call("dragend", this.a, this.annotation);
+      this.a.classed("dragging", false);
+      this.a.selectAll("circle.handle").style("pointer-events", "all");
+    }
+  }, {
+    key: "dragSubject",
+    value: function dragSubject() {
+      var position = this.annotation.position;
+      position.x += _d3Selection.event.dx;
+      position.y += _d3Selection.event.dy;
+      this.annotation.position = position;
+    }
+  }, {
+    key: "dragNote",
+    value: function dragNote() {
+      var offset = this.annotation.offset;
+      offset.x += _d3Selection.event.dx;
+      offset.y += _d3Selection.event.dy;
+      this.annotation.offset = offset;
+    }
+  }, {
+    key: "mapHandles",
+    value: function mapHandles(handles) {
+      var _this5 = this;
+
+      return handles.map(function (h) {
+        return _extends({}, h, {
+          start: _this5.dragstarted.bind(_this5),
+          end: _this5.dragended.bind(_this5)
+        });
+      });
+    }
+  }]);
+  return Type;
+}();
+
+exports.annotationTypeBase = Type;
+
+var customType = function customType(initialType, typeSettings, _init) {
+  return function (_initialType) {
+    inherits(customType, _initialType);
+
+    function customType(settings) {
+      classCallCheck(this, customType);
+
+      var _this6 = possibleConstructorReturn(this, (customType.__proto__ || Object.getPrototypeOf(customType)).call(this, settings));
+
+      _this6.typeSettings = typeSettings;
+
+      if (typeSettings.disable) {
+        typeSettings.disable.forEach(function (d) {
+          _this6[d] && _this6[d].remove();
+          _this6[d] = undefined;
+
+          if (d === "note") {
+            _this6.noteContent = undefined;
+          }
+        });
+      }
+
+      return _this6;
+    }
+
+    createClass(customType, [{
+      key: "className",
+      value: function className() {
+        return "" + (typeSettings.className || get(customType.prototype.__proto__ || Object.getPrototypeOf(customType.prototype), "className", this) && get(customType.prototype.__proto__ || Object.getPrototypeOf(customType.prototype), "className", this).call(this) || "");
+      }
+    }, {
+      key: "drawSubject",
+      value: function drawSubject(context) {
+        this.typeSettings.subject = _extends({}, typeSettings.subject, this.typeSettings.subject);
+        return get(customType.prototype.__proto__ || Object.getPrototypeOf(customType.prototype), "drawSubject", this).call(this, _extends({}, context, this.typeSettings.subject));
+      }
+    }, {
+      key: "drawConnector",
+      value: function drawConnector(context) {
+        this.typeSettings.connector = _extends({}, typeSettings.connector, this.typeSettings.connector);
+        return get(customType.prototype.__proto__ || Object.getPrototypeOf(customType.prototype), "drawConnector", this).call(this, _extends({}, context, typeSettings.connector, this.typeSettings.connector));
+      }
+    }, {
+      key: "drawNote",
+      value: function drawNote(context) {
+        this.typeSettings.note = _extends({}, typeSettings.note, this.typeSettings.note);
+        return get(customType.prototype.__proto__ || Object.getPrototypeOf(customType.prototype), "drawNote", this).call(this, _extends({}, context, typeSettings.note, this.typeSettings.note));
+      }
+    }, {
+      key: "drawNoteContent",
+      value: function drawNoteContent(context) {
+        return get(customType.prototype.__proto__ || Object.getPrototypeOf(customType.prototype), "drawNoteContent", this).call(this, _extends({}, context, typeSettings.note, this.typeSettings.note));
+      }
+    }], [{
+      key: "init",
+      value: function init(annotation, accessors) {
+        get(customType.__proto__ || Object.getPrototypeOf(customType), "init", this).call(this, annotation, accessors);
+
+        if (_init) {
+          annotation = _init(annotation, accessors);
+        }
+
+        return annotation;
+      }
+    }]);
+    return customType;
+  }(initialType);
+};
+
+exports.annotationCustomType = customType;
+
+var d3NoteText = function (_Type) {
+  inherits(d3NoteText, _Type);
+
+  function d3NoteText(params) {
+    classCallCheck(this, d3NoteText);
+
+    var _this7 = possibleConstructorReturn(this, (d3NoteText.__proto__ || Object.getPrototypeOf(d3NoteText)).call(this, params));
+
+    _this7.textWrap = params.textWrap || 120;
+
+    _this7.drawText();
+
+    return _this7;
+  }
+
+  createClass(d3NoteText, [{
+    key: "updateTextWrap",
+    value: function updateTextWrap(textWrap) {
+      this.textWrap = textWrap;
+      this.drawText();
+    } //TODO: add update text functionality
+
+  }, {
+    key: "drawText",
+    value: function drawText() {
+      if (this.note) {
+        newWithClass(this.note, [this.annotation], "g", "annotation-note-content");
+        var noteContent = this.note.select("g.annotation-note-content");
+        newWithClass(noteContent, [this.annotation], "rect", "annotation-note-bg");
+        newWithClass(noteContent, [this.annotation], "text", "annotation-note-label");
+        newWithClass(noteContent, [this.annotation], "text", "annotation-note-title");
+        var titleBBox = {
+          height: 0
+        };
+        var label = this.a.select("text.annotation-note-label");
+        var wrapLength = this.annotation.note && this.annotation.note.wrap || this.typeSettings && this.typeSettings.note && this.typeSettings.note.wrap || this.textWrap;
+        var wrapSplitter = this.annotation.note && this.annotation.note.wrapSplitter || this.typeSettings && this.typeSettings.note && this.typeSettings.note.wrapSplitter;
+        var bgPadding = this.annotation.note && this.annotation.note.bgPadding || this.typeSettings && this.typeSettings.note && this.typeSettings.note.bgPadding;
+        var bgPaddingFinal = {
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0
+        };
+
+        if (typeof bgPadding === "number") {
+          bgPaddingFinal = {
+            top: bgPadding,
+            bottom: bgPadding,
+            left: bgPadding,
+            right: bgPadding
+          };
+        } else if (bgPadding && (typeof bgPadding === "undefined" ? "undefined" : _typeof(bgPadding)) === "object") {
+          bgPaddingFinal = _extends(bgPaddingFinal, bgPadding);
+        }
+
+        if (this.annotation.note.title) {
+          var title = this.a.select("text.annotation-note-title");
+          title.text(this.annotation.note.title);
+          title.attr("fill", this.annotation.color);
+          title.attr("font-weight", "bold");
+          title.call(wrap, wrapLength, wrapSplitter);
+          titleBBox = title.node().getBBox();
+        }
+
+        label.text(this.annotation.note.label).attr("dx", "0");
+        label.call(wrap, wrapLength, wrapSplitter);
+        label.attr("y", titleBBox.height * 1.1 || 0);
+        label.attr("fill", this.annotation.color);
+        var bbox = this.getNoteBBox();
+        this.a.select("rect.annotation-note-bg").attr("width", bbox.width + bgPaddingFinal.left + bgPaddingFinal.right).attr("height", bbox.height + bgPaddingFinal.top + bgPaddingFinal.bottom).attr("x", bbox.x - bgPaddingFinal.left).attr("y", -bgPaddingFinal.top).attr("fill", "white").attr("fill-opacity", 0);
+      }
+    }
+  }]);
+  return d3NoteText;
+}(Type);
+
+var d3Label = customType(d3NoteText, {
+  className: "label",
+  note: {
+    align: "middle"
+  }
+});
+exports.annotationLabel = d3Label;
+var d3Callout = customType(d3NoteText, {
+  className: "callout",
+  note: {
+    lineType: "horizontal"
+  }
+});
+exports.annotationCallout = d3Callout;
+var d3CalloutElbow = customType(d3Callout, {
+  className: "callout elbow",
+  connector: {
+    type: "elbow"
+  }
+});
+exports.annotationCalloutElbow = d3CalloutElbow;
+var d3CalloutCurve = customType(d3Callout, {
+  className: "callout curve",
+  connector: {
+    type: "curve"
+  }
+});
+exports.annotationCalloutCurve = d3CalloutCurve;
+var d3Badge = customType(Type, {
+  className: "badge",
+  subject: {
+    type: "badge"
+  },
+  disable: ["connector", "note"]
+});
+exports.annotationBadge = d3Badge;
+var d3CalloutCircle = customType(d3NoteText, {
+  className: "callout circle",
+  subject: {
+    type: "circle"
+  },
+  note: {
+    lineType: "horizontal"
+  },
+  connector: {
+    type: "elbow"
+  }
+});
+exports.annotationCalloutCircle = d3CalloutCircle;
+var d3CalloutRect = customType(d3NoteText, {
+  className: "callout rect",
+  subject: {
+    type: "rect"
+  },
+  note: {
+    lineType: "horizontal"
+  },
+  connector: {
+    type: "elbow"
+  }
+});
+exports.annotationCalloutRect = d3CalloutRect;
+
+var ThresholdMap = function (_d3Callout) {
+  inherits(ThresholdMap, _d3Callout);
+
+  function ThresholdMap() {
+    classCallCheck(this, ThresholdMap);
+    return possibleConstructorReturn(this, (ThresholdMap.__proto__ || Object.getPrototypeOf(ThresholdMap)).apply(this, arguments));
+  }
+
+  createClass(ThresholdMap, [{
+    key: "mapY",
+    value: function mapY(accessors) {
+      get(ThresholdMap.prototype.__proto__ || Object.getPrototypeOf(ThresholdMap.prototype), "mapY", this).call(this, accessors);
+      var a = this.annotation;
+
+      if ((a.subject.x1 || a.subject.x2) && a.data && accessors.y) {
+        a.y = accessors.y(a.data);
+      }
+
+      if ((a.subject.x1 || a.subject.x2) && !a.x) {
+        a.x = a.subject.x1 || a.subject.x2;
+      }
+    }
+  }, {
+    key: "mapX",
+    value: function mapX(accessors) {
+      get(ThresholdMap.prototype.__proto__ || Object.getPrototypeOf(ThresholdMap.prototype), "mapX", this).call(this, accessors);
+      var a = this.annotation;
+
+      if ((a.subject.y1 || a.subject.y2) && a.data && accessors.x) {
+        a.x = accessors.x(a.data);
+      }
+
+      if ((a.subject.y1 || a.subject.y2) && !a.y) {
+        a.y = a.subject.y1 || a.subject.y2;
+      }
+    }
+  }]);
+  return ThresholdMap;
+}(d3Callout);
+
+var d3XYThreshold = customType(ThresholdMap, {
+  className: "callout xythreshold",
+  subject: {
+    type: "threshold"
+  }
+});
+exports.annotationXYThreshold = d3XYThreshold;
+
+var newWithClass = function newWithClass(a, d, type, className, classID) {
+  var group = a.selectAll(type + "." + (classID || className)).data(d);
+  group.enter().append(type).merge(group).attr("class", className);
+  group.exit().remove();
+  return a;
+};
+
+var addHandlers = function addHandlers(dispatcher, annotation, _ref3) {
+  var component = _ref3.component,
+      name = _ref3.name;
+
+  if (component) {
+    component.on("mouseover.annotations", function () {
+      dispatcher.call(name + "over", component, annotation);
+    }).on("mouseout.annotations", function () {
+      return dispatcher.call(name + "out", component, annotation);
+    }).on("click.annotations", function () {
+      return dispatcher.call(name + "click", component, annotation);
+    });
+  }
+}; //Text wrapping code adapted from Mike Bostock
+
+
+var wrap = function wrap(text, width, wrapSplitter) {
+  var lineHeight = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 1.2;
+  text.each(function () {
+    var text = (0, _d3Selection.select)(this),
+        words = text.text().split(wrapSplitter || /[ \t\r\n]+/).reverse().filter(function (w) {
+      return w !== "";
+    });
+    var word = void 0,
+        line$$1 = [],
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("dy", 0.8 + "em");
+
+    while (word = words.pop()) {
+      line$$1.push(word);
+      tspan.text(line$$1.join(" "));
+
+      if (tspan.node().getComputedTextLength() > width && line$$1.length > 1) {
+        line$$1.pop();
+        tspan.text(line$$1.join(" "));
+        line$$1 = [word];
+        tspan = text.append("tspan").attr("x", 0).attr("dy", lineHeight + "em").text(word);
+      }
+    }
+  });
+};
+
+var bboxWithoutHandles = function bboxWithoutHandles(selection) {
+  var selector = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ":not(.handle)";
+
+  if (!selection) {
+    return {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    };
+  }
+
+  return selection.selectAll(selector).nodes().reduce(function (p, c) {
+    var bbox = c.getBBox();
+    p.x = Math.min(p.x, bbox.x);
+    p.y = Math.min(p.y, bbox.y);
+    p.width = Math.max(p.width, bbox.width);
+    var yOffset = c && c.attributes && c.attributes.y;
+    p.height = Math.max(p.height, (yOffset && parseFloat(yOffset.value) || 0) + bbox.height);
+    return p;
+  }, {
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0
+  });
+};
+
+function annotation() {
+  var annotations = [],
+      collection = void 0,
+      context = void 0,
+      //TODO: add canvas functionality
+  disable = [],
+      accessors = {},
+      accessorsInverse = {},
+      editMode = false,
+      ids = void 0,
+      type = d3Callout,
+      textWrap = void 0,
+      notePadding = void 0,
+      annotationDispatcher = (0, _d3Dispatch.dispatch)("subjectover", "subjectout", "subjectclick", "connectorover", "connectorout", "connectorclick", "noteover", "noteout", "noteclick", "dragend", "dragstart"),
+      sel = void 0;
+
+  var annotation = function annotation(selection) {
+    sel = selection; //TODO: check to see if this is still needed
+
+    if (!editMode) {
+      selection.selectAll("circle.handle").remove();
+    }
+
+    var translatedAnnotations = annotations.map(function (a) {
+      if (!a.type) {
+        a.type = type;
+      }
+
+      if (!a.disable) {
+        a.disable = disable;
+      }
+
+      return new Annotation(a);
+    });
+    collection = collection || new AnnotationCollection({
+      annotations: translatedAnnotations,
+      accessors: accessors,
+      accessorsInverse: accessorsInverse,
+      ids: ids
+    });
+    var annotationG = selection.selectAll("g").data([collection]);
+    annotationG.enter().append("g").attr("class", "annotations");
+    var group = selection.select("g.annotations");
+    newWithClass(group, collection.annotations, "g", "annotation");
+    var annotation = group.selectAll("g.annotation");
+    annotation.each(function (d) {
+      var a = (0, _d3Selection.select)(this);
+      a.attr("class", "annotation");
+      newWithClass(a, [d], "g", "annotation-connector");
+      newWithClass(a, [d], "g", "annotation-subject");
+      newWithClass(a, [d], "g", "annotation-note");
+      newWithClass(a.select("g.annotation-note"), [d], "g", "annotation-note-content");
+      d.type = d.type.toString() === "[object Object]" ? d.type : new d.type({
+        a: a,
+        annotation: d,
+        textWrap: textWrap,
+        notePadding: notePadding,
+        editMode: editMode,
+        dispatcher: annotationDispatcher,
+        accessors: accessors
+      });
+      d.type.draw();
+      d.type.drawText && d.type.drawText();
+    });
+  };
+
+  annotation.json = function () {
+    /* eslint-disable no-console */
+    console.log("Annotations JSON was copied to your clipboard. Please note the annotation type is not JSON compatible. It appears in the objects array in the console, but not in the copied JSON.", collection.json);
+    /* eslint-enable no-console */
+
+    window.copy(JSON.stringify(collection.json.map(function (a) {
+      delete a.type;
+      return a;
+    })));
+    return annotation;
+  };
+
+  annotation.update = function () {
+    if (annotations && collection) {
+      annotations = collection.annotations.map(function (a) {
+        a.type.draw();
+        return a;
+      });
+    }
+
+    return annotation;
+  };
+
+  annotation.updateText = function () {
+    if (collection) {
+      collection.updateText(textWrap);
+      annotations = collection.annotations;
+    }
+
+    return annotation;
+  };
+
+  annotation.updatedAccessors = function () {
+    collection.setPositionWithAccessors();
+    annotations = collection.annotations;
+    return annotation;
+  };
+
+  annotation.disable = function (_) {
+    if (!arguments.length) return disable;
+    disable = _;
+
+    if (collection) {
+      collection.updateDisable(disable);
+      annotations = collection.annotations;
+    }
+
+    return annotation;
+  };
+
+  annotation.textWrap = function (_) {
+    if (!arguments.length) return textWrap;
+    textWrap = _;
+
+    if (collection) {
+      collection.updateTextWrap(textWrap);
+      annotations = collection.annotations;
+    }
+
+    return annotation;
+  };
+
+  annotation.notePadding = function (_) {
+    if (!arguments.length) return notePadding;
+    notePadding = _;
+
+    if (collection) {
+      collection.updateNotePadding(notePadding);
+      annotations = collection.annotations;
+    }
+
+    return annotation;
+  }; //todo think of how to handle when undefined is sent
+
+
+  annotation.type = function (_, settings) {
+    if (!arguments.length) return type;
+    type = _;
+
+    if (collection) {
+      collection.annotations.map(function (a) {
+        a.type.note && a.type.note.selectAll("*:not(.annotation-note-content)").remove();
+        a.type.noteContent && a.type.noteContent.selectAll("*").remove();
+        a.type.subject && a.type.subject.selectAll("*").remove();
+        a.type.connector && a.type.connector.selectAll("*").remove();
+        a.type.typeSettings = {};
+        a.type = type;
+        a.subject = settings && settings.subject || a.subject;
+        a.connector = settings && settings.connector || a.connector;
+        a.note = settings && settings.note || a.note;
+      });
+      annotations = collection.annotations;
+    }
+
+    return annotation;
+  };
+
+  annotation.annotations = function (_) {
+    if (!arguments.length) return collection && collection.annotations || annotations;
+    annotations = _;
+
+    if (collection && collection.annotations) {
+      var rerun = annotations.some(function (d) {
+        return !d.type || d.type.toString() !== "[object Object]";
+      });
+
+      if (rerun) {
+        collection = null;
+        annotation(sel);
+      } else {
+        collection.annotations = annotations;
+      }
+    }
+
+    return annotation;
+  };
+
+  annotation.context = function (_) {
+    if (!arguments.length) return context;
+    context = _;
+    return annotation;
+  };
+
+  annotation.accessors = function (_) {
+    if (!arguments.length) return accessors;
+    accessors = _;
+    return annotation;
+  };
+
+  annotation.accessorsInverse = function (_) {
+    if (!arguments.length) return accessorsInverse;
+    accessorsInverse = _;
+    return annotation;
+  };
+
+  annotation.ids = function (_) {
+    if (!arguments.length) return ids;
+    ids = _;
+    return annotation;
+  };
+
+  annotation.editMode = function (_) {
+    if (!arguments.length) return editMode;
+    editMode = _;
+
+    if (sel) {
+      sel.selectAll("g.annotation").classed("editable", editMode);
+    }
+
+    if (collection) {
+      collection.editMode(editMode);
+      annotations = collection.annotations;
+    }
+
+    return annotation;
+  };
+
+  annotation.collection = function (_) {
+    if (!arguments.length) return collection;
+    collection = _;
+    return annotation;
+  };
+
+  annotation.on = function () {
+    var value = annotationDispatcher.on.apply(annotationDispatcher, arguments);
+    return value === annotationDispatcher ? annotation : value;
+  };
+
+  return annotation;
+}
+
+var index = {
+  annotation: annotation,
+  annotationTypeBase: Type,
+  annotationLabel: d3Label,
+  annotationCallout: d3Callout,
+  annotationCalloutCurve: d3CalloutCurve,
+  annotationCalloutElbow: d3CalloutElbow,
+  annotationCalloutCircle: d3CalloutCircle,
+  annotationCalloutRect: d3CalloutRect,
+  annotationXYThreshold: d3XYThreshold,
+  annotationBadge: d3Badge,
+  annotationCustomType: customType
+};
+var _default = index;
+exports.default = _default;
+},{"d3-selection":"../node_modules/d3-svg-annotation/node_modules/d3-selection/src/index.js","d3-drag":"../node_modules/d3-svg-annotation/node_modules/d3-drag/src/index.js","d3-shape":"../node_modules/d3-svg-annotation/node_modules/d3-shape/index.js","d3-dispatch":"../node_modules/d3-svg-annotation/node_modules/d3-dispatch/index.js"}],"scripts/scales.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.setXScale = setXScale;
+exports.setYScale = setYScale;
+
+/**
+ * Defines the log scale used to position the center of the circles in X.
+ *
+ * @param {number} width The width of the graph
+ * @param {object} data The data to be used
+ * @returns {*} The linear scale in X
+ */
+function setXScale(width, data) {
+  // TODO : Set scale
+  // const dates = []
+  // data.map(d => dates.push(d.date))
+  var xScale = d3.scaleTime().domain(d3.extent(data, function (d) {
+    return d.date;
+  })).range([0, width]);
+  return xScale;
+}
+/**
+ * Defines the log scale used to position the center of the circles in Y.
+ *
+ * @param {number} height The height of the graph
+ * @param {object} data The data to be used
+ * @returns {*} The linear scale in Y
+ */
+
+
+function setYScale(height, data) {
+  // TODO : Set scale
+  var max = d3.max(data, function (d) {
+    return d.nombre;
+  });
+  var yScale = d3.scaleLinear().domain([0, max]).range([height, 0]);
+  return yScale;
+}
+},{}],"scripts/lineChartViz.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.doubleLineChart = doubleLineChart;
+exports.drawAnnotationsViz = drawAnnotationsViz;
+exports.drawLine = drawLine;
+exports.positionLabels = positionLabels;
+exports.setTitleText = setTitleText;
+exports.singleLineChart = singleLineChart;
+
+var d3Annotation = _interopRequireWildcard(require("d3-svg-annotation"));
+
+var scales = _interopRequireWildcard(require("./scales"));
+
+var helper = _interopRequireWildcard(require("./helper"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+/**
+ * @param pathToCsv
+ * @param g
+ * @param xScale
+ * @param yScale
+ * @param graphSize
+ * @param margin
+ * @param title
+ * @param color
+ * @param color1
+ * @param color2
+ * @param annotations
+ */
+function doubleLineChart(pathToCsv, g, xScale, yScale, graphSize, margin, title, color1, color2) {
+  var annotations = arguments.length > 9 && arguments[9] !== undefined ? arguments[9] : [];
+  helper.appendAxes(g);
+  helper.appendGraphLabels(g);
+  helper.placeTitle(g);
+  var camion = [];
+  var autre = [];
+  positionLabels(g, graphSize.width, graphSize.height); // BAD POUR LA MEMOIRE...
+
+  d3.csv(pathToCsv).then(function (data) {
+    data = data.map(function (d) {
+      return {
+        type: d.Types,
+        date: d3.timeParse('%Y-%m-%d')(d.Date),
+        nombre: +d.Nombres
+      };
+    });
+    camion = data.filter(function (d) {
+      return d.type === 'CAMION';
+    });
+    autre = data.filter(function (d) {
+      return d.type !== 'CAMION';
+    });
+    xScale = scales.setXScale(graphSize.width, data);
+    yScale = scales.setYScale(graphSize.height, data);
+    helper.drawXAxis(g, xScale, graphSize.height);
+    helper.drawYAxis(g, yScale);
+    drawLine(g, camion, color1, xScale, yScale);
+    drawLine(g, autre, color2, xScale, yScale);
+
+    if (annotations.length > 0) {
+      drawAnnotationsViz(g, xScale, yScale, annotations);
+    }
+
+    setTitleText(g, title);
+  });
+}
+/**
+ * @param pathToCsv
+ * @param g
+ * @param xScale
+ * @param yScale
+ * @param graphSize
+ * @param margin
+ * @param title
+ * @param color
+ * @param annotateViz : string be 'viz1' or 'viz3'
+ */
+
+
+function singleLineChart(pathToCsv, g, xScale, yScale, graphSize, margin, title, color) {
+  var annotateViz = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : '';
+  helper.appendAxes(g);
+  helper.appendGraphLabels(g);
+  helper.placeTitle(g);
+  positionLabels(g, graphSize.width, graphSize.height);
+  d3.csv(pathToCsv).then(function (data) {
+    data = data.map(function (d) {
+      return {
+        date: d3.timeParse('%Y-%m-%d')(d.Date),
+        nombre: +d.Nombres
+      };
+    });
+    xScale = scales.setXScale(graphSize.width, data);
+    yScale = scales.setYScale(graphSize.height, data);
+    helper.drawXAxis(g, xScale, graphSize.height);
+    helper.drawYAxis(g, yScale);
+    drawLine(g, data, color, xScale, yScale);
+
+    if (d3Annotation.annotation !== '') {
+      var _annotation = getAnnotation(xScale, yScale, margin, graphSize, annotateViz);
+
+      drawAnnotationsViz(g, xScale, yScale, _annotation);
+    }
+
+    setTitleText(g, title);
+  });
+}
+/**
+ * @param xScale
+ * @param yScale
+ * @param margin
+ * @param graphSize
+ * @param viz : string can be 'viz1' or 'viz3'
+ */
+
+
+function getAnnotation(xScale, yScale, margin, graphSize, viz) {
+  var annotation = [];
+
+  switch (viz) {
+    case 'viz1':
+      annotation = [{
+        note: {
+          label: 'Vision Zéro'
+        },
+        subject: {
+          y1: margin.top,
+          y2: graphSize.height - margin.bottom
+        },
+        y: margin.top,
+        data: {
+          x: '2016-01-01'
+        } // position the x based on an x scale
+
+      }, {
+        note: {
+          label: 'Début couvre-feu'
+        },
+        subject: {
+          y1: margin.top,
+          y2: graphSize.height - margin.bottom
+        },
+        y: margin.top,
+        data: {
+          x: '2020-03-14'
+        }
+      }];
+      break;
+
+    case 'viz3':
+      annotation = [{
+        note: {
+          title: 'Tendance à la hausse'
+        },
+        connector: {
+          end: 'arrow' // Can be none, or arrow or dot
+
+        },
+        subject: {
+          height: graphSize.height - margin.top - margin.bottom,
+          width: xScale(new Date('2020-03-14')) - xScale(new Date('2016-01-01'))
+        },
+        type: d3Annotation.annotationCalloutRect,
+        x: xScale(new Date('01-01-2016')),
+        y: margin.top,
+        disable: ['connector'] // doesn't draw the connector
+
+      }];
+      break;
+  }
+
+  return annotation;
+}
+/**
+ * Positions the x axis label and y axis label.
+ *
+ * @param {*} g The d3 Selection of the graph's g SVG element
+ * @param {number} width The width of the graph
+ * @param {number} height The height of the graph
+ */
+
+
+function positionLabels(g, width, height) {
+  // TODO : Position axis labels
+  var labelDate = g.selectAll('.x.axis-text');
+  var labelAccident = g.selectAll('.y.axis-text');
+  labelDate.attr('x', width / 2);
+  labelDate.attr('y', height + 40);
+  labelAccident.attr('x', -40);
+  labelAccident.attr('y', height / 2);
+}
+/**
+ * Draws the circles on the graph.
+ *
+ * @param g
+ * @param {object} data The data to bind to
+ * @param {*} rScale The scale for the circles' radius
+ * @param {*} colorScale The scale for the circles' color
+ * @param color
+ * @param xScale
+ * @param yScale
+ */
+
+
+function drawLine(g, data, color, xScale, yScale) {
+  g.append('path').datum(data).attr('class', 'linePath').attr('fill', 'none').attr('stroke', color).attr('stroke-width', 1.5).attr('d', d3.line().x(function (d) {
+    return xScale(d.date);
+  }).y(function (d) {
+    return yScale(d.nombre);
+  }));
+}
+/**
+ * Draw vertical line to indicate an event in time
+ *
+ * @param date
+ * @param text
+ * @param g
+ * @param xScale
+ * @param yScale
+ * @param margin
+ * @param height
+ * @param annotations
+ */
+
+
+function drawAnnotationsViz(g, xScale, yScale, annotations) {
+  /* Code below relevant for annotations */
+  var type = d3Annotation.annotationCustomType(d3Annotation.annotationXYThreshold, {
+    note: {
+      lineType: 'none',
+      orientation: 'top',
+      align: 'middle'
+    }
+  });
+  var makeAnnotations = d3Annotation.annotation().type(type) // Gives you access to any data objects in the annotations array
+  .accessors({
+    x: function x(d) {
+      return xScale(new Date(d.x));
+    },
+    y: function y(d) {
+      return yScale(d.y);
+    }
+  }).annotations(annotations).textWrap(30);
+  g.append('g').attr('class', 'annotation-group').call(makeAnnotations);
+}
+/**
+ * Update the title of the graph.
+ *
+ * @param {number} year The currently displayed year
+ * @param g
+ * @param title
+ */
+
+
+function setTitleText(g, title) {
+  // TODO : Set the title
+  g.select('.title').text(title);
+} // /**
+//  * @param g
+//  * @param data
+//  * @param color
+//  * @param xScale
+//  * @param yScale
+//  * @param margin
+//  * @param height
+//  */
+// function build (g, data, color, xScale, yScale, margin, height) {
+//   console.log('building lineCharts')
+//   drawLine(g, data, color, xScale, yScale)
+//   drawAnnotationsViz1(g, xScale, yScale, margin, height)
+//   setTitleText()
+// }
+},{"d3-svg-annotation":"../node_modules/d3-svg-annotation/indexRollupNext.js","./scales":"scripts/scales.js","./helper":"scripts/helper.js"}],"../node_modules/d3-collection/src/map.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.prefix = exports.default = void 0;
+var prefix = "$";
+exports.prefix = prefix;
+
+function Map() {}
+
+Map.prototype = map.prototype = {
+  constructor: Map,
+  has: function (key) {
+    return prefix + key in this;
+  },
+  get: function (key) {
+    return this[prefix + key];
+  },
+  set: function (key, value) {
+    this[prefix + key] = value;
+    return this;
+  },
+  remove: function (key) {
+    var property = prefix + key;
+    return property in this && delete this[property];
+  },
+  clear: function () {
+    for (var property in this) if (property[0] === prefix) delete this[property];
+  },
+  keys: function () {
+    var keys = [];
+
+    for (var property in this) if (property[0] === prefix) keys.push(property.slice(1));
+
+    return keys;
+  },
+  values: function () {
+    var values = [];
+
+    for (var property in this) if (property[0] === prefix) values.push(this[property]);
+
+    return values;
+  },
+  entries: function () {
+    var entries = [];
+
+    for (var property in this) if (property[0] === prefix) entries.push({
+      key: property.slice(1),
+      value: this[property]
+    });
+
+    return entries;
+  },
+  size: function () {
+    var size = 0;
+
+    for (var property in this) if (property[0] === prefix) ++size;
+
+    return size;
+  },
+  empty: function () {
+    for (var property in this) if (property[0] === prefix) return false;
+
+    return true;
+  },
+  each: function (f) {
+    for (var property in this) if (property[0] === prefix) f(this[property], property.slice(1), this);
+  }
+};
+
+function map(object, f) {
+  var map = new Map(); // Copy constructor.
+
+  if (object instanceof Map) object.each(function (value, key) {
+    map.set(key, value);
+  }); // Index array by numeric index or specified key function.
+  else if (Array.isArray(object)) {
+    var i = -1,
+        n = object.length,
+        o;
+    if (f == null) while (++i < n) map.set(i, object[i]);else while (++i < n) map.set(f(o = object[i], i, object), o);
+  } // Convert object to map.
+  else if (object) for (var key in object) map.set(key, object[key]);
+  return map;
+}
+
+var _default = map;
+exports.default = _default;
+},{}],"../node_modules/d3-collection/src/nest.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _map = _interopRequireDefault(require("./map"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default() {
+  var keys = [],
+      sortKeys = [],
+      sortValues,
+      rollup,
+      nest;
+
+  function apply(array, depth, createResult, setResult) {
+    if (depth >= keys.length) {
+      if (sortValues != null) array.sort(sortValues);
+      return rollup != null ? rollup(array) : array;
+    }
+
+    var i = -1,
+        n = array.length,
+        key = keys[depth++],
+        keyValue,
+        value,
+        valuesByKey = (0, _map.default)(),
+        values,
+        result = createResult();
+
+    while (++i < n) {
+      if (values = valuesByKey.get(keyValue = key(value = array[i]) + "")) {
+        values.push(value);
+      } else {
+        valuesByKey.set(keyValue, [value]);
+      }
+    }
+
+    valuesByKey.each(function (values, key) {
+      setResult(result, key, apply(values, depth, createResult, setResult));
+    });
+    return result;
+  }
+
+  function entries(map, depth) {
+    if (++depth > keys.length) return map;
+    var array,
+        sortKey = sortKeys[depth - 1];
+    if (rollup != null && depth >= keys.length) array = map.entries();else array = [], map.each(function (v, k) {
+      array.push({
+        key: k,
+        values: entries(v, depth)
+      });
+    });
+    return sortKey != null ? array.sort(function (a, b) {
+      return sortKey(a.key, b.key);
+    }) : array;
+  }
+
+  return nest = {
+    object: function (array) {
+      return apply(array, 0, createObject, setObject);
+    },
+    map: function (array) {
+      return apply(array, 0, createMap, setMap);
+    },
+    entries: function (array) {
+      return entries(apply(array, 0, createMap, setMap), 0);
+    },
+    key: function (d) {
+      keys.push(d);
+      return nest;
+    },
+    sortKeys: function (order) {
+      sortKeys[keys.length - 1] = order;
+      return nest;
+    },
+    sortValues: function (order) {
+      sortValues = order;
+      return nest;
+    },
+    rollup: function (f) {
+      rollup = f;
+      return nest;
+    }
+  };
+}
+
+function createObject() {
+  return {};
+}
+
+function setObject(object, key, value) {
+  object[key] = value;
+}
+
+function createMap() {
+  return (0, _map.default)();
+}
+
+function setMap(map, key, value) {
+  map.set(key, value);
+}
+},{"./map":"../node_modules/d3-collection/src/map.js"}],"../node_modules/d3-collection/src/set.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _map = _interopRequireWildcard(require("./map"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function Set() {}
+
+var proto = _map.default.prototype;
+Set.prototype = set.prototype = {
+  constructor: Set,
+  has: proto.has,
+  add: function (value) {
+    value += "";
+    this[_map.prefix + value] = value;
+    return this;
+  },
+  remove: proto.remove,
+  clear: proto.clear,
+  values: proto.keys,
+  size: proto.size,
+  empty: proto.empty,
+  each: proto.each
+};
+
+function set(object, f) {
+  var set = new Set(); // Copy constructor.
+
+  if (object instanceof Set) object.each(function (value) {
+    set.add(value);
+  }); // Otherwise, assume it’s an array.
+  else if (object) {
+    var i = -1,
+        n = object.length;
+    if (f == null) while (++i < n) set.add(object[i]);else while (++i < n) set.add(f(object[i], i, object));
+  }
+  return set;
+}
+
+var _default = set;
+exports.default = _default;
+},{"./map":"../node_modules/d3-collection/src/map.js"}],"../node_modules/d3-collection/src/keys.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(map) {
+  var keys = [];
+
+  for (var key in map) keys.push(key);
+
+  return keys;
+}
+},{}],"../node_modules/d3-collection/src/values.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(map) {
+  var values = [];
+
+  for (var key in map) values.push(map[key]);
+
+  return values;
+}
+},{}],"../node_modules/d3-collection/src/entries.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(map) {
+  var entries = [];
+
+  for (var key in map) entries.push({
+    key: key,
+    value: map[key]
+  });
+
+  return entries;
+}
+},{}],"../node_modules/d3-collection/src/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "entries", {
+  enumerable: true,
+  get: function () {
+    return _entries.default;
+  }
+});
+Object.defineProperty(exports, "keys", {
+  enumerable: true,
+  get: function () {
+    return _keys.default;
+  }
+});
+Object.defineProperty(exports, "map", {
+  enumerable: true,
+  get: function () {
+    return _map.default;
+  }
+});
+Object.defineProperty(exports, "nest", {
+  enumerable: true,
+  get: function () {
+    return _nest.default;
+  }
+});
+Object.defineProperty(exports, "set", {
+  enumerable: true,
+  get: function () {
+    return _set.default;
+  }
+});
+Object.defineProperty(exports, "values", {
+  enumerable: true,
+  get: function () {
+    return _values.default;
+  }
+});
+
+var _nest = _interopRequireDefault(require("./nest"));
+
+var _set = _interopRequireDefault(require("./set"));
+
+var _map = _interopRequireDefault(require("./map"));
+
+var _keys = _interopRequireDefault(require("./keys"));
+
+var _values = _interopRequireDefault(require("./values"));
+
+var _entries = _interopRequireDefault(require("./entries"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+},{"./nest":"../node_modules/d3-collection/src/nest.js","./set":"../node_modules/d3-collection/src/set.js","./map":"../node_modules/d3-collection/src/map.js","./keys":"../node_modules/d3-collection/src/keys.js","./values":"../node_modules/d3-collection/src/values.js","./entries":"../node_modules/d3-collection/src/entries.js"}],"../node_modules/d3-selection/src/namespaces.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3341,350 +9972,598 @@ var _window = _interopRequireDefault(require("./window"));
 var _on = require("./selection/on");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./create":"../node_modules/d3-selection/src/create.js","./creator":"../node_modules/d3-selection/src/creator.js","./local":"../node_modules/d3-selection/src/local.js","./matcher":"../node_modules/d3-selection/src/matcher.js","./mouse":"../node_modules/d3-selection/src/mouse.js","./namespace":"../node_modules/d3-selection/src/namespace.js","./namespaces":"../node_modules/d3-selection/src/namespaces.js","./point":"../node_modules/d3-selection/src/point.js","./select":"../node_modules/d3-selection/src/select.js","./selectAll":"../node_modules/d3-selection/src/selectAll.js","./selection/index":"../node_modules/d3-selection/src/selection/index.js","./selector":"../node_modules/d3-selection/src/selector.js","./selectorAll":"../node_modules/d3-selection/src/selectorAll.js","./selection/style":"../node_modules/d3-selection/src/selection/style.js","./touch":"../node_modules/d3-selection/src/touch.js","./touches":"../node_modules/d3-selection/src/touches.js","./window":"../node_modules/d3-selection/src/window.js","./selection/on":"../node_modules/d3-selection/src/selection/on.js"}],"../node_modules/d3-drag/src/noevent.js":[function(require,module,exports) {
+},{"./create":"../node_modules/d3-selection/src/create.js","./creator":"../node_modules/d3-selection/src/creator.js","./local":"../node_modules/d3-selection/src/local.js","./matcher":"../node_modules/d3-selection/src/matcher.js","./mouse":"../node_modules/d3-selection/src/mouse.js","./namespace":"../node_modules/d3-selection/src/namespace.js","./namespaces":"../node_modules/d3-selection/src/namespaces.js","./point":"../node_modules/d3-selection/src/point.js","./select":"../node_modules/d3-selection/src/select.js","./selectAll":"../node_modules/d3-selection/src/selectAll.js","./selection/index":"../node_modules/d3-selection/src/selection/index.js","./selector":"../node_modules/d3-selection/src/selector.js","./selectorAll":"../node_modules/d3-selection/src/selectorAll.js","./selection/style":"../node_modules/d3-selection/src/selection/style.js","./touch":"../node_modules/d3-selection/src/touch.js","./touches":"../node_modules/d3-selection/src/touches.js","./window":"../node_modules/d3-selection/src/window.js","./selection/on":"../node_modules/d3-selection/src/selection/on.js"}],"../node_modules/d3-tip/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = _default;
-exports.nopropagation = nopropagation;
+
+var _d3Collection = require("d3-collection");
 
 var _d3Selection = require("d3-selection");
 
-function nopropagation() {
-  _d3Selection.event.stopImmediatePropagation();
-}
-
+/**
+ * d3.tip
+ * Copyright (c) 2013-2017 Justin Palmer
+ *
+ * Tooltips for d3.js SVG visualizations
+ */
+// eslint-disable-next-line no-extra-semi
+// Public - constructs a new tooltip
+//
+// Returns a tip
 function _default() {
-  _d3Selection.event.preventDefault();
+  var direction = d3TipDirection,
+      offset = d3TipOffset,
+      html = d3TipHTML,
+      rootElement = document.body,
+      node = initNode(),
+      svg = null,
+      point = null,
+      target = null;
 
-  _d3Selection.event.stopImmediatePropagation();
-}
-},{"d3-selection":"../node_modules/d3-selection/src/index.js"}],"../node_modules/d3-drag/src/nodrag.js":[function(require,module,exports) {
-"use strict";
+  function tip(vis) {
+    svg = getSVGNode(vis);
+    if (!svg) return;
+    point = svg.createSVGPoint();
+    rootElement.appendChild(node);
+  } // Public - show the tooltip on the screen
+  //
+  // Returns a tip
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-exports.yesdrag = yesdrag;
 
-var _d3Selection = require("d3-selection");
+  tip.show = function () {
+    var args = Array.prototype.slice.call(arguments);
+    if (args[args.length - 1] instanceof SVGElement) target = args.pop();
+    var content = html.apply(this, args),
+        poffset = offset.apply(this, args),
+        dir = direction.apply(this, args),
+        nodel = getNodeEl(),
+        i = directions.length,
+        coords,
+        scrollTop = document.documentElement.scrollTop || rootElement.scrollTop,
+        scrollLeft = document.documentElement.scrollLeft || rootElement.scrollLeft;
+    nodel.html(content).style('opacity', 1).style('pointer-events', 'all');
 
-var _noevent = _interopRequireDefault(require("./noevent.js"));
+    while (i--) nodel.classed(directions[i], false);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+    coords = directionCallbacks.get(dir).apply(this);
+    nodel.classed(dir, true).style('top', coords.top + poffset[0] + scrollTop + 'px').style('left', coords.left + poffset[1] + scrollLeft + 'px');
+    return tip;
+  }; // Public - hide the tooltip
+  //
+  // Returns a tip
 
-function _default(view) {
-  var root = view.document.documentElement,
-      selection = (0, _d3Selection.select)(view).on("dragstart.drag", _noevent.default, true);
 
-  if ("onselectstart" in root) {
-    selection.on("selectstart.drag", _noevent.default, true);
-  } else {
-    root.__noselect = root.style.MozUserSelect;
-    root.style.MozUserSelect = "none";
-  }
-}
+  tip.hide = function () {
+    var nodel = getNodeEl();
+    nodel.style('opacity', 0).style('pointer-events', 'none');
+    return tip;
+  }; // Public: Proxy attr calls to the d3 tip container.
+  // Sets or gets attribute value.
+  //
+  // n - name of the attribute
+  // v - value of the attribute
+  //
+  // Returns tip or attribute value
+  // eslint-disable-next-line no-unused-vars
 
-function yesdrag(view, noclick) {
-  var root = view.document.documentElement,
-      selection = (0, _d3Selection.select)(view).on("dragstart.drag", null);
 
-  if (noclick) {
-    selection.on("click.drag", _noevent.default, true);
-    setTimeout(function () {
-      selection.on("click.drag", null);
-    }, 0);
-  }
+  tip.attr = function (n, v) {
+    if (arguments.length < 2 && typeof n === 'string') {
+      return getNodeEl().attr(n);
+    }
 
-  if ("onselectstart" in root) {
-    selection.on("selectstart.drag", null);
-  } else {
-    root.style.MozUserSelect = root.__noselect;
-    delete root.__noselect;
-  }
-}
-},{"d3-selection":"../node_modules/d3-selection/src/index.js","./noevent.js":"../node_modules/d3-drag/src/noevent.js"}],"../node_modules/d3-drag/src/constant.js":[function(require,module,exports) {
-"use strict";
+    var args = Array.prototype.slice.call(arguments);
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
+    _d3Selection.selection.prototype.attr.apply(getNodeEl(), args);
 
-function _default(x) {
-  return function () {
-    return x;
+    return tip;
+  }; // Public: Proxy style calls to the d3 tip container.
+  // Sets or gets a style value.
+  //
+  // n - name of the property
+  // v - value of the property
+  //
+  // Returns tip or style property value
+  // eslint-disable-next-line no-unused-vars
+
+
+  tip.style = function (n, v) {
+    if (arguments.length < 2 && typeof n === 'string') {
+      return getNodeEl().style(n);
+    }
+
+    var args = Array.prototype.slice.call(arguments);
+
+    _d3Selection.selection.prototype.style.apply(getNodeEl(), args);
+
+    return tip;
+  }; // Public: Set or get the direction of the tooltip
+  //
+  // v - One of n(north), s(south), e(east), or w(west), nw(northwest),
+  //     sw(southwest), ne(northeast) or se(southeast)
+  //
+  // Returns tip or direction
+
+
+  tip.direction = function (v) {
+    if (!arguments.length) return direction;
+    direction = v == null ? v : functor(v);
+    return tip;
+  }; // Public: Sets or gets the offset of the tip
+  //
+  // v - Array of [x, y] offset
+  //
+  // Returns offset or
+
+
+  tip.offset = function (v) {
+    if (!arguments.length) return offset;
+    offset = v == null ? v : functor(v);
+    return tip;
+  }; // Public: sets or gets the html value of the tooltip
+  //
+  // v - String value of the tip
+  //
+  // Returns html value or tip
+
+
+  tip.html = function (v) {
+    if (!arguments.length) return html;
+    html = v == null ? v : functor(v);
+    return tip;
+  }; // Public: sets or gets the root element anchor of the tooltip
+  //
+  // v - root element of the tooltip
+  //
+  // Returns root node of tip
+
+
+  tip.rootElement = function (v) {
+    if (!arguments.length) return rootElement;
+    rootElement = v == null ? v : functor(v);
+    return tip;
+  }; // Public: destroys the tooltip and removes it from the DOM
+  //
+  // Returns a tip
+
+
+  tip.destroy = function () {
+    if (node) {
+      getNodeEl().remove();
+      node = null;
+    }
+
+    return tip;
   };
-}
-},{}],"../node_modules/d3-drag/src/event.js":[function(require,module,exports) {
-"use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = DragEvent;
-
-function DragEvent(target, type, subject, id, active, x, y, dx, dy, dispatch) {
-  this.target = target;
-  this.type = type;
-  this.subject = subject;
-  this.identifier = id;
-  this.active = active;
-  this.x = x;
-  this.y = y;
-  this.dx = dx;
-  this.dy = dy;
-  this._ = dispatch;
-}
-
-DragEvent.prototype.on = function () {
-  var value = this._.on.apply(this._, arguments);
-
-  return value === this._ ? this : value;
-};
-},{}],"../node_modules/d3-drag/src/drag.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-var _d3Dispatch = require("d3-dispatch");
-
-var _d3Selection = require("d3-selection");
-
-var _nodrag = _interopRequireWildcard(require("./nodrag.js"));
-
-var _noevent = _interopRequireWildcard(require("./noevent.js"));
-
-var _constant = _interopRequireDefault(require("./constant.js"));
-
-var _event = _interopRequireDefault(require("./event.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-// Ignore right-click, since that should open the context menu.
-function defaultFilter() {
-  return !_d3Selection.event.ctrlKey && !_d3Selection.event.button;
-}
-
-function defaultContainer() {
-  return this.parentNode;
-}
-
-function defaultSubject(d) {
-  return d == null ? {
-    x: _d3Selection.event.x,
-    y: _d3Selection.event.y
-  } : d;
-}
-
-function defaultTouchable() {
-  return navigator.maxTouchPoints || "ontouchstart" in this;
-}
-
-function _default() {
-  var filter = defaultFilter,
-      container = defaultContainer,
-      subject = defaultSubject,
-      touchable = defaultTouchable,
-      gestures = {},
-      listeners = (0, _d3Dispatch.dispatch)("start", "drag", "end"),
-      active = 0,
-      mousedownx,
-      mousedowny,
-      mousemoving,
-      touchending,
-      clickDistance2 = 0;
-
-  function drag(selection) {
-    selection.on("mousedown.drag", mousedowned).filter(touchable).on("touchstart.drag", touchstarted).on("touchmove.drag", touchmoved).on("touchend.drag touchcancel.drag", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
+  function d3TipDirection() {
+    return 'n';
   }
 
-  function mousedowned() {
-    if (touchending || !filter.apply(this, arguments)) return;
-    var gesture = beforestart("mouse", container.apply(this, arguments), _d3Selection.mouse, this, arguments);
-    if (!gesture) return;
-    (0, _d3Selection.select)(_d3Selection.event.view).on("mousemove.drag", mousemoved, true).on("mouseup.drag", mouseupped, true);
-    (0, _nodrag.default)(_d3Selection.event.view);
-    (0, _noevent.nopropagation)();
-    mousemoving = false;
-    mousedownx = _d3Selection.event.clientX;
-    mousedowny = _d3Selection.event.clientY;
-    gesture("start");
+  function d3TipOffset() {
+    return [0, 0];
   }
 
-  function mousemoved() {
-    (0, _noevent.default)();
-
-    if (!mousemoving) {
-      var dx = _d3Selection.event.clientX - mousedownx,
-          dy = _d3Selection.event.clientY - mousedowny;
-      mousemoving = dx * dx + dy * dy > clickDistance2;
-    }
-
-    gestures.mouse("drag");
+  function d3TipHTML() {
+    return ' ';
   }
 
-  function mouseupped() {
-    (0, _d3Selection.select)(_d3Selection.event.view).on("mousemove.drag mouseup.drag", null);
-    (0, _nodrag.yesdrag)(_d3Selection.event.view, mousemoving);
-    (0, _noevent.default)();
-    gestures.mouse("end");
-  }
+  var directionCallbacks = (0, _d3Collection.map)({
+    n: directionNorth,
+    s: directionSouth,
+    e: directionEast,
+    w: directionWest,
+    nw: directionNorthWest,
+    ne: directionNorthEast,
+    sw: directionSouthWest,
+    se: directionSouthEast
+  }),
+      directions = directionCallbacks.keys();
 
-  function touchstarted() {
-    if (!filter.apply(this, arguments)) return;
-    var touches = _d3Selection.event.changedTouches,
-        c = container.apply(this, arguments),
-        n = touches.length,
-        i,
-        gesture;
-
-    for (i = 0; i < n; ++i) {
-      if (gesture = beforestart(touches[i].identifier, c, _d3Selection.touch, this, arguments)) {
-        (0, _noevent.nopropagation)();
-        gesture("start");
-      }
-    }
-  }
-
-  function touchmoved() {
-    var touches = _d3Selection.event.changedTouches,
-        n = touches.length,
-        i,
-        gesture;
-
-    for (i = 0; i < n; ++i) {
-      if (gesture = gestures[touches[i].identifier]) {
-        (0, _noevent.default)();
-        gesture("drag");
-      }
-    }
-  }
-
-  function touchended() {
-    var touches = _d3Selection.event.changedTouches,
-        n = touches.length,
-        i,
-        gesture;
-    if (touchending) clearTimeout(touchending);
-    touchending = setTimeout(function () {
-      touchending = null;
-    }, 500); // Ghost clicks are delayed!
-
-    for (i = 0; i < n; ++i) {
-      if (gesture = gestures[touches[i].identifier]) {
-        (0, _noevent.nopropagation)();
-        gesture("end");
-      }
-    }
-  }
-
-  function beforestart(id, container, point, that, args) {
-    var p = point(container, id),
-        s,
-        dx,
-        dy,
-        sublisteners = listeners.copy();
-    if (!(0, _d3Selection.customEvent)(new _event.default(drag, "beforestart", s, id, active, p[0], p[1], 0, 0, sublisteners), function () {
-      if ((_d3Selection.event.subject = s = subject.apply(that, args)) == null) return false;
-      dx = s.x - p[0] || 0;
-      dy = s.y - p[1] || 0;
-      return true;
-    })) return;
-    return function gesture(type) {
-      var p0 = p,
-          n;
-
-      switch (type) {
-        case "start":
-          gestures[id] = gesture, n = active++;
-          break;
-
-        case "end":
-          delete gestures[id], --active;
-        // nobreak
-
-        case "drag":
-          p = point(container, id), n = active;
-          break;
-      }
-
-      (0, _d3Selection.customEvent)(new _event.default(drag, type, s, id, n, p[0] + dx, p[1] + dy, p[0] - p0[0], p[1] - p0[1], sublisteners), sublisteners.apply, sublisteners, [type, that, args]);
+  function directionNorth() {
+    var bbox = getScreenBBox(this);
+    return {
+      top: bbox.n.y - node.offsetHeight,
+      left: bbox.n.x - node.offsetWidth / 2
     };
   }
 
-  drag.filter = function (_) {
-    return arguments.length ? (filter = typeof _ === "function" ? _ : (0, _constant.default)(!!_), drag) : filter;
-  };
+  function directionSouth() {
+    var bbox = getScreenBBox(this);
+    return {
+      top: bbox.s.y,
+      left: bbox.s.x - node.offsetWidth / 2
+    };
+  }
 
-  drag.container = function (_) {
-    return arguments.length ? (container = typeof _ === "function" ? _ : (0, _constant.default)(_), drag) : container;
-  };
+  function directionEast() {
+    var bbox = getScreenBBox(this);
+    return {
+      top: bbox.e.y - node.offsetHeight / 2,
+      left: bbox.e.x
+    };
+  }
 
-  drag.subject = function (_) {
-    return arguments.length ? (subject = typeof _ === "function" ? _ : (0, _constant.default)(_), drag) : subject;
-  };
+  function directionWest() {
+    var bbox = getScreenBBox(this);
+    return {
+      top: bbox.w.y - node.offsetHeight / 2,
+      left: bbox.w.x - node.offsetWidth
+    };
+  }
 
-  drag.touchable = function (_) {
-    return arguments.length ? (touchable = typeof _ === "function" ? _ : (0, _constant.default)(!!_), drag) : touchable;
-  };
+  function directionNorthWest() {
+    var bbox = getScreenBBox(this);
+    return {
+      top: bbox.nw.y - node.offsetHeight,
+      left: bbox.nw.x - node.offsetWidth
+    };
+  }
 
-  drag.on = function () {
-    var value = listeners.on.apply(listeners, arguments);
-    return value === listeners ? drag : value;
-  };
+  function directionNorthEast() {
+    var bbox = getScreenBBox(this);
+    return {
+      top: bbox.ne.y - node.offsetHeight,
+      left: bbox.ne.x
+    };
+  }
 
-  drag.clickDistance = function (_) {
-    return arguments.length ? (clickDistance2 = (_ = +_) * _, drag) : Math.sqrt(clickDistance2);
-  };
+  function directionSouthWest() {
+    var bbox = getScreenBBox(this);
+    return {
+      top: bbox.sw.y,
+      left: bbox.sw.x - node.offsetWidth
+    };
+  }
 
-  return drag;
+  function directionSouthEast() {
+    var bbox = getScreenBBox(this);
+    return {
+      top: bbox.se.y,
+      left: bbox.se.x
+    };
+  }
+
+  function initNode() {
+    var div = (0, _d3Selection.select)(document.createElement('div'));
+    div.style('position', 'absolute').style('top', 0).style('opacity', 0).style('pointer-events', 'none').style('box-sizing', 'border-box');
+    return div.node();
+  }
+
+  function getSVGNode(element) {
+    var svgNode = element.node();
+    if (!svgNode) return null;
+    if (svgNode.tagName.toLowerCase() === 'svg') return svgNode;
+    return svgNode.ownerSVGElement;
+  }
+
+  function getNodeEl() {
+    if (node == null) {
+      node = initNode(); // re-add node to DOM
+
+      rootElement.appendChild(node);
+    }
+
+    return (0, _d3Selection.select)(node);
+  } // Private - gets the screen coordinates of a shape
+  //
+  // Given a shape on the screen, will return an SVGPoint for the directions
+  // n(north), s(south), e(east), w(west), ne(northeast), se(southeast),
+  // nw(northwest), sw(southwest).
+  //
+  //    +-+-+
+  //    |   |
+  //    +   +
+  //    |   |
+  //    +-+-+
+  //
+  // Returns an Object {n, s, e, w, nw, sw, ne, se}
+
+
+  function getScreenBBox(targetShape) {
+    var targetel = target || targetShape;
+
+    while (targetel.getScreenCTM == null && targetel.parentNode != null) {
+      targetel = targetel.parentNode;
+    }
+
+    var bbox = {},
+        matrix = targetel.getScreenCTM(),
+        tbbox = targetel.getBBox(),
+        width = tbbox.width,
+        height = tbbox.height,
+        x = tbbox.x,
+        y = tbbox.y;
+    point.x = x;
+    point.y = y;
+    bbox.nw = point.matrixTransform(matrix);
+    point.x += width;
+    bbox.ne = point.matrixTransform(matrix);
+    point.y += height;
+    bbox.se = point.matrixTransform(matrix);
+    point.x -= width;
+    bbox.sw = point.matrixTransform(matrix);
+    point.y -= height / 2;
+    bbox.w = point.matrixTransform(matrix);
+    point.x += width;
+    bbox.e = point.matrixTransform(matrix);
+    point.x -= width / 2;
+    point.y -= height / 2;
+    bbox.n = point.matrixTransform(matrix);
+    point.y += height;
+    bbox.s = point.matrixTransform(matrix);
+    return bbox;
+  } // Private - replace D3JS 3.X d3.functor() function
+
+
+  function functor(v) {
+    return typeof v === 'function' ? v : function () {
+      return v;
+    };
+  }
+
+  return tip;
 }
-},{"d3-dispatch":"../node_modules/d3-dispatch/src/index.js","d3-selection":"../node_modules/d3-selection/src/index.js","./nodrag.js":"../node_modules/d3-drag/src/nodrag.js","./noevent.js":"../node_modules/d3-drag/src/noevent.js","./constant.js":"../node_modules/d3-drag/src/constant.js","./event.js":"../node_modules/d3-drag/src/event.js"}],"../node_modules/d3-drag/src/index.js":[function(require,module,exports) {
+},{"d3-collection":"../node_modules/d3-collection/src/index.js","d3-selection":"../node_modules/d3-selection/src/index.js"}],"scripts/event.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "drag", {
-  enumerable: true,
-  get: function () {
-    return _drag.default;
-  }
+exports.AddSourceLinksKeys = AddSourceLinksKeys;
+exports.AddTargetLinksKeys = AddTargetLinksKeys;
+exports.onClickEvent = onClickEvent;
+exports.setEventHandler = setEventHandler;
+
+/**
+ * Sets up an event handler for when the mouse enters and leaves the squares
+ * in the heatmap. When the square is hovered, it enters the "selected" state.
+ *
+ * The tick labels for the year and neighborhood corresponding to the square appear
+ * in bold.
+ *
+ * @param {*} xScale The xScale to be used when placing the text in the square
+ * @param {*} yScale The yScale to be used when placing the text in the square
+ * @param {Function} rectSelected The function to call to set the mode to "selected" on the square
+ * @param {Function} rectUnselected The function to call to remove "selected" mode from the square
+ * @param {Function} selectTicks The function to call to set the mode to "selected" on the ticks
+ * @param {Function} unselectTicks The function to call to remove "selected" mode from the ticks
+ * @param g
+ * @param colorScale
+ * @param otherColor
+ */
+function setEventHandler(g, colorScale, otherColor) {
+  // TODO : Select the squares and set their event handlers
+  var nodes = g.selectAll('.graph-node');
+  console.log('values : ', nodes);
+  nodes.on('click', function (d) {
+    onClickEvent(g, d, colorScale, otherColor);
+  });
+}
+/**
+ * @param g
+ * @param data
+ * @param colorScale
+ * @param otherColor
+ */
+
+
+function onClickEvent(g, data, colorScale, otherColor) {
+  var keys = [];
+  console.log('keys', keys);
+  console.log('data', data);
+  console.log('targetLinks', data.targetLinks);
+  AddSourceLinksKeys(keys, data.sourceLinks);
+  AddTargetLinksKeys(keys, data.targetLinks);
+  console.log('keys', keys);
+  g.selectAll('.graph-line').select('path').attr('stroke', function (d) {
+    return keys.includes(d.index) ? colorScale(d.value) : otherColor;
+  });
+}
+/**
+ * @param keys
+ * @param sources
+ */
+
+
+function AddSourceLinksKeys(keys, sources) {
+  console.log('sources', sources);
+  sources.forEach(function (element) {
+    if (!keys.includes(element.index)) {
+      keys.push(element.index);
+    }
+
+    AddSourceLinksKeys(keys, element.target.sourceLinks);
+  });
+}
+/**
+ * @param keys
+ * @param targets
+ */
+
+
+function AddTargetLinksKeys(keys, targets) {
+  console.log('targets', targets);
+  targets.forEach(function (element) {
+    if (!keys.includes(element.index)) {
+      keys.push(element.index);
+    }
+
+    AddTargetLinksKeys(keys, element.source.targetLinks);
+  });
+}
+},{}],"../node_modules/d3-scale-chromatic/src/colors.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
-Object.defineProperty(exports, "dragDisable", {
-  enumerable: true,
-  get: function () {
-    return _nodrag.default;
-  }
+exports.default = _default;
+
+function _default(specifier) {
+  var n = specifier.length / 6 | 0,
+      colors = new Array(n),
+      i = 0;
+
+  while (i < n) colors[i] = "#" + specifier.slice(i * 6, ++i * 6);
+
+  return colors;
+}
+},{}],"../node_modules/d3-scale-chromatic/src/categorical/category10.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
-Object.defineProperty(exports, "dragEnable", {
-  enumerable: true,
-  get: function () {
-    return _nodrag.yesdrag;
-  }
-});
+exports.default = void 0;
 
-var _drag = _interopRequireDefault(require("./drag.js"));
-
-var _nodrag = _interopRequireWildcard(require("./nodrag.js"));
-
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+var _colors = _interopRequireDefault(require("../colors.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./drag.js":"../node_modules/d3-drag/src/drag.js","./nodrag.js":"../node_modules/d3-drag/src/nodrag.js"}],"../node_modules/d3-color/src/define.js":[function(require,module,exports) {
+
+var _default = (0, _colors.default)("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf");
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Accent.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _default = (0, _colors.default)("7fc97fbeaed4fdc086ffff99386cb0f0027fbf5b17666666");
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Dark2.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _default = (0, _colors.default)("1b9e77d95f027570b3e7298a66a61ee6ab02a6761d666666");
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Paired.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _default = (0, _colors.default)("a6cee31f78b4b2df8a33a02cfb9a99e31a1cfdbf6fff7f00cab2d66a3d9affff99b15928");
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Pastel1.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _default = (0, _colors.default)("fbb4aeb3cde3ccebc5decbe4fed9a6ffffcce5d8bdfddaecf2f2f2");
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Pastel2.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _default = (0, _colors.default)("b3e2cdfdcdaccbd5e8f4cae4e6f5c9fff2aef1e2cccccccc");
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Set1.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _default = (0, _colors.default)("e41a1c377eb84daf4a984ea3ff7f00ffff33a65628f781bf999999");
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Set2.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _default = (0, _colors.default)("66c2a5fc8d628da0cbe78ac3a6d854ffd92fe5c494b3b3b3");
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Set3.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _default = (0, _colors.default)("8dd3c7ffffb3bebadafb807280b1d3fdb462b3de69fccde5d9d9d9bc80bdccebc5ffed6f");
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Tableau10.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _default = (0, _colors.default)("4e79a7f28e2ce1575976b7b259a14fedc949af7aa1ff9da79c755fbab0ab");
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-color/src/define.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5467,7 +12346,3109 @@ function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "functio
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./value.js":"../node_modules/d3-interpolate/src/value.js","./array.js":"../node_modules/d3-interpolate/src/array.js","./basis.js":"../node_modules/d3-interpolate/src/basis.js","./basisClosed.js":"../node_modules/d3-interpolate/src/basisClosed.js","./date.js":"../node_modules/d3-interpolate/src/date.js","./discrete.js":"../node_modules/d3-interpolate/src/discrete.js","./hue.js":"../node_modules/d3-interpolate/src/hue.js","./number.js":"../node_modules/d3-interpolate/src/number.js","./numberArray.js":"../node_modules/d3-interpolate/src/numberArray.js","./object.js":"../node_modules/d3-interpolate/src/object.js","./round.js":"../node_modules/d3-interpolate/src/round.js","./string.js":"../node_modules/d3-interpolate/src/string.js","./transform/index.js":"../node_modules/d3-interpolate/src/transform/index.js","./zoom.js":"../node_modules/d3-interpolate/src/zoom.js","./rgb.js":"../node_modules/d3-interpolate/src/rgb.js","./hsl.js":"../node_modules/d3-interpolate/src/hsl.js","./lab.js":"../node_modules/d3-interpolate/src/lab.js","./hcl.js":"../node_modules/d3-interpolate/src/hcl.js","./cubehelix.js":"../node_modules/d3-interpolate/src/cubehelix.js","./piecewise.js":"../node_modules/d3-interpolate/src/piecewise.js","./quantize.js":"../node_modules/d3-interpolate/src/quantize.js"}],"../node_modules/d3-timer/src/timer.js":[function(require,module,exports) {
+},{"./value.js":"../node_modules/d3-interpolate/src/value.js","./array.js":"../node_modules/d3-interpolate/src/array.js","./basis.js":"../node_modules/d3-interpolate/src/basis.js","./basisClosed.js":"../node_modules/d3-interpolate/src/basisClosed.js","./date.js":"../node_modules/d3-interpolate/src/date.js","./discrete.js":"../node_modules/d3-interpolate/src/discrete.js","./hue.js":"../node_modules/d3-interpolate/src/hue.js","./number.js":"../node_modules/d3-interpolate/src/number.js","./numberArray.js":"../node_modules/d3-interpolate/src/numberArray.js","./object.js":"../node_modules/d3-interpolate/src/object.js","./round.js":"../node_modules/d3-interpolate/src/round.js","./string.js":"../node_modules/d3-interpolate/src/string.js","./transform/index.js":"../node_modules/d3-interpolate/src/transform/index.js","./zoom.js":"../node_modules/d3-interpolate/src/zoom.js","./rgb.js":"../node_modules/d3-interpolate/src/rgb.js","./hsl.js":"../node_modules/d3-interpolate/src/hsl.js","./lab.js":"../node_modules/d3-interpolate/src/lab.js","./hcl.js":"../node_modules/d3-interpolate/src/hcl.js","./cubehelix.js":"../node_modules/d3-interpolate/src/cubehelix.js","./piecewise.js":"../node_modules/d3-interpolate/src/piecewise.js","./quantize.js":"../node_modules/d3-interpolate/src/quantize.js"}],"../node_modules/d3-scale-chromatic/src/ramp.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _d3Interpolate = require("d3-interpolate");
+
+function _default(scheme) {
+  return (0, _d3Interpolate.interpolateRgbBasis)(scheme[scheme.length - 1]);
+}
+},{"d3-interpolate":"../node_modules/d3-interpolate/src/index.js"}],"../node_modules/d3-scale-chromatic/src/diverging/BrBG.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("d8b365f5f5f55ab4ac", "a6611adfc27d80cdc1018571", "a6611adfc27df5f5f580cdc1018571", "8c510ad8b365f6e8c3c7eae55ab4ac01665e", "8c510ad8b365f6e8c3f5f5f5c7eae55ab4ac01665e", "8c510abf812ddfc27df6e8c3c7eae580cdc135978f01665e", "8c510abf812ddfc27df6e8c3f5f5f5c7eae580cdc135978f01665e", "5430058c510abf812ddfc27df6e8c3c7eae580cdc135978f01665e003c30", "5430058c510abf812ddfc27df6e8c3f5f5f5c7eae580cdc135978f01665e003c30").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/PRGn.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("af8dc3f7f7f77fbf7b", "7b3294c2a5cfa6dba0008837", "7b3294c2a5cff7f7f7a6dba0008837", "762a83af8dc3e7d4e8d9f0d37fbf7b1b7837", "762a83af8dc3e7d4e8f7f7f7d9f0d37fbf7b1b7837", "762a839970abc2a5cfe7d4e8d9f0d3a6dba05aae611b7837", "762a839970abc2a5cfe7d4e8f7f7f7d9f0d3a6dba05aae611b7837", "40004b762a839970abc2a5cfe7d4e8d9f0d3a6dba05aae611b783700441b", "40004b762a839970abc2a5cfe7d4e8f7f7f7d9f0d3a6dba05aae611b783700441b").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/PiYG.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("e9a3c9f7f7f7a1d76a", "d01c8bf1b6dab8e1864dac26", "d01c8bf1b6daf7f7f7b8e1864dac26", "c51b7de9a3c9fde0efe6f5d0a1d76a4d9221", "c51b7de9a3c9fde0eff7f7f7e6f5d0a1d76a4d9221", "c51b7dde77aef1b6dafde0efe6f5d0b8e1867fbc414d9221", "c51b7dde77aef1b6dafde0eff7f7f7e6f5d0b8e1867fbc414d9221", "8e0152c51b7dde77aef1b6dafde0efe6f5d0b8e1867fbc414d9221276419", "8e0152c51b7dde77aef1b6dafde0eff7f7f7e6f5d0b8e1867fbc414d9221276419").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/PuOr.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("998ec3f7f7f7f1a340", "5e3c99b2abd2fdb863e66101", "5e3c99b2abd2f7f7f7fdb863e66101", "542788998ec3d8daebfee0b6f1a340b35806", "542788998ec3d8daebf7f7f7fee0b6f1a340b35806", "5427888073acb2abd2d8daebfee0b6fdb863e08214b35806", "5427888073acb2abd2d8daebf7f7f7fee0b6fdb863e08214b35806", "2d004b5427888073acb2abd2d8daebfee0b6fdb863e08214b358067f3b08", "2d004b5427888073acb2abd2d8daebf7f7f7fee0b6fdb863e08214b358067f3b08").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/RdBu.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("ef8a62f7f7f767a9cf", "ca0020f4a58292c5de0571b0", "ca0020f4a582f7f7f792c5de0571b0", "b2182bef8a62fddbc7d1e5f067a9cf2166ac", "b2182bef8a62fddbc7f7f7f7d1e5f067a9cf2166ac", "b2182bd6604df4a582fddbc7d1e5f092c5de4393c32166ac", "b2182bd6604df4a582fddbc7f7f7f7d1e5f092c5de4393c32166ac", "67001fb2182bd6604df4a582fddbc7d1e5f092c5de4393c32166ac053061", "67001fb2182bd6604df4a582fddbc7f7f7f7d1e5f092c5de4393c32166ac053061").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/RdGy.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("ef8a62ffffff999999", "ca0020f4a582bababa404040", "ca0020f4a582ffffffbababa404040", "b2182bef8a62fddbc7e0e0e09999994d4d4d", "b2182bef8a62fddbc7ffffffe0e0e09999994d4d4d", "b2182bd6604df4a582fddbc7e0e0e0bababa8787874d4d4d", "b2182bd6604df4a582fddbc7ffffffe0e0e0bababa8787874d4d4d", "67001fb2182bd6604df4a582fddbc7e0e0e0bababa8787874d4d4d1a1a1a", "67001fb2182bd6604df4a582fddbc7ffffffe0e0e0bababa8787874d4d4d1a1a1a").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/RdYlBu.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("fc8d59ffffbf91bfdb", "d7191cfdae61abd9e92c7bb6", "d7191cfdae61ffffbfabd9e92c7bb6", "d73027fc8d59fee090e0f3f891bfdb4575b4", "d73027fc8d59fee090ffffbfe0f3f891bfdb4575b4", "d73027f46d43fdae61fee090e0f3f8abd9e974add14575b4", "d73027f46d43fdae61fee090ffffbfe0f3f8abd9e974add14575b4", "a50026d73027f46d43fdae61fee090e0f3f8abd9e974add14575b4313695", "a50026d73027f46d43fdae61fee090ffffbfe0f3f8abd9e974add14575b4313695").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/RdYlGn.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("fc8d59ffffbf91cf60", "d7191cfdae61a6d96a1a9641", "d7191cfdae61ffffbfa6d96a1a9641", "d73027fc8d59fee08bd9ef8b91cf601a9850", "d73027fc8d59fee08bffffbfd9ef8b91cf601a9850", "d73027f46d43fdae61fee08bd9ef8ba6d96a66bd631a9850", "d73027f46d43fdae61fee08bffffbfd9ef8ba6d96a66bd631a9850", "a50026d73027f46d43fdae61fee08bd9ef8ba6d96a66bd631a9850006837", "a50026d73027f46d43fdae61fee08bffffbfd9ef8ba6d96a66bd631a9850006837").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/Spectral.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("fc8d59ffffbf99d594", "d7191cfdae61abdda42b83ba", "d7191cfdae61ffffbfabdda42b83ba", "d53e4ffc8d59fee08be6f59899d5943288bd", "d53e4ffc8d59fee08bffffbfe6f59899d5943288bd", "d53e4ff46d43fdae61fee08be6f598abdda466c2a53288bd", "d53e4ff46d43fdae61fee08bffffbfe6f598abdda466c2a53288bd", "9e0142d53e4ff46d43fdae61fee08be6f598abdda466c2a53288bd5e4fa2", "9e0142d53e4ff46d43fdae61fee08bffffbfe6f598abdda466c2a53288bd5e4fa2").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/BuGn.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("e5f5f999d8c92ca25f", "edf8fbb2e2e266c2a4238b45", "edf8fbb2e2e266c2a42ca25f006d2c", "edf8fbccece699d8c966c2a42ca25f006d2c", "edf8fbccece699d8c966c2a441ae76238b45005824", "f7fcfde5f5f9ccece699d8c966c2a441ae76238b45005824", "f7fcfde5f5f9ccece699d8c966c2a441ae76238b45006d2c00441b").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/BuPu.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("e0ecf49ebcda8856a7", "edf8fbb3cde38c96c688419d", "edf8fbb3cde38c96c68856a7810f7c", "edf8fbbfd3e69ebcda8c96c68856a7810f7c", "edf8fbbfd3e69ebcda8c96c68c6bb188419d6e016b", "f7fcfde0ecf4bfd3e69ebcda8c96c68c6bb188419d6e016b", "f7fcfde0ecf4bfd3e69ebcda8c96c68c6bb188419d810f7c4d004b").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/GnBu.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("e0f3dba8ddb543a2ca", "f0f9e8bae4bc7bccc42b8cbe", "f0f9e8bae4bc7bccc443a2ca0868ac", "f0f9e8ccebc5a8ddb57bccc443a2ca0868ac", "f0f9e8ccebc5a8ddb57bccc44eb3d32b8cbe08589e", "f7fcf0e0f3dbccebc5a8ddb57bccc44eb3d32b8cbe08589e", "f7fcf0e0f3dbccebc5a8ddb57bccc44eb3d32b8cbe0868ac084081").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/OrRd.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("fee8c8fdbb84e34a33", "fef0d9fdcc8afc8d59d7301f", "fef0d9fdcc8afc8d59e34a33b30000", "fef0d9fdd49efdbb84fc8d59e34a33b30000", "fef0d9fdd49efdbb84fc8d59ef6548d7301f990000", "fff7ecfee8c8fdd49efdbb84fc8d59ef6548d7301f990000", "fff7ecfee8c8fdd49efdbb84fc8d59ef6548d7301fb300007f0000").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/PuBuGn.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("ece2f0a6bddb1c9099", "f6eff7bdc9e167a9cf02818a", "f6eff7bdc9e167a9cf1c9099016c59", "f6eff7d0d1e6a6bddb67a9cf1c9099016c59", "f6eff7d0d1e6a6bddb67a9cf3690c002818a016450", "fff7fbece2f0d0d1e6a6bddb67a9cf3690c002818a016450", "fff7fbece2f0d0d1e6a6bddb67a9cf3690c002818a016c59014636").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/PuBu.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("ece7f2a6bddb2b8cbe", "f1eef6bdc9e174a9cf0570b0", "f1eef6bdc9e174a9cf2b8cbe045a8d", "f1eef6d0d1e6a6bddb74a9cf2b8cbe045a8d", "f1eef6d0d1e6a6bddb74a9cf3690c00570b0034e7b", "fff7fbece7f2d0d1e6a6bddb74a9cf3690c00570b0034e7b", "fff7fbece7f2d0d1e6a6bddb74a9cf3690c00570b0045a8d023858").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/PuRd.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("e7e1efc994c7dd1c77", "f1eef6d7b5d8df65b0ce1256", "f1eef6d7b5d8df65b0dd1c77980043", "f1eef6d4b9dac994c7df65b0dd1c77980043", "f1eef6d4b9dac994c7df65b0e7298ace125691003f", "f7f4f9e7e1efd4b9dac994c7df65b0e7298ace125691003f", "f7f4f9e7e1efd4b9dac994c7df65b0e7298ace125698004367001f").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/RdPu.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("fde0ddfa9fb5c51b8a", "feebe2fbb4b9f768a1ae017e", "feebe2fbb4b9f768a1c51b8a7a0177", "feebe2fcc5c0fa9fb5f768a1c51b8a7a0177", "feebe2fcc5c0fa9fb5f768a1dd3497ae017e7a0177", "fff7f3fde0ddfcc5c0fa9fb5f768a1dd3497ae017e7a0177", "fff7f3fde0ddfcc5c0fa9fb5f768a1dd3497ae017e7a017749006a").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/YlGnBu.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("edf8b17fcdbb2c7fb8", "ffffcca1dab441b6c4225ea8", "ffffcca1dab441b6c42c7fb8253494", "ffffccc7e9b47fcdbb41b6c42c7fb8253494", "ffffccc7e9b47fcdbb41b6c41d91c0225ea80c2c84", "ffffd9edf8b1c7e9b47fcdbb41b6c41d91c0225ea80c2c84", "ffffd9edf8b1c7e9b47fcdbb41b6c41d91c0225ea8253494081d58").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/YlGn.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("f7fcb9addd8e31a354", "ffffccc2e69978c679238443", "ffffccc2e69978c67931a354006837", "ffffccd9f0a3addd8e78c67931a354006837", "ffffccd9f0a3addd8e78c67941ab5d238443005a32", "ffffe5f7fcb9d9f0a3addd8e78c67941ab5d238443005a32", "ffffe5f7fcb9d9f0a3addd8e78c67941ab5d238443006837004529").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/YlOrBr.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("fff7bcfec44fd95f0e", "ffffd4fed98efe9929cc4c02", "ffffd4fed98efe9929d95f0e993404", "ffffd4fee391fec44ffe9929d95f0e993404", "ffffd4fee391fec44ffe9929ec7014cc4c028c2d04", "ffffe5fff7bcfee391fec44ffe9929ec7014cc4c028c2d04", "ffffe5fff7bcfee391fec44ffe9929ec7014cc4c02993404662506").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/YlOrRd.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("ffeda0feb24cf03b20", "ffffb2fecc5cfd8d3ce31a1c", "ffffb2fecc5cfd8d3cf03b20bd0026", "ffffb2fed976feb24cfd8d3cf03b20bd0026", "ffffb2fed976feb24cfd8d3cfc4e2ae31a1cb10026", "ffffccffeda0fed976feb24cfd8d3cfc4e2ae31a1cb10026", "ffffccffeda0fed976feb24cfd8d3cfc4e2ae31a1cbd0026800026").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-single/Blues.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("deebf79ecae13182bd", "eff3ffbdd7e76baed62171b5", "eff3ffbdd7e76baed63182bd08519c", "eff3ffc6dbef9ecae16baed63182bd08519c", "eff3ffc6dbef9ecae16baed64292c62171b5084594", "f7fbffdeebf7c6dbef9ecae16baed64292c62171b5084594", "f7fbffdeebf7c6dbef9ecae16baed64292c62171b508519c08306b").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-single/Greens.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("e5f5e0a1d99b31a354", "edf8e9bae4b374c476238b45", "edf8e9bae4b374c47631a354006d2c", "edf8e9c7e9c0a1d99b74c47631a354006d2c", "edf8e9c7e9c0a1d99b74c47641ab5d238b45005a32", "f7fcf5e5f5e0c7e9c0a1d99b74c47641ab5d238b45005a32", "f7fcf5e5f5e0c7e9c0a1d99b74c47641ab5d238b45006d2c00441b").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-single/Greys.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("f0f0f0bdbdbd636363", "f7f7f7cccccc969696525252", "f7f7f7cccccc969696636363252525", "f7f7f7d9d9d9bdbdbd969696636363252525", "f7f7f7d9d9d9bdbdbd969696737373525252252525", "fffffff0f0f0d9d9d9bdbdbd969696737373525252252525", "fffffff0f0f0d9d9d9bdbdbd969696737373525252252525000000").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-single/Purples.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("efedf5bcbddc756bb1", "f2f0f7cbc9e29e9ac86a51a3", "f2f0f7cbc9e29e9ac8756bb154278f", "f2f0f7dadaebbcbddc9e9ac8756bb154278f", "f2f0f7dadaebbcbddc9e9ac8807dba6a51a34a1486", "fcfbfdefedf5dadaebbcbddc9e9ac8807dba6a51a34a1486", "fcfbfdefedf5dadaebbcbddc9e9ac8807dba6a51a354278f3f007d").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-single/Reds.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("fee0d2fc9272de2d26", "fee5d9fcae91fb6a4acb181d", "fee5d9fcae91fb6a4ade2d26a50f15", "fee5d9fcbba1fc9272fb6a4ade2d26a50f15", "fee5d9fcbba1fc9272fb6a4aef3b2ccb181d99000d", "fff5f0fee0d2fcbba1fc9272fb6a4aef3b2ccb181d99000d", "fff5f0fee0d2fcbba1fc9272fb6a4aef3b2ccb181da50f1567000d").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-single/Oranges.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.scheme = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+var _ramp = _interopRequireDefault(require("../ramp.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var scheme = new Array(3).concat("fee6cefdae6be6550d", "feeddefdbe85fd8d3cd94701", "feeddefdbe85fd8d3ce6550da63603", "feeddefdd0a2fdae6bfd8d3ce6550da63603", "feeddefdd0a2fdae6bfd8d3cf16913d948018c2d04", "fff5ebfee6cefdd0a2fdae6bfd8d3cf16913d948018c2d04", "fff5ebfee6cefdd0a2fdae6bfd8d3cf16913d94801a636037f2704").map(_colors.default);
+exports.scheme = scheme;
+
+var _default = (0, _ramp.default)(scheme);
+
+exports.default = _default;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/cividis.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(t) {
+  t = Math.max(0, Math.min(1, t));
+  return "rgb(" + Math.max(0, Math.min(255, Math.round(-4.54 - t * (35.34 - t * (2381.73 - t * (6402.7 - t * (7024.72 - t * 2710.57))))))) + ", " + Math.max(0, Math.min(255, Math.round(32.49 + t * (170.73 + t * (52.82 - t * (131.46 - t * (176.58 - t * 67.37))))))) + ", " + Math.max(0, Math.min(255, Math.round(81.24 + t * (442.36 - t * (2482.43 - t * (6167.24 - t * (6614.94 - t * 2475.67))))))) + ")";
+}
+},{}],"../node_modules/d3-scale-chromatic/src/sequential-multi/cubehelix.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _d3Color = require("d3-color");
+
+var _d3Interpolate = require("d3-interpolate");
+
+var _default = (0, _d3Interpolate.interpolateCubehelixLong)((0, _d3Color.cubehelix)(300, 0.5, 0.0), (0, _d3Color.cubehelix)(-240, 0.5, 1.0));
+
+exports.default = _default;
+},{"d3-color":"../node_modules/d3-color/src/index.js","d3-interpolate":"../node_modules/d3-interpolate/src/index.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/rainbow.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.cool = void 0;
+exports.default = _default;
+exports.warm = void 0;
+
+var _d3Color = require("d3-color");
+
+var _d3Interpolate = require("d3-interpolate");
+
+var warm = (0, _d3Interpolate.interpolateCubehelixLong)((0, _d3Color.cubehelix)(-100, 0.75, 0.35), (0, _d3Color.cubehelix)(80, 1.50, 0.8));
+exports.warm = warm;
+var cool = (0, _d3Interpolate.interpolateCubehelixLong)((0, _d3Color.cubehelix)(260, 0.75, 0.35), (0, _d3Color.cubehelix)(80, 1.50, 0.8));
+exports.cool = cool;
+var c = (0, _d3Color.cubehelix)();
+
+function _default(t) {
+  if (t < 0 || t > 1) t -= Math.floor(t);
+  var ts = Math.abs(t - 0.5);
+  c.h = 360 * t - 100;
+  c.s = 1.5 - 1.5 * ts;
+  c.l = 0.8 - 0.9 * ts;
+  return c + "";
+}
+},{"d3-color":"../node_modules/d3-color/src/index.js","d3-interpolate":"../node_modules/d3-interpolate/src/index.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/sinebow.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _d3Color = require("d3-color");
+
+var c = (0, _d3Color.rgb)(),
+    pi_1_3 = Math.PI / 3,
+    pi_2_3 = Math.PI * 2 / 3;
+
+function _default(t) {
+  var x;
+  t = (0.5 - t) * Math.PI;
+  c.r = 255 * (x = Math.sin(t)) * x;
+  c.g = 255 * (x = Math.sin(t + pi_1_3)) * x;
+  c.b = 255 * (x = Math.sin(t + pi_2_3)) * x;
+  return c + "";
+}
+},{"d3-color":"../node_modules/d3-color/src/index.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/turbo.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(t) {
+  t = Math.max(0, Math.min(1, t));
+  return "rgb(" + Math.max(0, Math.min(255, Math.round(34.61 + t * (1172.33 - t * (10793.56 - t * (33300.12 - t * (38394.49 - t * 14825.05))))))) + ", " + Math.max(0, Math.min(255, Math.round(23.31 + t * (557.33 + t * (1225.33 - t * (3574.96 - t * (1073.77 + t * 707.56))))))) + ", " + Math.max(0, Math.min(255, Math.round(27.2 + t * (3211.1 - t * (15327.97 - t * (27814 - t * (22569.18 - t * 6838.66))))))) + ")";
+}
+},{}],"../node_modules/d3-scale-chromatic/src/sequential-multi/viridis.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.plasma = exports.magma = exports.inferno = exports.default = void 0;
+
+var _colors = _interopRequireDefault(require("../colors.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ramp(range) {
+  var n = range.length;
+  return function (t) {
+    return range[Math.max(0, Math.min(n - 1, Math.floor(t * n)))];
+  };
+}
+
+var _default = ramp((0, _colors.default)("44015444025645045745055946075a46085c460a5d460b5e470d60470e6147106347116447136548146748166848176948186a481a6c481b6d481c6e481d6f481f70482071482173482374482475482576482677482878482979472a7a472c7a472d7b472e7c472f7d46307e46327e46337f463480453581453781453882443983443a83443b84433d84433e85423f854240864241864142874144874045884046883f47883f48893e49893e4a893e4c8a3d4d8a3d4e8a3c4f8a3c508b3b518b3b528b3a538b3a548c39558c39568c38588c38598c375a8c375b8d365c8d365d8d355e8d355f8d34608d34618d33628d33638d32648e32658e31668e31678e31688e30698e306a8e2f6b8e2f6c8e2e6d8e2e6e8e2e6f8e2d708e2d718e2c718e2c728e2c738e2b748e2b758e2a768e2a778e2a788e29798e297a8e297b8e287c8e287d8e277e8e277f8e27808e26818e26828e26828e25838e25848e25858e24868e24878e23888e23898e238a8d228b8d228c8d228d8d218e8d218f8d21908d21918c20928c20928c20938c1f948c1f958b1f968b1f978b1f988b1f998a1f9a8a1e9b8a1e9c891e9d891f9e891f9f881fa0881fa1881fa1871fa28720a38620a48621a58521a68522a78522a88423a98324aa8325ab8225ac8226ad8127ad8128ae8029af7f2ab07f2cb17e2db27d2eb37c2fb47c31b57b32b67a34b67935b77937b87838b9773aba763bbb753dbc743fbc7340bd7242be7144bf7046c06f48c16e4ac16d4cc26c4ec36b50c46a52c56954c56856c66758c7655ac8645cc8635ec96260ca6063cb5f65cb5e67cc5c69cd5b6ccd5a6ece5870cf5773d05675d05477d1537ad1517cd2507fd34e81d34d84d44b86d54989d5488bd6468ed64590d74393d74195d84098d83e9bd93c9dd93ba0da39a2da37a5db36a8db34aadc32addc30b0dd2fb2dd2db5de2bb8de29bade28bddf26c0df25c2df23c5e021c8e020cae11fcde11dd0e11cd2e21bd5e21ad8e219dae319dde318dfe318e2e418e5e419e7e419eae51aece51befe51cf1e51df4e61ef6e620f8e621fbe723fde725"));
+
+exports.default = _default;
+var magma = ramp((0, _colors.default)("00000401000501010601010802010902020b02020d03030f03031204041405041606051806051a07061c08071e0907200a08220b09240c09260d0a290e0b2b100b2d110c2f120d31130d34140e36150e38160f3b180f3d19103f1a10421c10441d11471e114920114b21114e22115024125325125527125829115a2a115c2c115f2d11612f116331116533106734106936106b38106c390f6e3b0f703d0f713f0f72400f74420f75440f764510774710784910784a10794c117a4e117b4f127b51127c52137c54137d56147d57157e59157e5a167e5c167f5d177f5f187f601880621980641a80651a80671b80681c816a1c816b1d816d1d816e1e81701f81721f817320817521817621817822817922827b23827c23827e24828025828125818326818426818627818827818928818b29818c29818e2a81902a81912b81932b80942c80962c80982d80992d809b2e7f9c2e7f9e2f7fa02f7fa1307ea3307ea5317ea6317da8327daa337dab337cad347cae347bb0357bb2357bb3367ab5367ab73779b83779ba3878bc3978bd3977bf3a77c03a76c23b75c43c75c53c74c73d73c83e73ca3e72cc3f71cd4071cf4070d0416fd2426fd3436ed5446dd6456cd8456cd9466bdb476adc4869de4968df4a68e04c67e24d66e34e65e44f64e55064e75263e85362e95462ea5661eb5760ec5860ed5a5fee5b5eef5d5ef05f5ef1605df2625df2645cf3655cf4675cf4695cf56b5cf66c5cf66e5cf7705cf7725cf8745cf8765cf9785df9795df97b5dfa7d5efa7f5efa815ffb835ffb8560fb8761fc8961fc8a62fc8c63fc8e64fc9065fd9266fd9467fd9668fd9869fd9a6afd9b6bfe9d6cfe9f6dfea16efea36ffea571fea772fea973feaa74feac76feae77feb078feb27afeb47bfeb67cfeb77efeb97ffebb81febd82febf84fec185fec287fec488fec68afec88cfeca8dfecc8ffecd90fecf92fed194fed395fed597fed799fed89afdda9cfddc9efddea0fde0a1fde2a3fde3a5fde5a7fde7a9fde9aafdebacfcecaefceeb0fcf0b2fcf2b4fcf4b6fcf6b8fcf7b9fcf9bbfcfbbdfcfdbf"));
+exports.magma = magma;
+var inferno = ramp((0, _colors.default)("00000401000501010601010802010a02020c02020e03021004031204031405041706041907051b08051d09061f0a07220b07240c08260d08290e092b10092d110a30120a32140b34150b37160b39180c3c190c3e1b0c411c0c431e0c451f0c48210c4a230c4c240c4f260c51280b53290b552b0b572d0b592f0a5b310a5c320a5e340a5f3609613809623909633b09643d09653e0966400a67420a68440a68450a69470b6a490b6a4a0c6b4c0c6b4d0d6c4f0d6c510e6c520e6d540f6d550f6d57106e59106e5a116e5c126e5d126e5f136e61136e62146e64156e65156e67166e69166e6a176e6c186e6d186e6f196e71196e721a6e741a6e751b6e771c6d781c6d7a1d6d7c1d6d7d1e6d7f1e6c801f6c82206c84206b85216b87216b88226a8a226a8c23698d23698f24699025689225689326679526679727669827669a28659b29649d29649f2a63a02a63a22b62a32c61a52c60a62d60a82e5fa92e5eab2f5ead305dae305cb0315bb1325ab3325ab43359b63458b73557b93556ba3655bc3754bd3853bf3952c03a51c13a50c33b4fc43c4ec63d4dc73e4cc83f4bca404acb4149cc4248ce4347cf4446d04545d24644d34743d44842d54a41d74b3fd84c3ed94d3dda4e3cdb503bdd513ade5238df5337e05536e15635e25734e35933e45a31e55c30e65d2fe75e2ee8602de9612bea632aeb6429eb6628ec6726ed6925ee6a24ef6c23ef6e21f06f20f1711ff1731df2741cf3761bf37819f47918f57b17f57d15f67e14f68013f78212f78410f8850ff8870ef8890cf98b0bf98c0af98e09fa9008fa9207fa9407fb9606fb9706fb9906fb9b06fb9d07fc9f07fca108fca309fca50afca60cfca80dfcaa0ffcac11fcae12fcb014fcb216fcb418fbb61afbb81dfbba1ffbbc21fbbe23fac026fac228fac42afac62df9c72ff9c932f9cb35f8cd37f8cf3af7d13df7d340f6d543f6d746f5d949f5db4cf4dd4ff4df53f4e156f3e35af3e55df2e661f2e865f2ea69f1ec6df1ed71f1ef75f1f179f2f27df2f482f3f586f3f68af4f88ef5f992f6fa96f8fb9af9fc9dfafda1fcffa4"));
+exports.inferno = inferno;
+var plasma = ramp((0, _colors.default)("0d088710078813078916078a19068c1b068d1d068e20068f2206902406912605912805922a05932c05942e05952f059631059733059735049837049938049a3a049a3c049b3e049c3f049c41049d43039e44039e46039f48039f4903a04b03a14c02a14e02a25002a25102a35302a35502a45601a45801a45901a55b01a55c01a65e01a66001a66100a76300a76400a76600a76700a86900a86a00a86c00a86e00a86f00a87100a87201a87401a87501a87701a87801a87a02a87b02a87d03a87e03a88004a88104a78305a78405a78606a68707a68808a68a09a58b0aa58d0ba58e0ca48f0da4910ea3920fa39410a29511a19613a19814a099159f9a169f9c179e9d189d9e199da01a9ca11b9ba21d9aa31e9aa51f99a62098a72197a82296aa2395ab2494ac2694ad2793ae2892b02991b12a90b22b8fb32c8eb42e8db52f8cb6308bb7318ab83289ba3388bb3488bc3587bd3786be3885bf3984c03a83c13b82c23c81c33d80c43e7fc5407ec6417dc7427cc8437bc9447aca457acb4679cc4778cc4977cd4a76ce4b75cf4c74d04d73d14e72d24f71d35171d45270d5536fd5546ed6556dd7566cd8576bd9586ada5a6ada5b69db5c68dc5d67dd5e66de5f65de6164df6263e06363e16462e26561e26660e3685fe4695ee56a5de56b5de66c5ce76e5be76f5ae87059e97158e97257ea7457eb7556eb7655ec7754ed7953ed7a52ee7b51ef7c51ef7e50f07f4ff0804ef1814df1834cf2844bf3854bf3874af48849f48948f58b47f58c46f68d45f68f44f79044f79143f79342f89441f89540f9973ff9983ef99a3efa9b3dfa9c3cfa9e3bfb9f3afba139fba238fca338fca537fca636fca835fca934fdab33fdac33fdae32fdaf31fdb130fdb22ffdb42ffdb52efeb72dfeb82cfeba2cfebb2bfebd2afebe2afec029fdc229fdc328fdc527fdc627fdc827fdca26fdcb26fccd25fcce25fcd025fcd225fbd324fbd524fbd724fad824fada24f9dc24f9dd25f8df25f8e125f7e225f7e425f6e626f6e826f5e926f5eb27f4ed27f3ee27f3f027f2f227f1f426f1f525f0f724f0f921"));
+exports.plasma = plasma;
+},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "interpolateBlues", {
+  enumerable: true,
+  get: function () {
+    return _Blues.default;
+  }
+});
+Object.defineProperty(exports, "interpolateBrBG", {
+  enumerable: true,
+  get: function () {
+    return _BrBG.default;
+  }
+});
+Object.defineProperty(exports, "interpolateBuGn", {
+  enumerable: true,
+  get: function () {
+    return _BuGn.default;
+  }
+});
+Object.defineProperty(exports, "interpolateBuPu", {
+  enumerable: true,
+  get: function () {
+    return _BuPu.default;
+  }
+});
+Object.defineProperty(exports, "interpolateCividis", {
+  enumerable: true,
+  get: function () {
+    return _cividis.default;
+  }
+});
+Object.defineProperty(exports, "interpolateCool", {
+  enumerable: true,
+  get: function () {
+    return _rainbow.cool;
+  }
+});
+Object.defineProperty(exports, "interpolateCubehelixDefault", {
+  enumerable: true,
+  get: function () {
+    return _cubehelix.default;
+  }
+});
+Object.defineProperty(exports, "interpolateGnBu", {
+  enumerable: true,
+  get: function () {
+    return _GnBu.default;
+  }
+});
+Object.defineProperty(exports, "interpolateGreens", {
+  enumerable: true,
+  get: function () {
+    return _Greens.default;
+  }
+});
+Object.defineProperty(exports, "interpolateGreys", {
+  enumerable: true,
+  get: function () {
+    return _Greys.default;
+  }
+});
+Object.defineProperty(exports, "interpolateInferno", {
+  enumerable: true,
+  get: function () {
+    return _viridis.inferno;
+  }
+});
+Object.defineProperty(exports, "interpolateMagma", {
+  enumerable: true,
+  get: function () {
+    return _viridis.magma;
+  }
+});
+Object.defineProperty(exports, "interpolateOrRd", {
+  enumerable: true,
+  get: function () {
+    return _OrRd.default;
+  }
+});
+Object.defineProperty(exports, "interpolateOranges", {
+  enumerable: true,
+  get: function () {
+    return _Oranges.default;
+  }
+});
+Object.defineProperty(exports, "interpolatePRGn", {
+  enumerable: true,
+  get: function () {
+    return _PRGn.default;
+  }
+});
+Object.defineProperty(exports, "interpolatePiYG", {
+  enumerable: true,
+  get: function () {
+    return _PiYG.default;
+  }
+});
+Object.defineProperty(exports, "interpolatePlasma", {
+  enumerable: true,
+  get: function () {
+    return _viridis.plasma;
+  }
+});
+Object.defineProperty(exports, "interpolatePuBu", {
+  enumerable: true,
+  get: function () {
+    return _PuBu.default;
+  }
+});
+Object.defineProperty(exports, "interpolatePuBuGn", {
+  enumerable: true,
+  get: function () {
+    return _PuBuGn.default;
+  }
+});
+Object.defineProperty(exports, "interpolatePuOr", {
+  enumerable: true,
+  get: function () {
+    return _PuOr.default;
+  }
+});
+Object.defineProperty(exports, "interpolatePuRd", {
+  enumerable: true,
+  get: function () {
+    return _PuRd.default;
+  }
+});
+Object.defineProperty(exports, "interpolatePurples", {
+  enumerable: true,
+  get: function () {
+    return _Purples.default;
+  }
+});
+Object.defineProperty(exports, "interpolateRainbow", {
+  enumerable: true,
+  get: function () {
+    return _rainbow.default;
+  }
+});
+Object.defineProperty(exports, "interpolateRdBu", {
+  enumerable: true,
+  get: function () {
+    return _RdBu.default;
+  }
+});
+Object.defineProperty(exports, "interpolateRdGy", {
+  enumerable: true,
+  get: function () {
+    return _RdGy.default;
+  }
+});
+Object.defineProperty(exports, "interpolateRdPu", {
+  enumerable: true,
+  get: function () {
+    return _RdPu.default;
+  }
+});
+Object.defineProperty(exports, "interpolateRdYlBu", {
+  enumerable: true,
+  get: function () {
+    return _RdYlBu.default;
+  }
+});
+Object.defineProperty(exports, "interpolateRdYlGn", {
+  enumerable: true,
+  get: function () {
+    return _RdYlGn.default;
+  }
+});
+Object.defineProperty(exports, "interpolateReds", {
+  enumerable: true,
+  get: function () {
+    return _Reds.default;
+  }
+});
+Object.defineProperty(exports, "interpolateSinebow", {
+  enumerable: true,
+  get: function () {
+    return _sinebow.default;
+  }
+});
+Object.defineProperty(exports, "interpolateSpectral", {
+  enumerable: true,
+  get: function () {
+    return _Spectral.default;
+  }
+});
+Object.defineProperty(exports, "interpolateTurbo", {
+  enumerable: true,
+  get: function () {
+    return _turbo.default;
+  }
+});
+Object.defineProperty(exports, "interpolateViridis", {
+  enumerable: true,
+  get: function () {
+    return _viridis.default;
+  }
+});
+Object.defineProperty(exports, "interpolateWarm", {
+  enumerable: true,
+  get: function () {
+    return _rainbow.warm;
+  }
+});
+Object.defineProperty(exports, "interpolateYlGn", {
+  enumerable: true,
+  get: function () {
+    return _YlGn.default;
+  }
+});
+Object.defineProperty(exports, "interpolateYlGnBu", {
+  enumerable: true,
+  get: function () {
+    return _YlGnBu.default;
+  }
+});
+Object.defineProperty(exports, "interpolateYlOrBr", {
+  enumerable: true,
+  get: function () {
+    return _YlOrBr.default;
+  }
+});
+Object.defineProperty(exports, "interpolateYlOrRd", {
+  enumerable: true,
+  get: function () {
+    return _YlOrRd.default;
+  }
+});
+Object.defineProperty(exports, "schemeAccent", {
+  enumerable: true,
+  get: function () {
+    return _Accent.default;
+  }
+});
+Object.defineProperty(exports, "schemeBlues", {
+  enumerable: true,
+  get: function () {
+    return _Blues.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeBrBG", {
+  enumerable: true,
+  get: function () {
+    return _BrBG.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeBuGn", {
+  enumerable: true,
+  get: function () {
+    return _BuGn.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeBuPu", {
+  enumerable: true,
+  get: function () {
+    return _BuPu.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeCategory10", {
+  enumerable: true,
+  get: function () {
+    return _category.default;
+  }
+});
+Object.defineProperty(exports, "schemeDark2", {
+  enumerable: true,
+  get: function () {
+    return _Dark.default;
+  }
+});
+Object.defineProperty(exports, "schemeGnBu", {
+  enumerable: true,
+  get: function () {
+    return _GnBu.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeGreens", {
+  enumerable: true,
+  get: function () {
+    return _Greens.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeGreys", {
+  enumerable: true,
+  get: function () {
+    return _Greys.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeOrRd", {
+  enumerable: true,
+  get: function () {
+    return _OrRd.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeOranges", {
+  enumerable: true,
+  get: function () {
+    return _Oranges.scheme;
+  }
+});
+Object.defineProperty(exports, "schemePRGn", {
+  enumerable: true,
+  get: function () {
+    return _PRGn.scheme;
+  }
+});
+Object.defineProperty(exports, "schemePaired", {
+  enumerable: true,
+  get: function () {
+    return _Paired.default;
+  }
+});
+Object.defineProperty(exports, "schemePastel1", {
+  enumerable: true,
+  get: function () {
+    return _Pastel.default;
+  }
+});
+Object.defineProperty(exports, "schemePastel2", {
+  enumerable: true,
+  get: function () {
+    return _Pastel2.default;
+  }
+});
+Object.defineProperty(exports, "schemePiYG", {
+  enumerable: true,
+  get: function () {
+    return _PiYG.scheme;
+  }
+});
+Object.defineProperty(exports, "schemePuBu", {
+  enumerable: true,
+  get: function () {
+    return _PuBu.scheme;
+  }
+});
+Object.defineProperty(exports, "schemePuBuGn", {
+  enumerable: true,
+  get: function () {
+    return _PuBuGn.scheme;
+  }
+});
+Object.defineProperty(exports, "schemePuOr", {
+  enumerable: true,
+  get: function () {
+    return _PuOr.scheme;
+  }
+});
+Object.defineProperty(exports, "schemePuRd", {
+  enumerable: true,
+  get: function () {
+    return _PuRd.scheme;
+  }
+});
+Object.defineProperty(exports, "schemePurples", {
+  enumerable: true,
+  get: function () {
+    return _Purples.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeRdBu", {
+  enumerable: true,
+  get: function () {
+    return _RdBu.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeRdGy", {
+  enumerable: true,
+  get: function () {
+    return _RdGy.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeRdPu", {
+  enumerable: true,
+  get: function () {
+    return _RdPu.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeRdYlBu", {
+  enumerable: true,
+  get: function () {
+    return _RdYlBu.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeRdYlGn", {
+  enumerable: true,
+  get: function () {
+    return _RdYlGn.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeReds", {
+  enumerable: true,
+  get: function () {
+    return _Reds.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeSet1", {
+  enumerable: true,
+  get: function () {
+    return _Set.default;
+  }
+});
+Object.defineProperty(exports, "schemeSet2", {
+  enumerable: true,
+  get: function () {
+    return _Set2.default;
+  }
+});
+Object.defineProperty(exports, "schemeSet3", {
+  enumerable: true,
+  get: function () {
+    return _Set3.default;
+  }
+});
+Object.defineProperty(exports, "schemeSpectral", {
+  enumerable: true,
+  get: function () {
+    return _Spectral.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeTableau10", {
+  enumerable: true,
+  get: function () {
+    return _Tableau.default;
+  }
+});
+Object.defineProperty(exports, "schemeYlGn", {
+  enumerable: true,
+  get: function () {
+    return _YlGn.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeYlGnBu", {
+  enumerable: true,
+  get: function () {
+    return _YlGnBu.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeYlOrBr", {
+  enumerable: true,
+  get: function () {
+    return _YlOrBr.scheme;
+  }
+});
+Object.defineProperty(exports, "schemeYlOrRd", {
+  enumerable: true,
+  get: function () {
+    return _YlOrRd.scheme;
+  }
+});
+
+var _category = _interopRequireDefault(require("./categorical/category10.js"));
+
+var _Accent = _interopRequireDefault(require("./categorical/Accent.js"));
+
+var _Dark = _interopRequireDefault(require("./categorical/Dark2.js"));
+
+var _Paired = _interopRequireDefault(require("./categorical/Paired.js"));
+
+var _Pastel = _interopRequireDefault(require("./categorical/Pastel1.js"));
+
+var _Pastel2 = _interopRequireDefault(require("./categorical/Pastel2.js"));
+
+var _Set = _interopRequireDefault(require("./categorical/Set1.js"));
+
+var _Set2 = _interopRequireDefault(require("./categorical/Set2.js"));
+
+var _Set3 = _interopRequireDefault(require("./categorical/Set3.js"));
+
+var _Tableau = _interopRequireDefault(require("./categorical/Tableau10.js"));
+
+var _BrBG = _interopRequireWildcard(require("./diverging/BrBG.js"));
+
+var _PRGn = _interopRequireWildcard(require("./diverging/PRGn.js"));
+
+var _PiYG = _interopRequireWildcard(require("./diverging/PiYG.js"));
+
+var _PuOr = _interopRequireWildcard(require("./diverging/PuOr.js"));
+
+var _RdBu = _interopRequireWildcard(require("./diverging/RdBu.js"));
+
+var _RdGy = _interopRequireWildcard(require("./diverging/RdGy.js"));
+
+var _RdYlBu = _interopRequireWildcard(require("./diverging/RdYlBu.js"));
+
+var _RdYlGn = _interopRequireWildcard(require("./diverging/RdYlGn.js"));
+
+var _Spectral = _interopRequireWildcard(require("./diverging/Spectral.js"));
+
+var _BuGn = _interopRequireWildcard(require("./sequential-multi/BuGn.js"));
+
+var _BuPu = _interopRequireWildcard(require("./sequential-multi/BuPu.js"));
+
+var _GnBu = _interopRequireWildcard(require("./sequential-multi/GnBu.js"));
+
+var _OrRd = _interopRequireWildcard(require("./sequential-multi/OrRd.js"));
+
+var _PuBuGn = _interopRequireWildcard(require("./sequential-multi/PuBuGn.js"));
+
+var _PuBu = _interopRequireWildcard(require("./sequential-multi/PuBu.js"));
+
+var _PuRd = _interopRequireWildcard(require("./sequential-multi/PuRd.js"));
+
+var _RdPu = _interopRequireWildcard(require("./sequential-multi/RdPu.js"));
+
+var _YlGnBu = _interopRequireWildcard(require("./sequential-multi/YlGnBu.js"));
+
+var _YlGn = _interopRequireWildcard(require("./sequential-multi/YlGn.js"));
+
+var _YlOrBr = _interopRequireWildcard(require("./sequential-multi/YlOrBr.js"));
+
+var _YlOrRd = _interopRequireWildcard(require("./sequential-multi/YlOrRd.js"));
+
+var _Blues = _interopRequireWildcard(require("./sequential-single/Blues.js"));
+
+var _Greens = _interopRequireWildcard(require("./sequential-single/Greens.js"));
+
+var _Greys = _interopRequireWildcard(require("./sequential-single/Greys.js"));
+
+var _Purples = _interopRequireWildcard(require("./sequential-single/Purples.js"));
+
+var _Reds = _interopRequireWildcard(require("./sequential-single/Reds.js"));
+
+var _Oranges = _interopRequireWildcard(require("./sequential-single/Oranges.js"));
+
+var _cividis = _interopRequireDefault(require("./sequential-multi/cividis.js"));
+
+var _cubehelix = _interopRequireDefault(require("./sequential-multi/cubehelix.js"));
+
+var _rainbow = _interopRequireWildcard(require("./sequential-multi/rainbow.js"));
+
+var _sinebow = _interopRequireDefault(require("./sequential-multi/sinebow.js"));
+
+var _turbo = _interopRequireDefault(require("./sequential-multi/turbo.js"));
+
+var _viridis = _interopRequireWildcard(require("./sequential-multi/viridis.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+},{"./categorical/category10.js":"../node_modules/d3-scale-chromatic/src/categorical/category10.js","./categorical/Accent.js":"../node_modules/d3-scale-chromatic/src/categorical/Accent.js","./categorical/Dark2.js":"../node_modules/d3-scale-chromatic/src/categorical/Dark2.js","./categorical/Paired.js":"../node_modules/d3-scale-chromatic/src/categorical/Paired.js","./categorical/Pastel1.js":"../node_modules/d3-scale-chromatic/src/categorical/Pastel1.js","./categorical/Pastel2.js":"../node_modules/d3-scale-chromatic/src/categorical/Pastel2.js","./categorical/Set1.js":"../node_modules/d3-scale-chromatic/src/categorical/Set1.js","./categorical/Set2.js":"../node_modules/d3-scale-chromatic/src/categorical/Set2.js","./categorical/Set3.js":"../node_modules/d3-scale-chromatic/src/categorical/Set3.js","./categorical/Tableau10.js":"../node_modules/d3-scale-chromatic/src/categorical/Tableau10.js","./diverging/BrBG.js":"../node_modules/d3-scale-chromatic/src/diverging/BrBG.js","./diverging/PRGn.js":"../node_modules/d3-scale-chromatic/src/diverging/PRGn.js","./diverging/PiYG.js":"../node_modules/d3-scale-chromatic/src/diverging/PiYG.js","./diverging/PuOr.js":"../node_modules/d3-scale-chromatic/src/diverging/PuOr.js","./diverging/RdBu.js":"../node_modules/d3-scale-chromatic/src/diverging/RdBu.js","./diverging/RdGy.js":"../node_modules/d3-scale-chromatic/src/diverging/RdGy.js","./diverging/RdYlBu.js":"../node_modules/d3-scale-chromatic/src/diverging/RdYlBu.js","./diverging/RdYlGn.js":"../node_modules/d3-scale-chromatic/src/diverging/RdYlGn.js","./diverging/Spectral.js":"../node_modules/d3-scale-chromatic/src/diverging/Spectral.js","./sequential-multi/BuGn.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/BuGn.js","./sequential-multi/BuPu.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/BuPu.js","./sequential-multi/GnBu.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/GnBu.js","./sequential-multi/OrRd.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/OrRd.js","./sequential-multi/PuBuGn.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/PuBuGn.js","./sequential-multi/PuBu.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/PuBu.js","./sequential-multi/PuRd.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/PuRd.js","./sequential-multi/RdPu.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/RdPu.js","./sequential-multi/YlGnBu.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/YlGnBu.js","./sequential-multi/YlGn.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/YlGn.js","./sequential-multi/YlOrBr.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/YlOrBr.js","./sequential-multi/YlOrRd.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/YlOrRd.js","./sequential-single/Blues.js":"../node_modules/d3-scale-chromatic/src/sequential-single/Blues.js","./sequential-single/Greens.js":"../node_modules/d3-scale-chromatic/src/sequential-single/Greens.js","./sequential-single/Greys.js":"../node_modules/d3-scale-chromatic/src/sequential-single/Greys.js","./sequential-single/Purples.js":"../node_modules/d3-scale-chromatic/src/sequential-single/Purples.js","./sequential-single/Reds.js":"../node_modules/d3-scale-chromatic/src/sequential-single/Reds.js","./sequential-single/Oranges.js":"../node_modules/d3-scale-chromatic/src/sequential-single/Oranges.js","./sequential-multi/cividis.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/cividis.js","./sequential-multi/cubehelix.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/cubehelix.js","./sequential-multi/rainbow.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/rainbow.js","./sequential-multi/sinebow.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/sinebow.js","./sequential-multi/turbo.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/turbo.js","./sequential-multi/viridis.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/viridis.js"}],"../node_modules/d3/dist/package.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.version = exports.unpkg = exports.scripts = exports.repository = exports.name = exports.module = exports.main = exports.license = exports.keywords = exports.jsdelivr = exports.homepage = exports.files = exports.devDependencies = exports.description = exports.dependencies = exports.author = void 0;
+var name = "d3";
+exports.name = name;
+var version = "5.16.0";
+exports.version = version;
+var description = "Data-Driven Documents";
+exports.description = description;
+var keywords = ["dom", "visualization", "svg", "animation", "canvas"];
+exports.keywords = keywords;
+var homepage = "https://d3js.org";
+exports.homepage = homepage;
+var license = "BSD-3-Clause";
+exports.license = license;
+var author = {
+  "name": "Mike Bostock",
+  "url": "https://bost.ocks.org/mike"
+};
+exports.author = author;
+var main = "dist/d3.node.js";
+exports.main = main;
+var unpkg = "dist/d3.min.js";
+exports.unpkg = unpkg;
+var jsdelivr = "dist/d3.min.js";
+exports.jsdelivr = jsdelivr;
+var _module = "index.js";
+exports.module = _module;
+var repository = {
+  "type": "git",
+  "url": "https://github.com/d3/d3.git"
+};
+exports.repository = repository;
+var files = ["dist/**/*.js", "index.js"];
+exports.files = files;
+var scripts = {
+  "pretest": "rimraf dist && mkdir dist && json2module package.json > dist/package.js && rollup -c",
+  "test": "tape 'test/**/*-test.js'",
+  "prepublishOnly": "yarn test",
+  "postpublish": "git push && git push --tags && cd ../d3.github.com && git pull && cp ../d3/dist/d3.js d3.v5.js && cp ../d3/dist/d3.min.js d3.v5.min.js && git add d3.v5.js d3.v5.min.js && git commit -m \"d3 ${npm_package_version}\" && git push && cd - && cd ../d3-bower && git pull && cp ../d3/LICENSE ../d3/README.md ../d3/dist/d3.js ../d3/dist/d3.min.js . && git add -- LICENSE README.md d3.js d3.min.js && git commit -m \"${npm_package_version}\" && git tag -am \"${npm_package_version}\" v${npm_package_version} && git push && git push --tags && cd - && zip -j dist/d3.zip -- LICENSE README.md API.md CHANGES.md dist/d3.js dist/d3.min.js"
+};
+exports.scripts = scripts;
+var devDependencies = {
+  "json2module": "0.0",
+  "rimraf": "2",
+  "rollup": "1",
+  "rollup-plugin-ascii": "0.0",
+  "rollup-plugin-node-resolve": "3",
+  "rollup-plugin-terser": "5",
+  "tape": "4"
+};
+exports.devDependencies = devDependencies;
+var dependencies = {
+  "d3-array": "1",
+  "d3-axis": "1",
+  "d3-brush": "1",
+  "d3-chord": "1",
+  "d3-collection": "1",
+  "d3-color": "1",
+  "d3-contour": "1",
+  "d3-dispatch": "1",
+  "d3-drag": "1",
+  "d3-dsv": "1",
+  "d3-ease": "1",
+  "d3-fetch": "1",
+  "d3-force": "1",
+  "d3-format": "1",
+  "d3-geo": "1",
+  "d3-hierarchy": "1",
+  "d3-interpolate": "1",
+  "d3-path": "1",
+  "d3-polygon": "1",
+  "d3-quadtree": "1",
+  "d3-random": "1",
+  "d3-scale": "2",
+  "d3-scale-chromatic": "1",
+  "d3-selection": "1",
+  "d3-shape": "1",
+  "d3-time": "1",
+  "d3-time-format": "2",
+  "d3-timer": "1",
+  "d3-transition": "1",
+  "d3-voronoi": "1",
+  "d3-zoom": "1"
+};
+exports.dependencies = dependencies;
+},{}],"../node_modules/d3-array/src/ascending.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(a, b) {
+  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+}
+},{}],"../node_modules/d3-array/src/bisector.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _ascending = _interopRequireDefault(require("./ascending"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(compare) {
+  if (compare.length === 1) compare = ascendingComparator(compare);
+  return {
+    left: function (a, x, lo, hi) {
+      if (lo == null) lo = 0;
+      if (hi == null) hi = a.length;
+
+      while (lo < hi) {
+        var mid = lo + hi >>> 1;
+        if (compare(a[mid], x) < 0) lo = mid + 1;else hi = mid;
+      }
+
+      return lo;
+    },
+    right: function (a, x, lo, hi) {
+      if (lo == null) lo = 0;
+      if (hi == null) hi = a.length;
+
+      while (lo < hi) {
+        var mid = lo + hi >>> 1;
+        if (compare(a[mid], x) > 0) hi = mid;else lo = mid + 1;
+      }
+
+      return lo;
+    }
+  };
+}
+
+function ascendingComparator(f) {
+  return function (d, x) {
+    return (0, _ascending.default)(f(d), x);
+  };
+}
+},{"./ascending":"../node_modules/d3-array/src/ascending.js"}],"../node_modules/d3-array/src/bisect.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.bisectRight = exports.bisectLeft = void 0;
+
+var _ascending = _interopRequireDefault(require("./ascending"));
+
+var _bisector = _interopRequireDefault(require("./bisector"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var ascendingBisect = (0, _bisector.default)(_ascending.default);
+var bisectRight = ascendingBisect.right;
+exports.bisectRight = bisectRight;
+var bisectLeft = ascendingBisect.left;
+exports.bisectLeft = bisectLeft;
+var _default = bisectRight;
+exports.default = _default;
+},{"./ascending":"../node_modules/d3-array/src/ascending.js","./bisector":"../node_modules/d3-array/src/bisector.js"}],"../node_modules/d3-array/src/pairs.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+exports.pair = pair;
+
+function _default(array, f) {
+  if (f == null) f = pair;
+  var i = 0,
+      n = array.length - 1,
+      p = array[0],
+      pairs = new Array(n < 0 ? 0 : n);
+
+  while (i < n) pairs[i] = f(p, p = array[++i]);
+
+  return pairs;
+}
+
+function pair(a, b) {
+  return [a, b];
+}
+},{}],"../node_modules/d3-array/src/cross.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _pairs = require("./pairs");
+
+function _default(values0, values1, reduce) {
+  var n0 = values0.length,
+      n1 = values1.length,
+      values = new Array(n0 * n1),
+      i0,
+      i1,
+      i,
+      value0;
+  if (reduce == null) reduce = _pairs.pair;
+
+  for (i0 = i = 0; i0 < n0; ++i0) {
+    for (value0 = values0[i0], i1 = 0; i1 < n1; ++i1, ++i) {
+      values[i] = reduce(value0, values1[i1]);
+    }
+  }
+
+  return values;
+}
+},{"./pairs":"../node_modules/d3-array/src/pairs.js"}],"../node_modules/d3-array/src/descending.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(a, b) {
+  return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
+}
+},{}],"../node_modules/d3-array/src/number.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(x) {
+  return x === null ? NaN : +x;
+}
+},{}],"../node_modules/d3-array/src/variance.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _number = _interopRequireDefault(require("./number"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(values, valueof) {
+  var n = values.length,
+      m = 0,
+      i = -1,
+      mean = 0,
+      value,
+      delta,
+      sum = 0;
+
+  if (valueof == null) {
+    while (++i < n) {
+      if (!isNaN(value = (0, _number.default)(values[i]))) {
+        delta = value - mean;
+        mean += delta / ++m;
+        sum += delta * (value - mean);
+      }
+    }
+  } else {
+    while (++i < n) {
+      if (!isNaN(value = (0, _number.default)(valueof(values[i], i, values)))) {
+        delta = value - mean;
+        mean += delta / ++m;
+        sum += delta * (value - mean);
+      }
+    }
+  }
+
+  if (m > 1) return sum / (m - 1);
+}
+},{"./number":"../node_modules/d3-array/src/number.js"}],"../node_modules/d3-array/src/deviation.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _variance = _interopRequireDefault(require("./variance"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(array, f) {
+  var v = (0, _variance.default)(array, f);
+  return v ? Math.sqrt(v) : v;
+}
+},{"./variance":"../node_modules/d3-array/src/variance.js"}],"../node_modules/d3-array/src/extent.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      min,
+      max;
+
+  if (valueof == null) {
+    while (++i < n) {
+      // Find the first comparable value.
+      if ((value = values[i]) != null && value >= value) {
+        min = max = value;
+
+        while (++i < n) {
+          // Compare the remaining values.
+          if ((value = values[i]) != null) {
+            if (min > value) min = value;
+            if (max < value) max = value;
+          }
+        }
+      }
+    }
+  } else {
+    while (++i < n) {
+      // Find the first comparable value.
+      if ((value = valueof(values[i], i, values)) != null && value >= value) {
+        min = max = value;
+
+        while (++i < n) {
+          // Compare the remaining values.
+          if ((value = valueof(values[i], i, values)) != null) {
+            if (min > value) min = value;
+            if (max < value) max = value;
+          }
+        }
+      }
+    }
+  }
+
+  return [min, max];
+}
+},{}],"../node_modules/d3-array/src/array.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.slice = exports.map = void 0;
+var array = Array.prototype;
+var slice = array.slice;
+exports.slice = slice;
+var map = array.map;
+exports.map = map;
+},{}],"../node_modules/d3-array/src/constant.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(x) {
+  return function () {
+    return x;
+  };
+}
+},{}],"../node_modules/d3-array/src/identity.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(x) {
+  return x;
+}
+},{}],"../node_modules/d3-array/src/range.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(start, stop, step) {
+  start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
+  var i = -1,
+      n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
+      range = new Array(n);
+
+  while (++i < n) {
+    range[i] = start + i * step;
+  }
+
+  return range;
+}
+},{}],"../node_modules/d3-array/src/ticks.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+exports.tickIncrement = tickIncrement;
+exports.tickStep = tickStep;
+var e10 = Math.sqrt(50),
+    e5 = Math.sqrt(10),
+    e2 = Math.sqrt(2);
+
+function _default(start, stop, count) {
+  var reverse,
+      i = -1,
+      n,
+      ticks,
+      step;
+  stop = +stop, start = +start, count = +count;
+  if (start === stop && count > 0) return [start];
+  if (reverse = stop < start) n = start, start = stop, stop = n;
+  if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step)) return [];
+
+  if (step > 0) {
+    start = Math.ceil(start / step);
+    stop = Math.floor(stop / step);
+    ticks = new Array(n = Math.ceil(stop - start + 1));
+
+    while (++i < n) ticks[i] = (start + i) * step;
+  } else {
+    start = Math.floor(start * step);
+    stop = Math.ceil(stop * step);
+    ticks = new Array(n = Math.ceil(start - stop + 1));
+
+    while (++i < n) ticks[i] = (start - i) / step;
+  }
+
+  if (reverse) ticks.reverse();
+  return ticks;
+}
+
+function tickIncrement(start, stop, count) {
+  var step = (stop - start) / Math.max(0, count),
+      power = Math.floor(Math.log(step) / Math.LN10),
+      error = step / Math.pow(10, power);
+  return power >= 0 ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power) : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
+}
+
+function tickStep(start, stop, count) {
+  var step0 = Math.abs(stop - start) / Math.max(0, count),
+      step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)),
+      error = step0 / step1;
+  if (error >= e10) step1 *= 10;else if (error >= e5) step1 *= 5;else if (error >= e2) step1 *= 2;
+  return stop < start ? -step1 : step1;
+}
+},{}],"../node_modules/d3-array/src/threshold/sturges.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(values) {
+  return Math.ceil(Math.log(values.length) / Math.LN2) + 1;
+}
+},{}],"../node_modules/d3-array/src/histogram.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _array = require("./array");
+
+var _bisect = _interopRequireDefault(require("./bisect"));
+
+var _constant = _interopRequireDefault(require("./constant"));
+
+var _extent = _interopRequireDefault(require("./extent"));
+
+var _identity = _interopRequireDefault(require("./identity"));
+
+var _range = _interopRequireDefault(require("./range"));
+
+var _ticks = require("./ticks");
+
+var _sturges = _interopRequireDefault(require("./threshold/sturges"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default() {
+  var value = _identity.default,
+      domain = _extent.default,
+      threshold = _sturges.default;
+
+  function histogram(data) {
+    var i,
+        n = data.length,
+        x,
+        values = new Array(n);
+
+    for (i = 0; i < n; ++i) {
+      values[i] = value(data[i], i, data);
+    }
+
+    var xz = domain(values),
+        x0 = xz[0],
+        x1 = xz[1],
+        tz = threshold(values, x0, x1); // Convert number of thresholds into uniform thresholds.
+
+    if (!Array.isArray(tz)) {
+      tz = (0, _ticks.tickStep)(x0, x1, tz);
+      tz = (0, _range.default)(Math.ceil(x0 / tz) * tz, x1, tz); // exclusive
+    } // Remove any thresholds outside the domain.
+
+
+    var m = tz.length;
+
+    while (tz[0] <= x0) tz.shift(), --m;
+
+    while (tz[m - 1] > x1) tz.pop(), --m;
+
+    var bins = new Array(m + 1),
+        bin; // Initialize bins.
+
+    for (i = 0; i <= m; ++i) {
+      bin = bins[i] = [];
+      bin.x0 = i > 0 ? tz[i - 1] : x0;
+      bin.x1 = i < m ? tz[i] : x1;
+    } // Assign data to bins by value, ignoring any outside the domain.
+
+
+    for (i = 0; i < n; ++i) {
+      x = values[i];
+
+      if (x0 <= x && x <= x1) {
+        bins[(0, _bisect.default)(tz, x, 0, m)].push(data[i]);
+      }
+    }
+
+    return bins;
+  }
+
+  histogram.value = function (_) {
+    return arguments.length ? (value = typeof _ === "function" ? _ : (0, _constant.default)(_), histogram) : value;
+  };
+
+  histogram.domain = function (_) {
+    return arguments.length ? (domain = typeof _ === "function" ? _ : (0, _constant.default)([_[0], _[1]]), histogram) : domain;
+  };
+
+  histogram.thresholds = function (_) {
+    return arguments.length ? (threshold = typeof _ === "function" ? _ : Array.isArray(_) ? (0, _constant.default)(_array.slice.call(_)) : (0, _constant.default)(_), histogram) : threshold;
+  };
+
+  return histogram;
+}
+},{"./array":"../node_modules/d3-array/src/array.js","./bisect":"../node_modules/d3-array/src/bisect.js","./constant":"../node_modules/d3-array/src/constant.js","./extent":"../node_modules/d3-array/src/extent.js","./identity":"../node_modules/d3-array/src/identity.js","./range":"../node_modules/d3-array/src/range.js","./ticks":"../node_modules/d3-array/src/ticks.js","./threshold/sturges":"../node_modules/d3-array/src/threshold/sturges.js"}],"../node_modules/d3-array/src/quantile.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _number = _interopRequireDefault(require("./number"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(values, p, valueof) {
+  if (valueof == null) valueof = _number.default;
+  if (!(n = values.length)) return;
+  if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
+  if (p >= 1) return +valueof(values[n - 1], n - 1, values);
+  var n,
+      i = (n - 1) * p,
+      i0 = Math.floor(i),
+      value0 = +valueof(values[i0], i0, values),
+      value1 = +valueof(values[i0 + 1], i0 + 1, values);
+  return value0 + (value1 - value0) * (i - i0);
+}
+},{"./number":"../node_modules/d3-array/src/number.js"}],"../node_modules/d3-array/src/threshold/freedmanDiaconis.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _array = require("../array");
+
+var _ascending = _interopRequireDefault(require("../ascending"));
+
+var _number = _interopRequireDefault(require("../number"));
+
+var _quantile = _interopRequireDefault(require("../quantile"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(values, min, max) {
+  values = _array.map.call(values, _number.default).sort(_ascending.default);
+  return Math.ceil((max - min) / (2 * ((0, _quantile.default)(values, 0.75) - (0, _quantile.default)(values, 0.25)) * Math.pow(values.length, -1 / 3)));
+}
+},{"../array":"../node_modules/d3-array/src/array.js","../ascending":"../node_modules/d3-array/src/ascending.js","../number":"../node_modules/d3-array/src/number.js","../quantile":"../node_modules/d3-array/src/quantile.js"}],"../node_modules/d3-array/src/threshold/scott.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _deviation = _interopRequireDefault(require("../deviation"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(values, min, max) {
+  return Math.ceil((max - min) / (3.5 * (0, _deviation.default)(values) * Math.pow(values.length, -1 / 3)));
+}
+},{"../deviation":"../node_modules/d3-array/src/deviation.js"}],"../node_modules/d3-array/src/max.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      max;
+
+  if (valueof == null) {
+    while (++i < n) {
+      // Find the first comparable value.
+      if ((value = values[i]) != null && value >= value) {
+        max = value;
+
+        while (++i < n) {
+          // Compare the remaining values.
+          if ((value = values[i]) != null && value > max) {
+            max = value;
+          }
+        }
+      }
+    }
+  } else {
+    while (++i < n) {
+      // Find the first comparable value.
+      if ((value = valueof(values[i], i, values)) != null && value >= value) {
+        max = value;
+
+        while (++i < n) {
+          // Compare the remaining values.
+          if ((value = valueof(values[i], i, values)) != null && value > max) {
+            max = value;
+          }
+        }
+      }
+    }
+  }
+
+  return max;
+}
+},{}],"../node_modules/d3-array/src/mean.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _number = _interopRequireDefault(require("./number"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(values, valueof) {
+  var n = values.length,
+      m = n,
+      i = -1,
+      value,
+      sum = 0;
+
+  if (valueof == null) {
+    while (++i < n) {
+      if (!isNaN(value = (0, _number.default)(values[i]))) sum += value;else --m;
+    }
+  } else {
+    while (++i < n) {
+      if (!isNaN(value = (0, _number.default)(valueof(values[i], i, values)))) sum += value;else --m;
+    }
+  }
+
+  if (m) return sum / m;
+}
+},{"./number":"../node_modules/d3-array/src/number.js"}],"../node_modules/d3-array/src/median.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _ascending = _interopRequireDefault(require("./ascending"));
+
+var _number = _interopRequireDefault(require("./number"));
+
+var _quantile = _interopRequireDefault(require("./quantile"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      numbers = [];
+
+  if (valueof == null) {
+    while (++i < n) {
+      if (!isNaN(value = (0, _number.default)(values[i]))) {
+        numbers.push(value);
+      }
+    }
+  } else {
+    while (++i < n) {
+      if (!isNaN(value = (0, _number.default)(valueof(values[i], i, values)))) {
+        numbers.push(value);
+      }
+    }
+  }
+
+  return (0, _quantile.default)(numbers.sort(_ascending.default), 0.5);
+}
+},{"./ascending":"../node_modules/d3-array/src/ascending.js","./number":"../node_modules/d3-array/src/number.js","./quantile":"../node_modules/d3-array/src/quantile.js"}],"../node_modules/d3-array/src/merge.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(arrays) {
+  var n = arrays.length,
+      m,
+      i = -1,
+      j = 0,
+      merged,
+      array;
+
+  while (++i < n) j += arrays[i].length;
+
+  merged = new Array(j);
+
+  while (--n >= 0) {
+    array = arrays[n];
+    m = array.length;
+
+    while (--m >= 0) {
+      merged[--j] = array[m];
+    }
+  }
+
+  return merged;
+}
+},{}],"../node_modules/d3-array/src/min.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      min;
+
+  if (valueof == null) {
+    while (++i < n) {
+      // Find the first comparable value.
+      if ((value = values[i]) != null && value >= value) {
+        min = value;
+
+        while (++i < n) {
+          // Compare the remaining values.
+          if ((value = values[i]) != null && min > value) {
+            min = value;
+          }
+        }
+      }
+    }
+  } else {
+    while (++i < n) {
+      // Find the first comparable value.
+      if ((value = valueof(values[i], i, values)) != null && value >= value) {
+        min = value;
+
+        while (++i < n) {
+          // Compare the remaining values.
+          if ((value = valueof(values[i], i, values)) != null && min > value) {
+            min = value;
+          }
+        }
+      }
+    }
+  }
+
+  return min;
+}
+},{}],"../node_modules/d3-array/src/permute.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(array, indexes) {
+  var i = indexes.length,
+      permutes = new Array(i);
+
+  while (i--) permutes[i] = array[indexes[i]];
+
+  return permutes;
+}
+},{}],"../node_modules/d3-array/src/scan.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _ascending = _interopRequireDefault(require("./ascending"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(values, compare) {
+  if (!(n = values.length)) return;
+  var n,
+      i = 0,
+      j = 0,
+      xi,
+      xj = values[j];
+  if (compare == null) compare = _ascending.default;
+
+  while (++i < n) {
+    if (compare(xi = values[i], xj) < 0 || compare(xj, xj) !== 0) {
+      xj = xi, j = i;
+    }
+  }
+
+  if (compare(xj, xj) === 0) return j;
+}
+},{"./ascending":"../node_modules/d3-array/src/ascending.js"}],"../node_modules/d3-array/src/shuffle.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(array, i0, i1) {
+  var m = (i1 == null ? array.length : i1) - (i0 = i0 == null ? 0 : +i0),
+      t,
+      i;
+
+  while (m) {
+    i = Math.random() * m-- | 0;
+    t = array[m + i0];
+    array[m + i0] = array[i + i0];
+    array[i + i0] = t;
+  }
+
+  return array;
+}
+},{}],"../node_modules/d3-array/src/sum.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      sum = 0;
+
+  if (valueof == null) {
+    while (++i < n) {
+      if (value = +values[i]) sum += value; // Note: zero and null are equivalent.
+    }
+  } else {
+    while (++i < n) {
+      if (value = +valueof(values[i], i, values)) sum += value;
+    }
+  }
+
+  return sum;
+}
+},{}],"../node_modules/d3-array/src/transpose.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _min = _interopRequireDefault(require("./min"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(matrix) {
+  if (!(n = matrix.length)) return [];
+
+  for (var i = -1, m = (0, _min.default)(matrix, length), transpose = new Array(m); ++i < m;) {
+    for (var j = -1, n, row = transpose[i] = new Array(n); ++j < n;) {
+      row[j] = matrix[j][i];
+    }
+  }
+
+  return transpose;
+}
+
+function length(d) {
+  return d.length;
+}
+},{"./min":"../node_modules/d3-array/src/min.js"}],"../node_modules/d3-array/src/zip.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _transpose = _interopRequireDefault(require("./transpose"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default() {
+  return (0, _transpose.default)(arguments);
+}
+},{"./transpose":"../node_modules/d3-array/src/transpose.js"}],"../node_modules/d3-array/src/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "ascending", {
+  enumerable: true,
+  get: function () {
+    return _ascending.default;
+  }
+});
+Object.defineProperty(exports, "bisect", {
+  enumerable: true,
+  get: function () {
+    return _bisect.default;
+  }
+});
+Object.defineProperty(exports, "bisectLeft", {
+  enumerable: true,
+  get: function () {
+    return _bisect.bisectLeft;
+  }
+});
+Object.defineProperty(exports, "bisectRight", {
+  enumerable: true,
+  get: function () {
+    return _bisect.bisectRight;
+  }
+});
+Object.defineProperty(exports, "bisector", {
+  enumerable: true,
+  get: function () {
+    return _bisector.default;
+  }
+});
+Object.defineProperty(exports, "cross", {
+  enumerable: true,
+  get: function () {
+    return _cross.default;
+  }
+});
+Object.defineProperty(exports, "descending", {
+  enumerable: true,
+  get: function () {
+    return _descending.default;
+  }
+});
+Object.defineProperty(exports, "deviation", {
+  enumerable: true,
+  get: function () {
+    return _deviation.default;
+  }
+});
+Object.defineProperty(exports, "extent", {
+  enumerable: true,
+  get: function () {
+    return _extent.default;
+  }
+});
+Object.defineProperty(exports, "histogram", {
+  enumerable: true,
+  get: function () {
+    return _histogram.default;
+  }
+});
+Object.defineProperty(exports, "max", {
+  enumerable: true,
+  get: function () {
+    return _max.default;
+  }
+});
+Object.defineProperty(exports, "mean", {
+  enumerable: true,
+  get: function () {
+    return _mean.default;
+  }
+});
+Object.defineProperty(exports, "median", {
+  enumerable: true,
+  get: function () {
+    return _median.default;
+  }
+});
+Object.defineProperty(exports, "merge", {
+  enumerable: true,
+  get: function () {
+    return _merge.default;
+  }
+});
+Object.defineProperty(exports, "min", {
+  enumerable: true,
+  get: function () {
+    return _min.default;
+  }
+});
+Object.defineProperty(exports, "pairs", {
+  enumerable: true,
+  get: function () {
+    return _pairs.default;
+  }
+});
+Object.defineProperty(exports, "permute", {
+  enumerable: true,
+  get: function () {
+    return _permute.default;
+  }
+});
+Object.defineProperty(exports, "quantile", {
+  enumerable: true,
+  get: function () {
+    return _quantile.default;
+  }
+});
+Object.defineProperty(exports, "range", {
+  enumerable: true,
+  get: function () {
+    return _range.default;
+  }
+});
+Object.defineProperty(exports, "scan", {
+  enumerable: true,
+  get: function () {
+    return _scan.default;
+  }
+});
+Object.defineProperty(exports, "shuffle", {
+  enumerable: true,
+  get: function () {
+    return _shuffle.default;
+  }
+});
+Object.defineProperty(exports, "sum", {
+  enumerable: true,
+  get: function () {
+    return _sum.default;
+  }
+});
+Object.defineProperty(exports, "thresholdFreedmanDiaconis", {
+  enumerable: true,
+  get: function () {
+    return _freedmanDiaconis.default;
+  }
+});
+Object.defineProperty(exports, "thresholdScott", {
+  enumerable: true,
+  get: function () {
+    return _scott.default;
+  }
+});
+Object.defineProperty(exports, "thresholdSturges", {
+  enumerable: true,
+  get: function () {
+    return _sturges.default;
+  }
+});
+Object.defineProperty(exports, "tickIncrement", {
+  enumerable: true,
+  get: function () {
+    return _ticks.tickIncrement;
+  }
+});
+Object.defineProperty(exports, "tickStep", {
+  enumerable: true,
+  get: function () {
+    return _ticks.tickStep;
+  }
+});
+Object.defineProperty(exports, "ticks", {
+  enumerable: true,
+  get: function () {
+    return _ticks.default;
+  }
+});
+Object.defineProperty(exports, "transpose", {
+  enumerable: true,
+  get: function () {
+    return _transpose.default;
+  }
+});
+Object.defineProperty(exports, "variance", {
+  enumerable: true,
+  get: function () {
+    return _variance.default;
+  }
+});
+Object.defineProperty(exports, "zip", {
+  enumerable: true,
+  get: function () {
+    return _zip.default;
+  }
+});
+
+var _bisect = _interopRequireWildcard(require("./bisect"));
+
+var _ascending = _interopRequireDefault(require("./ascending"));
+
+var _bisector = _interopRequireDefault(require("./bisector"));
+
+var _cross = _interopRequireDefault(require("./cross"));
+
+var _descending = _interopRequireDefault(require("./descending"));
+
+var _deviation = _interopRequireDefault(require("./deviation"));
+
+var _extent = _interopRequireDefault(require("./extent"));
+
+var _histogram = _interopRequireDefault(require("./histogram"));
+
+var _freedmanDiaconis = _interopRequireDefault(require("./threshold/freedmanDiaconis"));
+
+var _scott = _interopRequireDefault(require("./threshold/scott"));
+
+var _sturges = _interopRequireDefault(require("./threshold/sturges"));
+
+var _max = _interopRequireDefault(require("./max"));
+
+var _mean = _interopRequireDefault(require("./mean"));
+
+var _median = _interopRequireDefault(require("./median"));
+
+var _merge = _interopRequireDefault(require("./merge"));
+
+var _min = _interopRequireDefault(require("./min"));
+
+var _pairs = _interopRequireDefault(require("./pairs"));
+
+var _permute = _interopRequireDefault(require("./permute"));
+
+var _quantile = _interopRequireDefault(require("./quantile"));
+
+var _range = _interopRequireDefault(require("./range"));
+
+var _scan = _interopRequireDefault(require("./scan"));
+
+var _shuffle = _interopRequireDefault(require("./shuffle"));
+
+var _sum = _interopRequireDefault(require("./sum"));
+
+var _ticks = _interopRequireWildcard(require("./ticks"));
+
+var _transpose = _interopRequireDefault(require("./transpose"));
+
+var _variance = _interopRequireDefault(require("./variance"));
+
+var _zip = _interopRequireDefault(require("./zip"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+},{"./bisect":"../node_modules/d3-array/src/bisect.js","./ascending":"../node_modules/d3-array/src/ascending.js","./bisector":"../node_modules/d3-array/src/bisector.js","./cross":"../node_modules/d3-array/src/cross.js","./descending":"../node_modules/d3-array/src/descending.js","./deviation":"../node_modules/d3-array/src/deviation.js","./extent":"../node_modules/d3-array/src/extent.js","./histogram":"../node_modules/d3-array/src/histogram.js","./threshold/freedmanDiaconis":"../node_modules/d3-array/src/threshold/freedmanDiaconis.js","./threshold/scott":"../node_modules/d3-array/src/threshold/scott.js","./threshold/sturges":"../node_modules/d3-array/src/threshold/sturges.js","./max":"../node_modules/d3-array/src/max.js","./mean":"../node_modules/d3-array/src/mean.js","./median":"../node_modules/d3-array/src/median.js","./merge":"../node_modules/d3-array/src/merge.js","./min":"../node_modules/d3-array/src/min.js","./pairs":"../node_modules/d3-array/src/pairs.js","./permute":"../node_modules/d3-array/src/permute.js","./quantile":"../node_modules/d3-array/src/quantile.js","./range":"../node_modules/d3-array/src/range.js","./scan":"../node_modules/d3-array/src/scan.js","./shuffle":"../node_modules/d3-array/src/shuffle.js","./sum":"../node_modules/d3-array/src/sum.js","./ticks":"../node_modules/d3-array/src/ticks.js","./transpose":"../node_modules/d3-array/src/transpose.js","./variance":"../node_modules/d3-array/src/variance.js","./zip":"../node_modules/d3-array/src/zip.js"}],"../node_modules/d3-axis/src/array.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.slice = void 0;
+var slice = Array.prototype.slice;
+exports.slice = slice;
+},{}],"../node_modules/d3-axis/src/identity.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(x) {
+  return x;
+}
+},{}],"../node_modules/d3-axis/src/axis.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.axisBottom = axisBottom;
+exports.axisLeft = axisLeft;
+exports.axisRight = axisRight;
+exports.axisTop = axisTop;
+
+var _array = require("./array");
+
+var _identity = _interopRequireDefault(require("./identity"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var top = 1,
+    right = 2,
+    bottom = 3,
+    left = 4,
+    epsilon = 1e-6;
+
+function translateX(x) {
+  return "translate(" + (x + 0.5) + ",0)";
+}
+
+function translateY(y) {
+  return "translate(0," + (y + 0.5) + ")";
+}
+
+function number(scale) {
+  return function (d) {
+    return +scale(d);
+  };
+}
+
+function center(scale) {
+  var offset = Math.max(0, scale.bandwidth() - 1) / 2; // Adjust for 0.5px offset.
+
+  if (scale.round()) offset = Math.round(offset);
+  return function (d) {
+    return +scale(d) + offset;
+  };
+}
+
+function entering() {
+  return !this.__axis;
+}
+
+function axis(orient, scale) {
+  var tickArguments = [],
+      tickValues = null,
+      tickFormat = null,
+      tickSizeInner = 6,
+      tickSizeOuter = 6,
+      tickPadding = 3,
+      k = orient === top || orient === left ? -1 : 1,
+      x = orient === left || orient === right ? "x" : "y",
+      transform = orient === top || orient === bottom ? translateX : translateY;
+
+  function axis(context) {
+    var values = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues,
+        format = tickFormat == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : _identity.default : tickFormat,
+        spacing = Math.max(tickSizeInner, 0) + tickPadding,
+        range = scale.range(),
+        range0 = +range[0] + 0.5,
+        range1 = +range[range.length - 1] + 0.5,
+        position = (scale.bandwidth ? center : number)(scale.copy()),
+        selection = context.selection ? context.selection() : context,
+        path = selection.selectAll(".domain").data([null]),
+        tick = selection.selectAll(".tick").data(values, scale).order(),
+        tickExit = tick.exit(),
+        tickEnter = tick.enter().append("g").attr("class", "tick"),
+        line = tick.select("line"),
+        text = tick.select("text");
+    path = path.merge(path.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor"));
+    tick = tick.merge(tickEnter);
+    line = line.merge(tickEnter.append("line").attr("stroke", "currentColor").attr(x + "2", k * tickSizeInner));
+    text = text.merge(tickEnter.append("text").attr("fill", "currentColor").attr(x, k * spacing).attr("dy", orient === top ? "0em" : orient === bottom ? "0.71em" : "0.32em"));
+
+    if (context !== selection) {
+      path = path.transition(context);
+      tick = tick.transition(context);
+      line = line.transition(context);
+      text = text.transition(context);
+      tickExit = tickExit.transition(context).attr("opacity", epsilon).attr("transform", function (d) {
+        return isFinite(d = position(d)) ? transform(d) : this.getAttribute("transform");
+      });
+      tickEnter.attr("opacity", epsilon).attr("transform", function (d) {
+        var p = this.parentNode.__axis;
+        return transform(p && isFinite(p = p(d)) ? p : position(d));
+      });
+    }
+
+    tickExit.remove();
+    path.attr("d", orient === left || orient == right ? tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H0.5V" + range1 + "H" + k * tickSizeOuter : "M0.5," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V0.5H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + ",0.5H" + range1);
+    tick.attr("opacity", 1).attr("transform", function (d) {
+      return transform(position(d));
+    });
+    line.attr(x + "2", k * tickSizeInner);
+    text.attr(x, k * spacing).text(format);
+    selection.filter(entering).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", orient === right ? "start" : orient === left ? "end" : "middle");
+    selection.each(function () {
+      this.__axis = position;
+    });
+  }
+
+  axis.scale = function (_) {
+    return arguments.length ? (scale = _, axis) : scale;
+  };
+
+  axis.ticks = function () {
+    return tickArguments = _array.slice.call(arguments), axis;
+  };
+
+  axis.tickArguments = function (_) {
+    return arguments.length ? (tickArguments = _ == null ? [] : _array.slice.call(_), axis) : tickArguments.slice();
+  };
+
+  axis.tickValues = function (_) {
+    return arguments.length ? (tickValues = _ == null ? null : _array.slice.call(_), axis) : tickValues && tickValues.slice();
+  };
+
+  axis.tickFormat = function (_) {
+    return arguments.length ? (tickFormat = _, axis) : tickFormat;
+  };
+
+  axis.tickSize = function (_) {
+    return arguments.length ? (tickSizeInner = tickSizeOuter = +_, axis) : tickSizeInner;
+  };
+
+  axis.tickSizeInner = function (_) {
+    return arguments.length ? (tickSizeInner = +_, axis) : tickSizeInner;
+  };
+
+  axis.tickSizeOuter = function (_) {
+    return arguments.length ? (tickSizeOuter = +_, axis) : tickSizeOuter;
+  };
+
+  axis.tickPadding = function (_) {
+    return arguments.length ? (tickPadding = +_, axis) : tickPadding;
+  };
+
+  return axis;
+}
+
+function axisTop(scale) {
+  return axis(top, scale);
+}
+
+function axisRight(scale) {
+  return axis(right, scale);
+}
+
+function axisBottom(scale) {
+  return axis(bottom, scale);
+}
+
+function axisLeft(scale) {
+  return axis(left, scale);
+}
+},{"./array":"../node_modules/d3-axis/src/array.js","./identity":"../node_modules/d3-axis/src/identity.js"}],"../node_modules/d3-axis/src/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "axisBottom", {
+  enumerable: true,
+  get: function () {
+    return _axis.axisBottom;
+  }
+});
+Object.defineProperty(exports, "axisLeft", {
+  enumerable: true,
+  get: function () {
+    return _axis.axisLeft;
+  }
+});
+Object.defineProperty(exports, "axisRight", {
+  enumerable: true,
+  get: function () {
+    return _axis.axisRight;
+  }
+});
+Object.defineProperty(exports, "axisTop", {
+  enumerable: true,
+  get: function () {
+    return _axis.axisTop;
+  }
+});
+
+var _axis = require("./axis");
+},{"./axis":"../node_modules/d3-axis/src/axis.js"}],"../node_modules/d3-dispatch/src/dispatch.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var noop = {
+  value: function () {}
+};
+
+function dispatch() {
+  for (var i = 0, n = arguments.length, _ = {}, t; i < n; ++i) {
+    if (!(t = arguments[i] + "") || t in _ || /[\s.]/.test(t)) throw new Error("illegal type: " + t);
+    _[t] = [];
+  }
+
+  return new Dispatch(_);
+}
+
+function Dispatch(_) {
+  this._ = _;
+}
+
+function parseTypenames(typenames, types) {
+  return typenames.trim().split(/^|\s+/).map(function (t) {
+    var name = "",
+        i = t.indexOf(".");
+    if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
+    if (t && !types.hasOwnProperty(t)) throw new Error("unknown type: " + t);
+    return {
+      type: t,
+      name: name
+    };
+  });
+}
+
+Dispatch.prototype = dispatch.prototype = {
+  constructor: Dispatch,
+  on: function (typename, callback) {
+    var _ = this._,
+        T = parseTypenames(typename + "", _),
+        t,
+        i = -1,
+        n = T.length; // If no callback was specified, return the callback of the given type and name.
+
+    if (arguments.length < 2) {
+      while (++i < n) if ((t = (typename = T[i]).type) && (t = get(_[t], typename.name))) return t;
+
+      return;
+    } // If a type was specified, set the callback for the given type and name.
+    // Otherwise, if a null callback was specified, remove callbacks of the given name.
+
+
+    if (callback != null && typeof callback !== "function") throw new Error("invalid callback: " + callback);
+
+    while (++i < n) {
+      if (t = (typename = T[i]).type) _[t] = set(_[t], typename.name, callback);else if (callback == null) for (t in _) _[t] = set(_[t], typename.name, null);
+    }
+
+    return this;
+  },
+  copy: function () {
+    var copy = {},
+        _ = this._;
+
+    for (var t in _) copy[t] = _[t].slice();
+
+    return new Dispatch(copy);
+  },
+  call: function (type, that) {
+    if ((n = arguments.length - 2) > 0) for (var args = new Array(n), i = 0, n, t; i < n; ++i) args[i] = arguments[i + 2];
+    if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
+
+    for (t = this._[type], i = 0, n = t.length; i < n; ++i) t[i].value.apply(that, args);
+  },
+  apply: function (type, that, args) {
+    if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
+
+    for (var t = this._[type], i = 0, n = t.length; i < n; ++i) t[i].value.apply(that, args);
+  }
+};
+
+function get(type, name) {
+  for (var i = 0, n = type.length, c; i < n; ++i) {
+    if ((c = type[i]).name === name) {
+      return c.value;
+    }
+  }
+}
+
+function set(type, name, callback) {
+  for (var i = 0, n = type.length; i < n; ++i) {
+    if (type[i].name === name) {
+      type[i] = noop, type = type.slice(0, i).concat(type.slice(i + 1));
+      break;
+    }
+  }
+
+  if (callback != null) type.push({
+    name: name,
+    value: callback
+  });
+  return type;
+}
+
+var _default = dispatch;
+exports.default = _default;
+},{}],"../node_modules/d3-dispatch/src/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "dispatch", {
+  enumerable: true,
+  get: function () {
+    return _dispatch.default;
+  }
+});
+
+var _dispatch = _interopRequireDefault(require("./dispatch.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+},{"./dispatch.js":"../node_modules/d3-dispatch/src/dispatch.js"}],"../node_modules/d3-drag/src/noevent.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+exports.nopropagation = nopropagation;
+
+var _d3Selection = require("d3-selection");
+
+function nopropagation() {
+  _d3Selection.event.stopImmediatePropagation();
+}
+
+function _default() {
+  _d3Selection.event.preventDefault();
+
+  _d3Selection.event.stopImmediatePropagation();
+}
+},{"d3-selection":"../node_modules/d3-selection/src/index.js"}],"../node_modules/d3-drag/src/nodrag.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+exports.yesdrag = yesdrag;
+
+var _d3Selection = require("d3-selection");
+
+var _noevent = _interopRequireDefault(require("./noevent.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _default(view) {
+  var root = view.document.documentElement,
+      selection = (0, _d3Selection.select)(view).on("dragstart.drag", _noevent.default, true);
+
+  if ("onselectstart" in root) {
+    selection.on("selectstart.drag", _noevent.default, true);
+  } else {
+    root.__noselect = root.style.MozUserSelect;
+    root.style.MozUserSelect = "none";
+  }
+}
+
+function yesdrag(view, noclick) {
+  var root = view.document.documentElement,
+      selection = (0, _d3Selection.select)(view).on("dragstart.drag", null);
+
+  if (noclick) {
+    selection.on("click.drag", _noevent.default, true);
+    setTimeout(function () {
+      selection.on("click.drag", null);
+    }, 0);
+  }
+
+  if ("onselectstart" in root) {
+    selection.on("selectstart.drag", null);
+  } else {
+    root.style.MozUserSelect = root.__noselect;
+    delete root.__noselect;
+  }
+}
+},{"d3-selection":"../node_modules/d3-selection/src/index.js","./noevent.js":"../node_modules/d3-drag/src/noevent.js"}],"../node_modules/d3-drag/src/constant.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+function _default(x) {
+  return function () {
+    return x;
+  };
+}
+},{}],"../node_modules/d3-drag/src/event.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = DragEvent;
+
+function DragEvent(target, type, subject, id, active, x, y, dx, dy, dispatch) {
+  this.target = target;
+  this.type = type;
+  this.subject = subject;
+  this.identifier = id;
+  this.active = active;
+  this.x = x;
+  this.y = y;
+  this.dx = dx;
+  this.dy = dy;
+  this._ = dispatch;
+}
+
+DragEvent.prototype.on = function () {
+  var value = this._.on.apply(this._, arguments);
+
+  return value === this._ ? this : value;
+};
+},{}],"../node_modules/d3-drag/src/drag.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _d3Dispatch = require("d3-dispatch");
+
+var _d3Selection = require("d3-selection");
+
+var _nodrag = _interopRequireWildcard(require("./nodrag.js"));
+
+var _noevent = _interopRequireWildcard(require("./noevent.js"));
+
+var _constant = _interopRequireDefault(require("./constant.js"));
+
+var _event = _interopRequireDefault(require("./event.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+// Ignore right-click, since that should open the context menu.
+function defaultFilter() {
+  return !_d3Selection.event.ctrlKey && !_d3Selection.event.button;
+}
+
+function defaultContainer() {
+  return this.parentNode;
+}
+
+function defaultSubject(d) {
+  return d == null ? {
+    x: _d3Selection.event.x,
+    y: _d3Selection.event.y
+  } : d;
+}
+
+function defaultTouchable() {
+  return navigator.maxTouchPoints || "ontouchstart" in this;
+}
+
+function _default() {
+  var filter = defaultFilter,
+      container = defaultContainer,
+      subject = defaultSubject,
+      touchable = defaultTouchable,
+      gestures = {},
+      listeners = (0, _d3Dispatch.dispatch)("start", "drag", "end"),
+      active = 0,
+      mousedownx,
+      mousedowny,
+      mousemoving,
+      touchending,
+      clickDistance2 = 0;
+
+  function drag(selection) {
+    selection.on("mousedown.drag", mousedowned).filter(touchable).on("touchstart.drag", touchstarted).on("touchmove.drag", touchmoved).on("touchend.drag touchcancel.drag", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
+  }
+
+  function mousedowned() {
+    if (touchending || !filter.apply(this, arguments)) return;
+    var gesture = beforestart("mouse", container.apply(this, arguments), _d3Selection.mouse, this, arguments);
+    if (!gesture) return;
+    (0, _d3Selection.select)(_d3Selection.event.view).on("mousemove.drag", mousemoved, true).on("mouseup.drag", mouseupped, true);
+    (0, _nodrag.default)(_d3Selection.event.view);
+    (0, _noevent.nopropagation)();
+    mousemoving = false;
+    mousedownx = _d3Selection.event.clientX;
+    mousedowny = _d3Selection.event.clientY;
+    gesture("start");
+  }
+
+  function mousemoved() {
+    (0, _noevent.default)();
+
+    if (!mousemoving) {
+      var dx = _d3Selection.event.clientX - mousedownx,
+          dy = _d3Selection.event.clientY - mousedowny;
+      mousemoving = dx * dx + dy * dy > clickDistance2;
+    }
+
+    gestures.mouse("drag");
+  }
+
+  function mouseupped() {
+    (0, _d3Selection.select)(_d3Selection.event.view).on("mousemove.drag mouseup.drag", null);
+    (0, _nodrag.yesdrag)(_d3Selection.event.view, mousemoving);
+    (0, _noevent.default)();
+    gestures.mouse("end");
+  }
+
+  function touchstarted() {
+    if (!filter.apply(this, arguments)) return;
+    var touches = _d3Selection.event.changedTouches,
+        c = container.apply(this, arguments),
+        n = touches.length,
+        i,
+        gesture;
+
+    for (i = 0; i < n; ++i) {
+      if (gesture = beforestart(touches[i].identifier, c, _d3Selection.touch, this, arguments)) {
+        (0, _noevent.nopropagation)();
+        gesture("start");
+      }
+    }
+  }
+
+  function touchmoved() {
+    var touches = _d3Selection.event.changedTouches,
+        n = touches.length,
+        i,
+        gesture;
+
+    for (i = 0; i < n; ++i) {
+      if (gesture = gestures[touches[i].identifier]) {
+        (0, _noevent.default)();
+        gesture("drag");
+      }
+    }
+  }
+
+  function touchended() {
+    var touches = _d3Selection.event.changedTouches,
+        n = touches.length,
+        i,
+        gesture;
+    if (touchending) clearTimeout(touchending);
+    touchending = setTimeout(function () {
+      touchending = null;
+    }, 500); // Ghost clicks are delayed!
+
+    for (i = 0; i < n; ++i) {
+      if (gesture = gestures[touches[i].identifier]) {
+        (0, _noevent.nopropagation)();
+        gesture("end");
+      }
+    }
+  }
+
+  function beforestart(id, container, point, that, args) {
+    var p = point(container, id),
+        s,
+        dx,
+        dy,
+        sublisteners = listeners.copy();
+    if (!(0, _d3Selection.customEvent)(new _event.default(drag, "beforestart", s, id, active, p[0], p[1], 0, 0, sublisteners), function () {
+      if ((_d3Selection.event.subject = s = subject.apply(that, args)) == null) return false;
+      dx = s.x - p[0] || 0;
+      dy = s.y - p[1] || 0;
+      return true;
+    })) return;
+    return function gesture(type) {
+      var p0 = p,
+          n;
+
+      switch (type) {
+        case "start":
+          gestures[id] = gesture, n = active++;
+          break;
+
+        case "end":
+          delete gestures[id], --active;
+        // nobreak
+
+        case "drag":
+          p = point(container, id), n = active;
+          break;
+      }
+
+      (0, _d3Selection.customEvent)(new _event.default(drag, type, s, id, n, p[0] + dx, p[1] + dy, p[0] - p0[0], p[1] - p0[1], sublisteners), sublisteners.apply, sublisteners, [type, that, args]);
+    };
+  }
+
+  drag.filter = function (_) {
+    return arguments.length ? (filter = typeof _ === "function" ? _ : (0, _constant.default)(!!_), drag) : filter;
+  };
+
+  drag.container = function (_) {
+    return arguments.length ? (container = typeof _ === "function" ? _ : (0, _constant.default)(_), drag) : container;
+  };
+
+  drag.subject = function (_) {
+    return arguments.length ? (subject = typeof _ === "function" ? _ : (0, _constant.default)(_), drag) : subject;
+  };
+
+  drag.touchable = function (_) {
+    return arguments.length ? (touchable = typeof _ === "function" ? _ : (0, _constant.default)(!!_), drag) : touchable;
+  };
+
+  drag.on = function () {
+    var value = listeners.on.apply(listeners, arguments);
+    return value === listeners ? drag : value;
+  };
+
+  drag.clickDistance = function (_) {
+    return arguments.length ? (clickDistance2 = (_ = +_) * _, drag) : Math.sqrt(clickDistance2);
+  };
+
+  return drag;
+}
+},{"d3-dispatch":"../node_modules/d3-dispatch/src/index.js","d3-selection":"../node_modules/d3-selection/src/index.js","./nodrag.js":"../node_modules/d3-drag/src/nodrag.js","./noevent.js":"../node_modules/d3-drag/src/noevent.js","./constant.js":"../node_modules/d3-drag/src/constant.js","./event.js":"../node_modules/d3-drag/src/event.js"}],"../node_modules/d3-drag/src/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "drag", {
+  enumerable: true,
+  get: function () {
+    return _drag.default;
+  }
+});
+Object.defineProperty(exports, "dragDisable", {
+  enumerable: true,
+  get: function () {
+    return _nodrag.default;
+  }
+});
+Object.defineProperty(exports, "dragEnable", {
+  enumerable: true,
+  get: function () {
+    return _nodrag.yesdrag;
+  }
+});
+
+var _drag = _interopRequireDefault(require("./drag.js"));
+
+var _nodrag = _interopRequireWildcard(require("./nodrag.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+},{"./drag.js":"../node_modules/d3-drag/src/drag.js","./nodrag.js":"../node_modules/d3-drag/src/nodrag.js"}],"../node_modules/d3-timer/src/timer.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6897,7 +16878,7 @@ var pi = Math.PI,
     halfPi = pi / 2;
 
 function sinIn(t) {
-  return 1 - Math.cos(t * halfPi);
+  return +t === 1 ? 1 : 1 - Math.cos(t * halfPi);
 }
 
 function sinOut(t) {
@@ -6906,6 +16887,18 @@ function sinOut(t) {
 
 function sinInOut(t) {
   return (1 - Math.cos(pi * t)) / 2;
+}
+},{}],"../node_modules/d3-ease/src/math.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.tpmt = tpmt;
+
+// tpmt is two power minus ten times t scaled to [0,1]
+function tpmt(x) {
+  return (Math.pow(2, -10 * x) - 0.0009765625) * 1.0009775171065494;
 }
 },{}],"../node_modules/d3-ease/src/exp.js":[function(require,module,exports) {
 "use strict";
@@ -6917,18 +16910,20 @@ exports.expIn = expIn;
 exports.expInOut = expInOut;
 exports.expOut = expOut;
 
+var _math = require("./math.js");
+
 function expIn(t) {
-  return Math.pow(2, 10 * t - 10);
+  return (0, _math.tpmt)(1 - +t);
 }
 
 function expOut(t) {
-  return 1 - Math.pow(2, -10 * t);
+  return 1 - (0, _math.tpmt)(t);
 }
 
 function expInOut(t) {
-  return ((t *= 2) <= 1 ? Math.pow(2, 10 * t - 10) : 2 - Math.pow(2, 10 - 10 * t)) / 2;
+  return ((t *= 2) <= 1 ? (0, _math.tpmt)(1 - t) : 2 - (0, _math.tpmt)(t - 1)) / 2;
 }
-},{}],"../node_modules/d3-ease/src/circle.js":[function(require,module,exports) {
+},{"./math.js":"../node_modules/d3-ease/src/math.js"}],"../node_modules/d3-ease/src/circle.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6993,7 +16988,7 @@ var backIn = function custom(s) {
   s = +s;
 
   function backIn(t) {
-    return t * t * ((s + 1) * t - s);
+    return (t = +t) * t * (s * (t - 1) + t);
   }
 
   backIn.overshoot = custom;
@@ -7006,7 +17001,7 @@ var backOut = function custom(s) {
   s = +s;
 
   function backOut(t) {
-    return --t * t * ((s + 1) * t + s) + 1;
+    return --t * t * ((t + 1) * s + t) + 1;
   }
 
   backOut.overshoot = custom;
@@ -7034,6 +17029,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.elasticOut = exports.elasticInOut = exports.elasticIn = void 0;
+
+var _math = require("./math.js");
+
 var tau = 2 * Math.PI,
     amplitude = 1,
     period = 0.3;
@@ -7042,7 +17040,7 @@ var elasticIn = function custom(a, p) {
   var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
 
   function elasticIn(t) {
-    return a * Math.pow(2, 10 * --t) * Math.sin((s - t) / p);
+    return a * (0, _math.tpmt)(- --t) * Math.sin((s - t) / p);
   }
 
   elasticIn.amplitude = function (a) {
@@ -7062,7 +17060,7 @@ var elasticOut = function custom(a, p) {
   var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
 
   function elasticOut(t) {
-    return 1 - a * Math.pow(2, -10 * (t = +t)) * Math.sin((t + s) / p);
+    return 1 - a * (0, _math.tpmt)(t = +t) * Math.sin((t + s) / p);
   }
 
   elasticOut.amplitude = function (a) {
@@ -7082,7 +17080,7 @@ var elasticInOut = function custom(a, p) {
   var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
 
   function elasticInOut(t) {
-    return ((t = t * 2 - 1) < 0 ? a * Math.pow(2, 10 * t) * Math.sin((s - t) / p) : 2 - a * Math.pow(2, -10 * t) * Math.sin((s + t) / p)) / 2;
+    return ((t = t * 2 - 1) < 0 ? a * (0, _math.tpmt)(-t) * Math.sin((s - t) / p) : 2 - a * (0, _math.tpmt)(t) * Math.sin((s + t) / p)) / 2;
   }
 
   elasticInOut.amplitude = function (a) {
@@ -7097,7 +17095,7 @@ var elasticInOut = function custom(a, p) {
 }(amplitude, period);
 
 exports.elasticInOut = elasticInOut;
-},{}],"../node_modules/d3-ease/src/index.js":[function(require,module,exports) {
+},{"./math.js":"../node_modules/d3-ease/src/math.js"}],"../node_modules/d3-ease/src/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7813,14 +17811,16 @@ function brush(dim) {
   }
 
   function emitter(that, args, clean) {
-    return !clean && that.__brush.emitter || new Emitter(that, args);
+    var emit = that.__brush.emitter;
+    return emit && (!clean || !emit.clean) ? emit : new Emitter(that, args, clean);
   }
 
-  function Emitter(that, args) {
+  function Emitter(that, args, clean) {
     this.that = that;
     this.args = args;
     this.state = that.__brush;
     this.active = 0;
+    this.clean = clean;
   }
 
   Emitter.prototype = {
@@ -8361,144 +18361,7 @@ function _default(x) {
     return x;
   };
 }
-},{}],"../node_modules/d3-path/src/path.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var pi = Math.PI,
-    tau = 2 * pi,
-    epsilon = 1e-6,
-    tauEpsilon = tau - epsilon;
-
-function Path() {
-  this._x0 = this._y0 = // start of current subpath
-  this._x1 = this._y1 = null; // end of current subpath
-
-  this._ = "";
-}
-
-function path() {
-  return new Path();
-}
-
-Path.prototype = path.prototype = {
-  constructor: Path,
-  moveTo: function (x, y) {
-    this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y);
-  },
-  closePath: function () {
-    if (this._x1 !== null) {
-      this._x1 = this._x0, this._y1 = this._y0;
-      this._ += "Z";
-    }
-  },
-  lineTo: function (x, y) {
-    this._ += "L" + (this._x1 = +x) + "," + (this._y1 = +y);
-  },
-  quadraticCurveTo: function (x1, y1, x, y) {
-    this._ += "Q" + +x1 + "," + +y1 + "," + (this._x1 = +x) + "," + (this._y1 = +y);
-  },
-  bezierCurveTo: function (x1, y1, x2, y2, x, y) {
-    this._ += "C" + +x1 + "," + +y1 + "," + +x2 + "," + +y2 + "," + (this._x1 = +x) + "," + (this._y1 = +y);
-  },
-  arcTo: function (x1, y1, x2, y2, r) {
-    x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
-    var x0 = this._x1,
-        y0 = this._y1,
-        x21 = x2 - x1,
-        y21 = y2 - y1,
-        x01 = x0 - x1,
-        y01 = y0 - y1,
-        l01_2 = x01 * x01 + y01 * y01; // Is the radius negative? Error.
-
-    if (r < 0) throw new Error("negative radius: " + r); // Is this path empty? Move to (x1,y1).
-
-    if (this._x1 === null) {
-      this._ += "M" + (this._x1 = x1) + "," + (this._y1 = y1);
-    } // Or, is (x1,y1) coincident with (x0,y0)? Do nothing.
-    else if (!(l01_2 > epsilon)) ; // Or, are (x0,y0), (x1,y1) and (x2,y2) collinear?
-    // Equivalently, is (x1,y1) coincident with (x2,y2)?
-    // Or, is the radius zero? Line to (x1,y1).
-    else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon) || !r) {
-      this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1);
-    } // Otherwise, draw an arc!
-    else {
-      var x20 = x2 - x0,
-          y20 = y2 - y0,
-          l21_2 = x21 * x21 + y21 * y21,
-          l20_2 = x20 * x20 + y20 * y20,
-          l21 = Math.sqrt(l21_2),
-          l01 = Math.sqrt(l01_2),
-          l = r * Math.tan((pi - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2),
-          t01 = l / l01,
-          t21 = l / l21; // If the start tangent is not coincident with (x0,y0), line to.
-
-      if (Math.abs(t01 - 1) > epsilon) {
-        this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01);
-      }
-
-      this._ += "A" + r + "," + r + ",0,0," + +(y01 * x20 > x01 * y20) + "," + (this._x1 = x1 + t21 * x21) + "," + (this._y1 = y1 + t21 * y21);
-    }
-  },
-  arc: function (x, y, r, a0, a1, ccw) {
-    x = +x, y = +y, r = +r, ccw = !!ccw;
-    var dx = r * Math.cos(a0),
-        dy = r * Math.sin(a0),
-        x0 = x + dx,
-        y0 = y + dy,
-        cw = 1 ^ ccw,
-        da = ccw ? a0 - a1 : a1 - a0; // Is the radius negative? Error.
-
-    if (r < 0) throw new Error("negative radius: " + r); // Is this path empty? Move to (x0,y0).
-
-    if (this._x1 === null) {
-      this._ += "M" + x0 + "," + y0;
-    } // Or, is (x0,y0) not coincident with the previous point? Line to (x0,y0).
-    else if (Math.abs(this._x1 - x0) > epsilon || Math.abs(this._y1 - y0) > epsilon) {
-      this._ += "L" + x0 + "," + y0;
-    } // Is this arc empty? We’re done.
-
-
-    if (!r) return; // Does the angle go the wrong way? Flip the direction.
-
-    if (da < 0) da = da % tau + tau; // Is this a complete circle? Draw two arcs to complete the circle.
-
-    if (da > tauEpsilon) {
-      this._ += "A" + r + "," + r + ",0,1," + cw + "," + (x - dx) + "," + (y - dy) + "A" + r + "," + r + ",0,1," + cw + "," + (this._x1 = x0) + "," + (this._y1 = y0);
-    } // Is this arc non-empty? Draw an arc!
-    else if (da > epsilon) {
-      this._ += "A" + r + "," + r + ",0," + +(da >= pi) + "," + cw + "," + (this._x1 = x + r * Math.cos(a1)) + "," + (this._y1 = y + r * Math.sin(a1));
-    }
-  },
-  rect: function (x, y, w, h) {
-    this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y) + "h" + +w + "v" + +h + "h" + -w + "Z";
-  },
-  toString: function () {
-    return this._;
-  }
-};
-var _default = path;
-exports.default = _default;
-},{}],"../node_modules/d3-path/src/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "path", {
-  enumerable: true,
-  get: function () {
-    return _path.default;
-  }
-});
-
-var _path = _interopRequireDefault(require("./path.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./path.js":"../node_modules/d3-path/src/path.js"}],"../node_modules/d3-chord/src/ribbon.js":[function(require,module,exports) {
+},{}],"../node_modules/d3-chord/src/ribbon.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8623,357 +18486,7 @@ var _chord = _interopRequireDefault(require("./chord"));
 var _ribbon = _interopRequireDefault(require("./ribbon"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./chord":"../node_modules/d3-chord/src/chord.js","./ribbon":"../node_modules/d3-chord/src/ribbon.js"}],"../node_modules/d3-collection/src/map.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.prefix = exports.default = void 0;
-var prefix = "$";
-exports.prefix = prefix;
-
-function Map() {}
-
-Map.prototype = map.prototype = {
-  constructor: Map,
-  has: function (key) {
-    return prefix + key in this;
-  },
-  get: function (key) {
-    return this[prefix + key];
-  },
-  set: function (key, value) {
-    this[prefix + key] = value;
-    return this;
-  },
-  remove: function (key) {
-    var property = prefix + key;
-    return property in this && delete this[property];
-  },
-  clear: function () {
-    for (var property in this) if (property[0] === prefix) delete this[property];
-  },
-  keys: function () {
-    var keys = [];
-
-    for (var property in this) if (property[0] === prefix) keys.push(property.slice(1));
-
-    return keys;
-  },
-  values: function () {
-    var values = [];
-
-    for (var property in this) if (property[0] === prefix) values.push(this[property]);
-
-    return values;
-  },
-  entries: function () {
-    var entries = [];
-
-    for (var property in this) if (property[0] === prefix) entries.push({
-      key: property.slice(1),
-      value: this[property]
-    });
-
-    return entries;
-  },
-  size: function () {
-    var size = 0;
-
-    for (var property in this) if (property[0] === prefix) ++size;
-
-    return size;
-  },
-  empty: function () {
-    for (var property in this) if (property[0] === prefix) return false;
-
-    return true;
-  },
-  each: function (f) {
-    for (var property in this) if (property[0] === prefix) f(this[property], property.slice(1), this);
-  }
-};
-
-function map(object, f) {
-  var map = new Map(); // Copy constructor.
-
-  if (object instanceof Map) object.each(function (value, key) {
-    map.set(key, value);
-  }); // Index array by numeric index or specified key function.
-  else if (Array.isArray(object)) {
-    var i = -1,
-        n = object.length,
-        o;
-    if (f == null) while (++i < n) map.set(i, object[i]);else while (++i < n) map.set(f(o = object[i], i, object), o);
-  } // Convert object to map.
-  else if (object) for (var key in object) map.set(key, object[key]);
-  return map;
-}
-
-var _default = map;
-exports.default = _default;
-},{}],"../node_modules/d3-collection/src/nest.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-var _map = _interopRequireDefault(require("./map"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _default() {
-  var keys = [],
-      sortKeys = [],
-      sortValues,
-      rollup,
-      nest;
-
-  function apply(array, depth, createResult, setResult) {
-    if (depth >= keys.length) {
-      if (sortValues != null) array.sort(sortValues);
-      return rollup != null ? rollup(array) : array;
-    }
-
-    var i = -1,
-        n = array.length,
-        key = keys[depth++],
-        keyValue,
-        value,
-        valuesByKey = (0, _map.default)(),
-        values,
-        result = createResult();
-
-    while (++i < n) {
-      if (values = valuesByKey.get(keyValue = key(value = array[i]) + "")) {
-        values.push(value);
-      } else {
-        valuesByKey.set(keyValue, [value]);
-      }
-    }
-
-    valuesByKey.each(function (values, key) {
-      setResult(result, key, apply(values, depth, createResult, setResult));
-    });
-    return result;
-  }
-
-  function entries(map, depth) {
-    if (++depth > keys.length) return map;
-    var array,
-        sortKey = sortKeys[depth - 1];
-    if (rollup != null && depth >= keys.length) array = map.entries();else array = [], map.each(function (v, k) {
-      array.push({
-        key: k,
-        values: entries(v, depth)
-      });
-    });
-    return sortKey != null ? array.sort(function (a, b) {
-      return sortKey(a.key, b.key);
-    }) : array;
-  }
-
-  return nest = {
-    object: function (array) {
-      return apply(array, 0, createObject, setObject);
-    },
-    map: function (array) {
-      return apply(array, 0, createMap, setMap);
-    },
-    entries: function (array) {
-      return entries(apply(array, 0, createMap, setMap), 0);
-    },
-    key: function (d) {
-      keys.push(d);
-      return nest;
-    },
-    sortKeys: function (order) {
-      sortKeys[keys.length - 1] = order;
-      return nest;
-    },
-    sortValues: function (order) {
-      sortValues = order;
-      return nest;
-    },
-    rollup: function (f) {
-      rollup = f;
-      return nest;
-    }
-  };
-}
-
-function createObject() {
-  return {};
-}
-
-function setObject(object, key, value) {
-  object[key] = value;
-}
-
-function createMap() {
-  return (0, _map.default)();
-}
-
-function setMap(map, key, value) {
-  map.set(key, value);
-}
-},{"./map":"../node_modules/d3-collection/src/map.js"}],"../node_modules/d3-collection/src/set.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _map = _interopRequireWildcard(require("./map"));
-
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function Set() {}
-
-var proto = _map.default.prototype;
-Set.prototype = set.prototype = {
-  constructor: Set,
-  has: proto.has,
-  add: function (value) {
-    value += "";
-    this[_map.prefix + value] = value;
-    return this;
-  },
-  remove: proto.remove,
-  clear: proto.clear,
-  values: proto.keys,
-  size: proto.size,
-  empty: proto.empty,
-  each: proto.each
-};
-
-function set(object, f) {
-  var set = new Set(); // Copy constructor.
-
-  if (object instanceof Set) object.each(function (value) {
-    set.add(value);
-  }); // Otherwise, assume it’s an array.
-  else if (object) {
-    var i = -1,
-        n = object.length;
-    if (f == null) while (++i < n) set.add(object[i]);else while (++i < n) set.add(f(object[i], i, object));
-  }
-  return set;
-}
-
-var _default = set;
-exports.default = _default;
-},{"./map":"../node_modules/d3-collection/src/map.js"}],"../node_modules/d3-collection/src/keys.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(map) {
-  var keys = [];
-
-  for (var key in map) keys.push(key);
-
-  return keys;
-}
-},{}],"../node_modules/d3-collection/src/values.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(map) {
-  var values = [];
-
-  for (var key in map) values.push(map[key]);
-
-  return values;
-}
-},{}],"../node_modules/d3-collection/src/entries.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(map) {
-  var entries = [];
-
-  for (var key in map) entries.push({
-    key: key,
-    value: map[key]
-  });
-
-  return entries;
-}
-},{}],"../node_modules/d3-collection/src/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "entries", {
-  enumerable: true,
-  get: function () {
-    return _entries.default;
-  }
-});
-Object.defineProperty(exports, "keys", {
-  enumerable: true,
-  get: function () {
-    return _keys.default;
-  }
-});
-Object.defineProperty(exports, "map", {
-  enumerable: true,
-  get: function () {
-    return _map.default;
-  }
-});
-Object.defineProperty(exports, "nest", {
-  enumerable: true,
-  get: function () {
-    return _nest.default;
-  }
-});
-Object.defineProperty(exports, "set", {
-  enumerable: true,
-  get: function () {
-    return _set.default;
-  }
-});
-Object.defineProperty(exports, "values", {
-  enumerable: true,
-  get: function () {
-    return _values.default;
-  }
-});
-
-var _nest = _interopRequireDefault(require("./nest"));
-
-var _set = _interopRequireDefault(require("./set"));
-
-var _map = _interopRequireDefault(require("./map"));
-
-var _keys = _interopRequireDefault(require("./keys"));
-
-var _values = _interopRequireDefault(require("./values"));
-
-var _entries = _interopRequireDefault(require("./entries"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./nest":"../node_modules/d3-collection/src/nest.js","./set":"../node_modules/d3-collection/src/set.js","./map":"../node_modules/d3-collection/src/map.js","./keys":"../node_modules/d3-collection/src/keys.js","./values":"../node_modules/d3-collection/src/values.js","./entries":"../node_modules/d3-collection/src/entries.js"}],"../node_modules/d3-contour/src/array.js":[function(require,module,exports) {
+},{"./chord":"../node_modules/d3-chord/src/chord.js","./ribbon":"../node_modules/d3-chord/src/ribbon.js"}],"../node_modules/d3-contour/src/array.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11630,11 +21143,16 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = _default;
+exports.formatDecimalParts = formatDecimalParts;
 
-// Computes the decimal coefficient and exponent of the specified number x with
+function _default(x) {
+  return Math.abs(x = Math.round(x)) >= 1e21 ? x.toLocaleString("en").replace(/,/g, "") : x.toString(10);
+} // Computes the decimal coefficient and exponent of the specified number x with
 // significant digits p, where x is positive and p is in [1, 21] or undefined.
-// For example, formatDecimal(1.23) returns ["123", 0].
-function _default(x, p) {
+// For example, formatDecimalParts(1.23) returns ["123", 0].
+
+
+function formatDecimalParts(x, p) {
   if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // NaN, ±Infinity
 
   var i,
@@ -11651,12 +21169,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = _default;
 
-var _formatDecimal = _interopRequireDefault(require("./formatDecimal.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _formatDecimal = require("./formatDecimal.js");
 
 function _default(x) {
-  return x = (0, _formatDecimal.default)(Math.abs(x)), x ? x[1] : NaN;
+  return x = (0, _formatDecimal.formatDecimalParts)(Math.abs(x)), x ? x[1] : NaN;
 }
 },{"./formatDecimal.js":"../node_modules/d3-format/src/formatDecimal.js"}],"../node_modules/d3-format/src/formatGroup.js":[function(require,module,exports) {
 "use strict";
@@ -11784,21 +21300,19 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = _default;
 exports.prefixExponent = void 0;
 
-var _formatDecimal = _interopRequireDefault(require("./formatDecimal.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _formatDecimal = require("./formatDecimal.js");
 
 var prefixExponent;
 exports.prefixExponent = prefixExponent;
 
 function _default(x, p) {
-  var d = (0, _formatDecimal.default)(x, p);
+  var d = (0, _formatDecimal.formatDecimalParts)(x, p);
   if (!d) return x + "";
   var coefficient = d[0],
       exponent = d[1],
       i = exponent - (exports.prefixExponent = prefixExponent = Math.max(-8, Math.min(8, Math.floor(exponent / 3))) * 3) + 1,
       n = coefficient.length;
-  return i === n ? coefficient : i > n ? coefficient + new Array(i - n + 1).join("0") : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i) : "0." + new Array(1 - i).join("0") + (0, _formatDecimal.default)(x, Math.max(0, p + i - 1))[0]; // less than 1y!
+  return i === n ? coefficient : i > n ? coefficient + new Array(i - n + 1).join("0") : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i) : "0." + new Array(1 - i).join("0") + (0, _formatDecimal.formatDecimalParts)(x, Math.max(0, p + i - 1))[0]; // less than 1y!
 }
 },{"./formatDecimal.js":"../node_modules/d3-format/src/formatDecimal.js"}],"../node_modules/d3-format/src/formatRounded.js":[function(require,module,exports) {
 "use strict";
@@ -11808,12 +21322,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = _default;
 
-var _formatDecimal = _interopRequireDefault(require("./formatDecimal.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _formatDecimal = require("./formatDecimal.js");
 
 function _default(x, p) {
-  var d = (0, _formatDecimal.default)(x, p);
+  var d = (0, _formatDecimal.formatDecimalParts)(x, p);
   if (!d) return x + "";
   var coefficient = d[0],
       exponent = d[1];
@@ -11826,6 +21338,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+
+var _formatDecimal = _interopRequireDefault(require("./formatDecimal.js"));
 
 var _formatPrefixAuto = _interopRequireDefault(require("./formatPrefixAuto.js"));
 
@@ -11843,9 +21357,7 @@ var _default = {
   "c": function (x) {
     return x + "";
   },
-  "d": function (x) {
-    return Math.round(x).toString(10);
-  },
+  "d": _formatDecimal.default,
   "e": function (x, p) {
     return x.toExponential(p);
   },
@@ -11871,7 +21383,7 @@ var _default = {
   }
 };
 exports.default = _default;
-},{"./formatPrefixAuto.js":"../node_modules/d3-format/src/formatPrefixAuto.js","./formatRounded.js":"../node_modules/d3-format/src/formatRounded.js"}],"../node_modules/d3-format/src/identity.js":[function(require,module,exports) {
+},{"./formatDecimal.js":"../node_modules/d3-format/src/formatDecimal.js","./formatPrefixAuto.js":"../node_modules/d3-format/src/formatPrefixAuto.js","./formatRounded.js":"../node_modules/d3-format/src/formatRounded.js"}],"../node_modules/d3-format/src/identity.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20975,6 +30487,8 @@ function formatLocale(locale) {
     "d": formatDayOfMonth,
     "e": formatDayOfMonth,
     "f": formatMicroseconds,
+    "g": formatYearISO,
+    "G": formatFullYearISO,
     "H": formatHour24,
     "I": formatHour12,
     "j": formatDayOfYear,
@@ -21007,6 +30521,8 @@ function formatLocale(locale) {
     "d": formatUTCDayOfMonth,
     "e": formatUTCDayOfMonth,
     "f": formatUTCMicroseconds,
+    "g": formatUTCYearISO,
+    "G": formatUTCFullYearISO,
     "H": formatUTCHour24,
     "I": formatUTCHour12,
     "j": formatUTCDayOfYear,
@@ -21039,6 +30555,8 @@ function formatLocale(locale) {
     "d": parseDayOfMonth,
     "e": parseDayOfMonth,
     "f": parseMicroseconds,
+    "g": parseYear,
+    "G": parseFullYear,
     "H": parseHour24,
     "I": parseHour24,
     "j": parseDayOfYear,
@@ -21480,9 +30998,13 @@ function formatWeekNumberSunday(d, p) {
   return pad(_d3Time.timeSunday.count((0, _d3Time.timeYear)(d) - 1, d), p, 2);
 }
 
-function formatWeekNumberISO(d, p) {
+function dISO(d) {
   var day = d.getDay();
-  d = day >= 4 || day === 0 ? (0, _d3Time.timeThursday)(d) : _d3Time.timeThursday.ceil(d);
+  return day >= 4 || day === 0 ? (0, _d3Time.timeThursday)(d) : _d3Time.timeThursday.ceil(d);
+}
+
+function formatWeekNumberISO(d, p) {
+  d = dISO(d);
   return pad(_d3Time.timeThursday.count((0, _d3Time.timeYear)(d), d) + ((0, _d3Time.timeYear)(d).getDay() === 4), p, 2);
 }
 
@@ -21498,7 +31020,18 @@ function formatYear(d, p) {
   return pad(d.getFullYear() % 100, p, 2);
 }
 
+function formatYearISO(d, p) {
+  d = dISO(d);
+  return pad(d.getFullYear() % 100, p, 2);
+}
+
 function formatFullYear(d, p) {
+  return pad(d.getFullYear() % 10000, p, 4);
+}
+
+function formatFullYearISO(d, p) {
+  var day = d.getDay();
+  d = day >= 4 || day === 0 ? (0, _d3Time.timeThursday)(d) : _d3Time.timeThursday.ceil(d);
   return pad(d.getFullYear() % 10000, p, 4);
 }
 
@@ -21552,9 +31085,13 @@ function formatUTCWeekNumberSunday(d, p) {
   return pad(_d3Time.utcSunday.count((0, _d3Time.utcYear)(d) - 1, d), p, 2);
 }
 
-function formatUTCWeekNumberISO(d, p) {
+function UTCdISO(d) {
   var day = d.getUTCDay();
-  d = day >= 4 || day === 0 ? (0, _d3Time.utcThursday)(d) : _d3Time.utcThursday.ceil(d);
+  return day >= 4 || day === 0 ? (0, _d3Time.utcThursday)(d) : _d3Time.utcThursday.ceil(d);
+}
+
+function formatUTCWeekNumberISO(d, p) {
+  d = UTCdISO(d);
   return pad(_d3Time.utcThursday.count((0, _d3Time.utcYear)(d), d) + ((0, _d3Time.utcYear)(d).getUTCDay() === 4), p, 2);
 }
 
@@ -21570,7 +31107,18 @@ function formatUTCYear(d, p) {
   return pad(d.getUTCFullYear() % 100, p, 2);
 }
 
+function formatUTCYearISO(d, p) {
+  d = UTCdISO(d);
+  return pad(d.getUTCFullYear() % 100, p, 2);
+}
+
 function formatUTCFullYear(d, p) {
+  return pad(d.getUTCFullYear() % 10000, p, 4);
+}
+
+function formatUTCFullYearISO(d, p) {
+  var day = d.getUTCDay();
+  d = day >= 4 || day === 0 ? (0, _d3Time.utcThursday)(d) : _d3Time.utcThursday.ceil(d);
   return pad(d.getUTCFullYear() % 10000, p, 4);
 }
 
@@ -22353,1392 +31901,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-},{"./band":"../node_modules/d3-scale/src/band.js","./identity":"../node_modules/d3-scale/src/identity.js","./linear":"../node_modules/d3-scale/src/linear.js","./log":"../node_modules/d3-scale/src/log.js","./symlog":"../node_modules/d3-scale/src/symlog.js","./ordinal":"../node_modules/d3-scale/src/ordinal.js","./pow":"../node_modules/d3-scale/src/pow.js","./quantile":"../node_modules/d3-scale/src/quantile.js","./quantize":"../node_modules/d3-scale/src/quantize.js","./threshold":"../node_modules/d3-scale/src/threshold.js","./time":"../node_modules/d3-scale/src/time.js","./utcTime":"../node_modules/d3-scale/src/utcTime.js","./sequential":"../node_modules/d3-scale/src/sequential.js","./sequentialQuantile":"../node_modules/d3-scale/src/sequentialQuantile.js","./diverging":"../node_modules/d3-scale/src/diverging.js","./tickFormat":"../node_modules/d3-scale/src/tickFormat.js"}],"../node_modules/d3-scale-chromatic/src/colors.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(specifier) {
-  var n = specifier.length / 6 | 0,
-      colors = new Array(n),
-      i = 0;
-
-  while (i < n) colors[i] = "#" + specifier.slice(i * 6, ++i * 6);
-
-  return colors;
-}
-},{}],"../node_modules/d3-scale-chromatic/src/categorical/category10.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _default = (0, _colors.default)("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf");
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Accent.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _default = (0, _colors.default)("7fc97fbeaed4fdc086ffff99386cb0f0027fbf5b17666666");
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Dark2.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _default = (0, _colors.default)("1b9e77d95f027570b3e7298a66a61ee6ab02a6761d666666");
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Paired.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _default = (0, _colors.default)("a6cee31f78b4b2df8a33a02cfb9a99e31a1cfdbf6fff7f00cab2d66a3d9affff99b15928");
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Pastel1.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _default = (0, _colors.default)("fbb4aeb3cde3ccebc5decbe4fed9a6ffffcce5d8bdfddaecf2f2f2");
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Pastel2.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _default = (0, _colors.default)("b3e2cdfdcdaccbd5e8f4cae4e6f5c9fff2aef1e2cccccccc");
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Set1.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _default = (0, _colors.default)("e41a1c377eb84daf4a984ea3ff7f00ffff33a65628f781bf999999");
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Set2.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _default = (0, _colors.default)("66c2a5fc8d628da0cbe78ac3a6d854ffd92fe5c494b3b3b3");
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Set3.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _default = (0, _colors.default)("8dd3c7ffffb3bebadafb807280b1d3fdb462b3de69fccde5d9d9d9bc80bdccebc5ffed6f");
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/categorical/Tableau10.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _default = (0, _colors.default)("4e79a7f28e2ce1575976b7b259a14fedc949af7aa1ff9da79c755fbab0ab");
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/ramp.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-var _d3Interpolate = require("d3-interpolate");
-
-function _default(scheme) {
-  return (0, _d3Interpolate.interpolateRgbBasis)(scheme[scheme.length - 1]);
-}
-},{"d3-interpolate":"../node_modules/d3-interpolate/src/index.js"}],"../node_modules/d3-scale-chromatic/src/diverging/BrBG.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("d8b365f5f5f55ab4ac", "a6611adfc27d80cdc1018571", "a6611adfc27df5f5f580cdc1018571", "8c510ad8b365f6e8c3c7eae55ab4ac01665e", "8c510ad8b365f6e8c3f5f5f5c7eae55ab4ac01665e", "8c510abf812ddfc27df6e8c3c7eae580cdc135978f01665e", "8c510abf812ddfc27df6e8c3f5f5f5c7eae580cdc135978f01665e", "5430058c510abf812ddfc27df6e8c3c7eae580cdc135978f01665e003c30", "5430058c510abf812ddfc27df6e8c3f5f5f5c7eae580cdc135978f01665e003c30").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/PRGn.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("af8dc3f7f7f77fbf7b", "7b3294c2a5cfa6dba0008837", "7b3294c2a5cff7f7f7a6dba0008837", "762a83af8dc3e7d4e8d9f0d37fbf7b1b7837", "762a83af8dc3e7d4e8f7f7f7d9f0d37fbf7b1b7837", "762a839970abc2a5cfe7d4e8d9f0d3a6dba05aae611b7837", "762a839970abc2a5cfe7d4e8f7f7f7d9f0d3a6dba05aae611b7837", "40004b762a839970abc2a5cfe7d4e8d9f0d3a6dba05aae611b783700441b", "40004b762a839970abc2a5cfe7d4e8f7f7f7d9f0d3a6dba05aae611b783700441b").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/PiYG.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("e9a3c9f7f7f7a1d76a", "d01c8bf1b6dab8e1864dac26", "d01c8bf1b6daf7f7f7b8e1864dac26", "c51b7de9a3c9fde0efe6f5d0a1d76a4d9221", "c51b7de9a3c9fde0eff7f7f7e6f5d0a1d76a4d9221", "c51b7dde77aef1b6dafde0efe6f5d0b8e1867fbc414d9221", "c51b7dde77aef1b6dafde0eff7f7f7e6f5d0b8e1867fbc414d9221", "8e0152c51b7dde77aef1b6dafde0efe6f5d0b8e1867fbc414d9221276419", "8e0152c51b7dde77aef1b6dafde0eff7f7f7e6f5d0b8e1867fbc414d9221276419").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/PuOr.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("998ec3f7f7f7f1a340", "5e3c99b2abd2fdb863e66101", "5e3c99b2abd2f7f7f7fdb863e66101", "542788998ec3d8daebfee0b6f1a340b35806", "542788998ec3d8daebf7f7f7fee0b6f1a340b35806", "5427888073acb2abd2d8daebfee0b6fdb863e08214b35806", "5427888073acb2abd2d8daebf7f7f7fee0b6fdb863e08214b35806", "2d004b5427888073acb2abd2d8daebfee0b6fdb863e08214b358067f3b08", "2d004b5427888073acb2abd2d8daebf7f7f7fee0b6fdb863e08214b358067f3b08").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/RdBu.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("ef8a62f7f7f767a9cf", "ca0020f4a58292c5de0571b0", "ca0020f4a582f7f7f792c5de0571b0", "b2182bef8a62fddbc7d1e5f067a9cf2166ac", "b2182bef8a62fddbc7f7f7f7d1e5f067a9cf2166ac", "b2182bd6604df4a582fddbc7d1e5f092c5de4393c32166ac", "b2182bd6604df4a582fddbc7f7f7f7d1e5f092c5de4393c32166ac", "67001fb2182bd6604df4a582fddbc7d1e5f092c5de4393c32166ac053061", "67001fb2182bd6604df4a582fddbc7f7f7f7d1e5f092c5de4393c32166ac053061").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/RdGy.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("ef8a62ffffff999999", "ca0020f4a582bababa404040", "ca0020f4a582ffffffbababa404040", "b2182bef8a62fddbc7e0e0e09999994d4d4d", "b2182bef8a62fddbc7ffffffe0e0e09999994d4d4d", "b2182bd6604df4a582fddbc7e0e0e0bababa8787874d4d4d", "b2182bd6604df4a582fddbc7ffffffe0e0e0bababa8787874d4d4d", "67001fb2182bd6604df4a582fddbc7e0e0e0bababa8787874d4d4d1a1a1a", "67001fb2182bd6604df4a582fddbc7ffffffe0e0e0bababa8787874d4d4d1a1a1a").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/RdYlBu.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("fc8d59ffffbf91bfdb", "d7191cfdae61abd9e92c7bb6", "d7191cfdae61ffffbfabd9e92c7bb6", "d73027fc8d59fee090e0f3f891bfdb4575b4", "d73027fc8d59fee090ffffbfe0f3f891bfdb4575b4", "d73027f46d43fdae61fee090e0f3f8abd9e974add14575b4", "d73027f46d43fdae61fee090ffffbfe0f3f8abd9e974add14575b4", "a50026d73027f46d43fdae61fee090e0f3f8abd9e974add14575b4313695", "a50026d73027f46d43fdae61fee090ffffbfe0f3f8abd9e974add14575b4313695").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/RdYlGn.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("fc8d59ffffbf91cf60", "d7191cfdae61a6d96a1a9641", "d7191cfdae61ffffbfa6d96a1a9641", "d73027fc8d59fee08bd9ef8b91cf601a9850", "d73027fc8d59fee08bffffbfd9ef8b91cf601a9850", "d73027f46d43fdae61fee08bd9ef8ba6d96a66bd631a9850", "d73027f46d43fdae61fee08bffffbfd9ef8ba6d96a66bd631a9850", "a50026d73027f46d43fdae61fee08bd9ef8ba6d96a66bd631a9850006837", "a50026d73027f46d43fdae61fee08bffffbfd9ef8ba6d96a66bd631a9850006837").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/diverging/Spectral.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("fc8d59ffffbf99d594", "d7191cfdae61abdda42b83ba", "d7191cfdae61ffffbfabdda42b83ba", "d53e4ffc8d59fee08be6f59899d5943288bd", "d53e4ffc8d59fee08bffffbfe6f59899d5943288bd", "d53e4ff46d43fdae61fee08be6f598abdda466c2a53288bd", "d53e4ff46d43fdae61fee08bffffbfe6f598abdda466c2a53288bd", "9e0142d53e4ff46d43fdae61fee08be6f598abdda466c2a53288bd5e4fa2", "9e0142d53e4ff46d43fdae61fee08bffffbfe6f598abdda466c2a53288bd5e4fa2").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/BuGn.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("e5f5f999d8c92ca25f", "edf8fbb2e2e266c2a4238b45", "edf8fbb2e2e266c2a42ca25f006d2c", "edf8fbccece699d8c966c2a42ca25f006d2c", "edf8fbccece699d8c966c2a441ae76238b45005824", "f7fcfde5f5f9ccece699d8c966c2a441ae76238b45005824", "f7fcfde5f5f9ccece699d8c966c2a441ae76238b45006d2c00441b").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/BuPu.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("e0ecf49ebcda8856a7", "edf8fbb3cde38c96c688419d", "edf8fbb3cde38c96c68856a7810f7c", "edf8fbbfd3e69ebcda8c96c68856a7810f7c", "edf8fbbfd3e69ebcda8c96c68c6bb188419d6e016b", "f7fcfde0ecf4bfd3e69ebcda8c96c68c6bb188419d6e016b", "f7fcfde0ecf4bfd3e69ebcda8c96c68c6bb188419d810f7c4d004b").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/GnBu.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("e0f3dba8ddb543a2ca", "f0f9e8bae4bc7bccc42b8cbe", "f0f9e8bae4bc7bccc443a2ca0868ac", "f0f9e8ccebc5a8ddb57bccc443a2ca0868ac", "f0f9e8ccebc5a8ddb57bccc44eb3d32b8cbe08589e", "f7fcf0e0f3dbccebc5a8ddb57bccc44eb3d32b8cbe08589e", "f7fcf0e0f3dbccebc5a8ddb57bccc44eb3d32b8cbe0868ac084081").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/OrRd.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("fee8c8fdbb84e34a33", "fef0d9fdcc8afc8d59d7301f", "fef0d9fdcc8afc8d59e34a33b30000", "fef0d9fdd49efdbb84fc8d59e34a33b30000", "fef0d9fdd49efdbb84fc8d59ef6548d7301f990000", "fff7ecfee8c8fdd49efdbb84fc8d59ef6548d7301f990000", "fff7ecfee8c8fdd49efdbb84fc8d59ef6548d7301fb300007f0000").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/PuBuGn.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("ece2f0a6bddb1c9099", "f6eff7bdc9e167a9cf02818a", "f6eff7bdc9e167a9cf1c9099016c59", "f6eff7d0d1e6a6bddb67a9cf1c9099016c59", "f6eff7d0d1e6a6bddb67a9cf3690c002818a016450", "fff7fbece2f0d0d1e6a6bddb67a9cf3690c002818a016450", "fff7fbece2f0d0d1e6a6bddb67a9cf3690c002818a016c59014636").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/PuBu.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("ece7f2a6bddb2b8cbe", "f1eef6bdc9e174a9cf0570b0", "f1eef6bdc9e174a9cf2b8cbe045a8d", "f1eef6d0d1e6a6bddb74a9cf2b8cbe045a8d", "f1eef6d0d1e6a6bddb74a9cf3690c00570b0034e7b", "fff7fbece7f2d0d1e6a6bddb74a9cf3690c00570b0034e7b", "fff7fbece7f2d0d1e6a6bddb74a9cf3690c00570b0045a8d023858").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/PuRd.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("e7e1efc994c7dd1c77", "f1eef6d7b5d8df65b0ce1256", "f1eef6d7b5d8df65b0dd1c77980043", "f1eef6d4b9dac994c7df65b0dd1c77980043", "f1eef6d4b9dac994c7df65b0e7298ace125691003f", "f7f4f9e7e1efd4b9dac994c7df65b0e7298ace125691003f", "f7f4f9e7e1efd4b9dac994c7df65b0e7298ace125698004367001f").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/RdPu.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("fde0ddfa9fb5c51b8a", "feebe2fbb4b9f768a1ae017e", "feebe2fbb4b9f768a1c51b8a7a0177", "feebe2fcc5c0fa9fb5f768a1c51b8a7a0177", "feebe2fcc5c0fa9fb5f768a1dd3497ae017e7a0177", "fff7f3fde0ddfcc5c0fa9fb5f768a1dd3497ae017e7a0177", "fff7f3fde0ddfcc5c0fa9fb5f768a1dd3497ae017e7a017749006a").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/YlGnBu.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("edf8b17fcdbb2c7fb8", "ffffcca1dab441b6c4225ea8", "ffffcca1dab441b6c42c7fb8253494", "ffffccc7e9b47fcdbb41b6c42c7fb8253494", "ffffccc7e9b47fcdbb41b6c41d91c0225ea80c2c84", "ffffd9edf8b1c7e9b47fcdbb41b6c41d91c0225ea80c2c84", "ffffd9edf8b1c7e9b47fcdbb41b6c41d91c0225ea8253494081d58").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/YlGn.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("f7fcb9addd8e31a354", "ffffccc2e69978c679238443", "ffffccc2e69978c67931a354006837", "ffffccd9f0a3addd8e78c67931a354006837", "ffffccd9f0a3addd8e78c67941ab5d238443005a32", "ffffe5f7fcb9d9f0a3addd8e78c67941ab5d238443005a32", "ffffe5f7fcb9d9f0a3addd8e78c67941ab5d238443006837004529").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/YlOrBr.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("fff7bcfec44fd95f0e", "ffffd4fed98efe9929cc4c02", "ffffd4fed98efe9929d95f0e993404", "ffffd4fee391fec44ffe9929d95f0e993404", "ffffd4fee391fec44ffe9929ec7014cc4c028c2d04", "ffffe5fff7bcfee391fec44ffe9929ec7014cc4c028c2d04", "ffffe5fff7bcfee391fec44ffe9929ec7014cc4c02993404662506").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/YlOrRd.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("ffeda0feb24cf03b20", "ffffb2fecc5cfd8d3ce31a1c", "ffffb2fecc5cfd8d3cf03b20bd0026", "ffffb2fed976feb24cfd8d3cf03b20bd0026", "ffffb2fed976feb24cfd8d3cfc4e2ae31a1cb10026", "ffffccffeda0fed976feb24cfd8d3cfc4e2ae31a1cb10026", "ffffccffeda0fed976feb24cfd8d3cfc4e2ae31a1cbd0026800026").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-single/Blues.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("deebf79ecae13182bd", "eff3ffbdd7e76baed62171b5", "eff3ffbdd7e76baed63182bd08519c", "eff3ffc6dbef9ecae16baed63182bd08519c", "eff3ffc6dbef9ecae16baed64292c62171b5084594", "f7fbffdeebf7c6dbef9ecae16baed64292c62171b5084594", "f7fbffdeebf7c6dbef9ecae16baed64292c62171b508519c08306b").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-single/Greens.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("e5f5e0a1d99b31a354", "edf8e9bae4b374c476238b45", "edf8e9bae4b374c47631a354006d2c", "edf8e9c7e9c0a1d99b74c47631a354006d2c", "edf8e9c7e9c0a1d99b74c47641ab5d238b45005a32", "f7fcf5e5f5e0c7e9c0a1d99b74c47641ab5d238b45005a32", "f7fcf5e5f5e0c7e9c0a1d99b74c47641ab5d238b45006d2c00441b").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-single/Greys.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("f0f0f0bdbdbd636363", "f7f7f7cccccc969696525252", "f7f7f7cccccc969696636363252525", "f7f7f7d9d9d9bdbdbd969696636363252525", "f7f7f7d9d9d9bdbdbd969696737373525252252525", "fffffff0f0f0d9d9d9bdbdbd969696737373525252252525", "fffffff0f0f0d9d9d9bdbdbd969696737373525252252525000000").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-single/Purples.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("efedf5bcbddc756bb1", "f2f0f7cbc9e29e9ac86a51a3", "f2f0f7cbc9e29e9ac8756bb154278f", "f2f0f7dadaebbcbddc9e9ac8756bb154278f", "f2f0f7dadaebbcbddc9e9ac8807dba6a51a34a1486", "fcfbfdefedf5dadaebbcbddc9e9ac8807dba6a51a34a1486", "fcfbfdefedf5dadaebbcbddc9e9ac8807dba6a51a354278f3f007d").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-single/Reds.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("fee0d2fc9272de2d26", "fee5d9fcae91fb6a4acb181d", "fee5d9fcae91fb6a4ade2d26a50f15", "fee5d9fcbba1fc9272fb6a4ade2d26a50f15", "fee5d9fcbba1fc9272fb6a4aef3b2ccb181d99000d", "fff5f0fee0d2fcbba1fc9272fb6a4aef3b2ccb181d99000d", "fff5f0fee0d2fcbba1fc9272fb6a4aef3b2ccb181da50f1567000d").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-single/Oranges.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scheme = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-var _ramp = _interopRequireDefault(require("../ramp.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var scheme = new Array(3).concat("fee6cefdae6be6550d", "feeddefdbe85fd8d3cd94701", "feeddefdbe85fd8d3ce6550da63603", "feeddefdd0a2fdae6bfd8d3ce6550da63603", "feeddefdd0a2fdae6bfd8d3cf16913d948018c2d04", "fff5ebfee6cefdd0a2fdae6bfd8d3cf16913d948018c2d04", "fff5ebfee6cefdd0a2fdae6bfd8d3cf16913d94801a636037f2704").map(_colors.default);
-exports.scheme = scheme;
-
-var _default = (0, _ramp.default)(scheme);
-
-exports.default = _default;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js","../ramp.js":"../node_modules/d3-scale-chromatic/src/ramp.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/cividis.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(t) {
-  t = Math.max(0, Math.min(1, t));
-  return "rgb(" + Math.max(0, Math.min(255, Math.round(-4.54 - t * (35.34 - t * (2381.73 - t * (6402.7 - t * (7024.72 - t * 2710.57))))))) + ", " + Math.max(0, Math.min(255, Math.round(32.49 + t * (170.73 + t * (52.82 - t * (131.46 - t * (176.58 - t * 67.37))))))) + ", " + Math.max(0, Math.min(255, Math.round(81.24 + t * (442.36 - t * (2482.43 - t * (6167.24 - t * (6614.94 - t * 2475.67))))))) + ")";
-}
-},{}],"../node_modules/d3-scale-chromatic/src/sequential-multi/cubehelix.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _d3Color = require("d3-color");
-
-var _d3Interpolate = require("d3-interpolate");
-
-var _default = (0, _d3Interpolate.interpolateCubehelixLong)((0, _d3Color.cubehelix)(300, 0.5, 0.0), (0, _d3Color.cubehelix)(-240, 0.5, 1.0));
-
-exports.default = _default;
-},{"d3-color":"../node_modules/d3-color/src/index.js","d3-interpolate":"../node_modules/d3-interpolate/src/index.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/rainbow.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.cool = void 0;
-exports.default = _default;
-exports.warm = void 0;
-
-var _d3Color = require("d3-color");
-
-var _d3Interpolate = require("d3-interpolate");
-
-var warm = (0, _d3Interpolate.interpolateCubehelixLong)((0, _d3Color.cubehelix)(-100, 0.75, 0.35), (0, _d3Color.cubehelix)(80, 1.50, 0.8));
-exports.warm = warm;
-var cool = (0, _d3Interpolate.interpolateCubehelixLong)((0, _d3Color.cubehelix)(260, 0.75, 0.35), (0, _d3Color.cubehelix)(80, 1.50, 0.8));
-exports.cool = cool;
-var c = (0, _d3Color.cubehelix)();
-
-function _default(t) {
-  if (t < 0 || t > 1) t -= Math.floor(t);
-  var ts = Math.abs(t - 0.5);
-  c.h = 360 * t - 100;
-  c.s = 1.5 - 1.5 * ts;
-  c.l = 0.8 - 0.9 * ts;
-  return c + "";
-}
-},{"d3-color":"../node_modules/d3-color/src/index.js","d3-interpolate":"../node_modules/d3-interpolate/src/index.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/sinebow.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-var _d3Color = require("d3-color");
-
-var c = (0, _d3Color.rgb)(),
-    pi_1_3 = Math.PI / 3,
-    pi_2_3 = Math.PI * 2 / 3;
-
-function _default(t) {
-  var x;
-  t = (0.5 - t) * Math.PI;
-  c.r = 255 * (x = Math.sin(t)) * x;
-  c.g = 255 * (x = Math.sin(t + pi_1_3)) * x;
-  c.b = 255 * (x = Math.sin(t + pi_2_3)) * x;
-  return c + "";
-}
-},{"d3-color":"../node_modules/d3-color/src/index.js"}],"../node_modules/d3-scale-chromatic/src/sequential-multi/turbo.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _default(t) {
-  t = Math.max(0, Math.min(1, t));
-  return "rgb(" + Math.max(0, Math.min(255, Math.round(34.61 + t * (1172.33 - t * (10793.56 - t * (33300.12 - t * (38394.49 - t * 14825.05))))))) + ", " + Math.max(0, Math.min(255, Math.round(23.31 + t * (557.33 + t * (1225.33 - t * (3574.96 - t * (1073.77 + t * 707.56))))))) + ", " + Math.max(0, Math.min(255, Math.round(27.2 + t * (3211.1 - t * (15327.97 - t * (27814 - t * (22569.18 - t * 6838.66))))))) + ")";
-}
-},{}],"../node_modules/d3-scale-chromatic/src/sequential-multi/viridis.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.plasma = exports.magma = exports.inferno = exports.default = void 0;
-
-var _colors = _interopRequireDefault(require("../colors.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function ramp(range) {
-  var n = range.length;
-  return function (t) {
-    return range[Math.max(0, Math.min(n - 1, Math.floor(t * n)))];
-  };
-}
-
-var _default = ramp((0, _colors.default)("44015444025645045745055946075a46085c460a5d460b5e470d60470e6147106347116447136548146748166848176948186a481a6c481b6d481c6e481d6f481f70482071482173482374482475482576482677482878482979472a7a472c7a472d7b472e7c472f7d46307e46327e46337f463480453581453781453882443983443a83443b84433d84433e85423f854240864241864142874144874045884046883f47883f48893e49893e4a893e4c8a3d4d8a3d4e8a3c4f8a3c508b3b518b3b528b3a538b3a548c39558c39568c38588c38598c375a8c375b8d365c8d365d8d355e8d355f8d34608d34618d33628d33638d32648e32658e31668e31678e31688e30698e306a8e2f6b8e2f6c8e2e6d8e2e6e8e2e6f8e2d708e2d718e2c718e2c728e2c738e2b748e2b758e2a768e2a778e2a788e29798e297a8e297b8e287c8e287d8e277e8e277f8e27808e26818e26828e26828e25838e25848e25858e24868e24878e23888e23898e238a8d228b8d228c8d228d8d218e8d218f8d21908d21918c20928c20928c20938c1f948c1f958b1f968b1f978b1f988b1f998a1f9a8a1e9b8a1e9c891e9d891f9e891f9f881fa0881fa1881fa1871fa28720a38620a48621a58521a68522a78522a88423a98324aa8325ab8225ac8226ad8127ad8128ae8029af7f2ab07f2cb17e2db27d2eb37c2fb47c31b57b32b67a34b67935b77937b87838b9773aba763bbb753dbc743fbc7340bd7242be7144bf7046c06f48c16e4ac16d4cc26c4ec36b50c46a52c56954c56856c66758c7655ac8645cc8635ec96260ca6063cb5f65cb5e67cc5c69cd5b6ccd5a6ece5870cf5773d05675d05477d1537ad1517cd2507fd34e81d34d84d44b86d54989d5488bd6468ed64590d74393d74195d84098d83e9bd93c9dd93ba0da39a2da37a5db36a8db34aadc32addc30b0dd2fb2dd2db5de2bb8de29bade28bddf26c0df25c2df23c5e021c8e020cae11fcde11dd0e11cd2e21bd5e21ad8e219dae319dde318dfe318e2e418e5e419e7e419eae51aece51befe51cf1e51df4e61ef6e620f8e621fbe723fde725"));
-
-exports.default = _default;
-var magma = ramp((0, _colors.default)("00000401000501010601010802010902020b02020d03030f03031204041405041606051806051a07061c08071e0907200a08220b09240c09260d0a290e0b2b100b2d110c2f120d31130d34140e36150e38160f3b180f3d19103f1a10421c10441d11471e114920114b21114e22115024125325125527125829115a2a115c2c115f2d11612f116331116533106734106936106b38106c390f6e3b0f703d0f713f0f72400f74420f75440f764510774710784910784a10794c117a4e117b4f127b51127c52137c54137d56147d57157e59157e5a167e5c167f5d177f5f187f601880621980641a80651a80671b80681c816a1c816b1d816d1d816e1e81701f81721f817320817521817621817822817922827b23827c23827e24828025828125818326818426818627818827818928818b29818c29818e2a81902a81912b81932b80942c80962c80982d80992d809b2e7f9c2e7f9e2f7fa02f7fa1307ea3307ea5317ea6317da8327daa337dab337cad347cae347bb0357bb2357bb3367ab5367ab73779b83779ba3878bc3978bd3977bf3a77c03a76c23b75c43c75c53c74c73d73c83e73ca3e72cc3f71cd4071cf4070d0416fd2426fd3436ed5446dd6456cd8456cd9466bdb476adc4869de4968df4a68e04c67e24d66e34e65e44f64e55064e75263e85362e95462ea5661eb5760ec5860ed5a5fee5b5eef5d5ef05f5ef1605df2625df2645cf3655cf4675cf4695cf56b5cf66c5cf66e5cf7705cf7725cf8745cf8765cf9785df9795df97b5dfa7d5efa7f5efa815ffb835ffb8560fb8761fc8961fc8a62fc8c63fc8e64fc9065fd9266fd9467fd9668fd9869fd9a6afd9b6bfe9d6cfe9f6dfea16efea36ffea571fea772fea973feaa74feac76feae77feb078feb27afeb47bfeb67cfeb77efeb97ffebb81febd82febf84fec185fec287fec488fec68afec88cfeca8dfecc8ffecd90fecf92fed194fed395fed597fed799fed89afdda9cfddc9efddea0fde0a1fde2a3fde3a5fde5a7fde7a9fde9aafdebacfcecaefceeb0fcf0b2fcf2b4fcf4b6fcf6b8fcf7b9fcf9bbfcfbbdfcfdbf"));
-exports.magma = magma;
-var inferno = ramp((0, _colors.default)("00000401000501010601010802010a02020c02020e03021004031204031405041706041907051b08051d09061f0a07220b07240c08260d08290e092b10092d110a30120a32140b34150b37160b39180c3c190c3e1b0c411c0c431e0c451f0c48210c4a230c4c240c4f260c51280b53290b552b0b572d0b592f0a5b310a5c320a5e340a5f3609613809623909633b09643d09653e0966400a67420a68440a68450a69470b6a490b6a4a0c6b4c0c6b4d0d6c4f0d6c510e6c520e6d540f6d550f6d57106e59106e5a116e5c126e5d126e5f136e61136e62146e64156e65156e67166e69166e6a176e6c186e6d186e6f196e71196e721a6e741a6e751b6e771c6d781c6d7a1d6d7c1d6d7d1e6d7f1e6c801f6c82206c84206b85216b87216b88226a8a226a8c23698d23698f24699025689225689326679526679727669827669a28659b29649d29649f2a63a02a63a22b62a32c61a52c60a62d60a82e5fa92e5eab2f5ead305dae305cb0315bb1325ab3325ab43359b63458b73557b93556ba3655bc3754bd3853bf3952c03a51c13a50c33b4fc43c4ec63d4dc73e4cc83f4bca404acb4149cc4248ce4347cf4446d04545d24644d34743d44842d54a41d74b3fd84c3ed94d3dda4e3cdb503bdd513ade5238df5337e05536e15635e25734e35933e45a31e55c30e65d2fe75e2ee8602de9612bea632aeb6429eb6628ec6726ed6925ee6a24ef6c23ef6e21f06f20f1711ff1731df2741cf3761bf37819f47918f57b17f57d15f67e14f68013f78212f78410f8850ff8870ef8890cf98b0bf98c0af98e09fa9008fa9207fa9407fb9606fb9706fb9906fb9b06fb9d07fc9f07fca108fca309fca50afca60cfca80dfcaa0ffcac11fcae12fcb014fcb216fcb418fbb61afbb81dfbba1ffbbc21fbbe23fac026fac228fac42afac62df9c72ff9c932f9cb35f8cd37f8cf3af7d13df7d340f6d543f6d746f5d949f5db4cf4dd4ff4df53f4e156f3e35af3e55df2e661f2e865f2ea69f1ec6df1ed71f1ef75f1f179f2f27df2f482f3f586f3f68af4f88ef5f992f6fa96f8fb9af9fc9dfafda1fcffa4"));
-exports.inferno = inferno;
-var plasma = ramp((0, _colors.default)("0d088710078813078916078a19068c1b068d1d068e20068f2206902406912605912805922a05932c05942e05952f059631059733059735049837049938049a3a049a3c049b3e049c3f049c41049d43039e44039e46039f48039f4903a04b03a14c02a14e02a25002a25102a35302a35502a45601a45801a45901a55b01a55c01a65e01a66001a66100a76300a76400a76600a76700a86900a86a00a86c00a86e00a86f00a87100a87201a87401a87501a87701a87801a87a02a87b02a87d03a87e03a88004a88104a78305a78405a78606a68707a68808a68a09a58b0aa58d0ba58e0ca48f0da4910ea3920fa39410a29511a19613a19814a099159f9a169f9c179e9d189d9e199da01a9ca11b9ba21d9aa31e9aa51f99a62098a72197a82296aa2395ab2494ac2694ad2793ae2892b02991b12a90b22b8fb32c8eb42e8db52f8cb6308bb7318ab83289ba3388bb3488bc3587bd3786be3885bf3984c03a83c13b82c23c81c33d80c43e7fc5407ec6417dc7427cc8437bc9447aca457acb4679cc4778cc4977cd4a76ce4b75cf4c74d04d73d14e72d24f71d35171d45270d5536fd5546ed6556dd7566cd8576bd9586ada5a6ada5b69db5c68dc5d67dd5e66de5f65de6164df6263e06363e16462e26561e26660e3685fe4695ee56a5de56b5de66c5ce76e5be76f5ae87059e97158e97257ea7457eb7556eb7655ec7754ed7953ed7a52ee7b51ef7c51ef7e50f07f4ff0804ef1814df1834cf2844bf3854bf3874af48849f48948f58b47f58c46f68d45f68f44f79044f79143f79342f89441f89540f9973ff9983ef99a3efa9b3dfa9c3cfa9e3bfb9f3afba139fba238fca338fca537fca636fca835fca934fdab33fdac33fdae32fdaf31fdb130fdb22ffdb42ffdb52efeb72dfeb82cfeba2cfebb2bfebd2afebe2afec029fdc229fdc328fdc527fdc627fdc827fdca26fdcb26fccd25fcce25fcd025fcd225fbd324fbd524fbd724fad824fada24f9dc24f9dd25f8df25f8e125f7e225f7e425f6e626f6e826f5e926f5eb27f4ed27f3ee27f3f027f2f227f1f426f1f525f0f724f0f921"));
-exports.plasma = plasma;
-},{"../colors.js":"../node_modules/d3-scale-chromatic/src/colors.js"}],"../node_modules/d3-scale-chromatic/src/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "interpolateBlues", {
-  enumerable: true,
-  get: function () {
-    return _Blues.default;
-  }
-});
-Object.defineProperty(exports, "interpolateBrBG", {
-  enumerable: true,
-  get: function () {
-    return _BrBG.default;
-  }
-});
-Object.defineProperty(exports, "interpolateBuGn", {
-  enumerable: true,
-  get: function () {
-    return _BuGn.default;
-  }
-});
-Object.defineProperty(exports, "interpolateBuPu", {
-  enumerable: true,
-  get: function () {
-    return _BuPu.default;
-  }
-});
-Object.defineProperty(exports, "interpolateCividis", {
-  enumerable: true,
-  get: function () {
-    return _cividis.default;
-  }
-});
-Object.defineProperty(exports, "interpolateCool", {
-  enumerable: true,
-  get: function () {
-    return _rainbow.cool;
-  }
-});
-Object.defineProperty(exports, "interpolateCubehelixDefault", {
-  enumerable: true,
-  get: function () {
-    return _cubehelix.default;
-  }
-});
-Object.defineProperty(exports, "interpolateGnBu", {
-  enumerable: true,
-  get: function () {
-    return _GnBu.default;
-  }
-});
-Object.defineProperty(exports, "interpolateGreens", {
-  enumerable: true,
-  get: function () {
-    return _Greens.default;
-  }
-});
-Object.defineProperty(exports, "interpolateGreys", {
-  enumerable: true,
-  get: function () {
-    return _Greys.default;
-  }
-});
-Object.defineProperty(exports, "interpolateInferno", {
-  enumerable: true,
-  get: function () {
-    return _viridis.inferno;
-  }
-});
-Object.defineProperty(exports, "interpolateMagma", {
-  enumerable: true,
-  get: function () {
-    return _viridis.magma;
-  }
-});
-Object.defineProperty(exports, "interpolateOrRd", {
-  enumerable: true,
-  get: function () {
-    return _OrRd.default;
-  }
-});
-Object.defineProperty(exports, "interpolateOranges", {
-  enumerable: true,
-  get: function () {
-    return _Oranges.default;
-  }
-});
-Object.defineProperty(exports, "interpolatePRGn", {
-  enumerable: true,
-  get: function () {
-    return _PRGn.default;
-  }
-});
-Object.defineProperty(exports, "interpolatePiYG", {
-  enumerable: true,
-  get: function () {
-    return _PiYG.default;
-  }
-});
-Object.defineProperty(exports, "interpolatePlasma", {
-  enumerable: true,
-  get: function () {
-    return _viridis.plasma;
-  }
-});
-Object.defineProperty(exports, "interpolatePuBu", {
-  enumerable: true,
-  get: function () {
-    return _PuBu.default;
-  }
-});
-Object.defineProperty(exports, "interpolatePuBuGn", {
-  enumerable: true,
-  get: function () {
-    return _PuBuGn.default;
-  }
-});
-Object.defineProperty(exports, "interpolatePuOr", {
-  enumerable: true,
-  get: function () {
-    return _PuOr.default;
-  }
-});
-Object.defineProperty(exports, "interpolatePuRd", {
-  enumerable: true,
-  get: function () {
-    return _PuRd.default;
-  }
-});
-Object.defineProperty(exports, "interpolatePurples", {
-  enumerable: true,
-  get: function () {
-    return _Purples.default;
-  }
-});
-Object.defineProperty(exports, "interpolateRainbow", {
-  enumerable: true,
-  get: function () {
-    return _rainbow.default;
-  }
-});
-Object.defineProperty(exports, "interpolateRdBu", {
-  enumerable: true,
-  get: function () {
-    return _RdBu.default;
-  }
-});
-Object.defineProperty(exports, "interpolateRdGy", {
-  enumerable: true,
-  get: function () {
-    return _RdGy.default;
-  }
-});
-Object.defineProperty(exports, "interpolateRdPu", {
-  enumerable: true,
-  get: function () {
-    return _RdPu.default;
-  }
-});
-Object.defineProperty(exports, "interpolateRdYlBu", {
-  enumerable: true,
-  get: function () {
-    return _RdYlBu.default;
-  }
-});
-Object.defineProperty(exports, "interpolateRdYlGn", {
-  enumerable: true,
-  get: function () {
-    return _RdYlGn.default;
-  }
-});
-Object.defineProperty(exports, "interpolateReds", {
-  enumerable: true,
-  get: function () {
-    return _Reds.default;
-  }
-});
-Object.defineProperty(exports, "interpolateSinebow", {
-  enumerable: true,
-  get: function () {
-    return _sinebow.default;
-  }
-});
-Object.defineProperty(exports, "interpolateSpectral", {
-  enumerable: true,
-  get: function () {
-    return _Spectral.default;
-  }
-});
-Object.defineProperty(exports, "interpolateTurbo", {
-  enumerable: true,
-  get: function () {
-    return _turbo.default;
-  }
-});
-Object.defineProperty(exports, "interpolateViridis", {
-  enumerable: true,
-  get: function () {
-    return _viridis.default;
-  }
-});
-Object.defineProperty(exports, "interpolateWarm", {
-  enumerable: true,
-  get: function () {
-    return _rainbow.warm;
-  }
-});
-Object.defineProperty(exports, "interpolateYlGn", {
-  enumerable: true,
-  get: function () {
-    return _YlGn.default;
-  }
-});
-Object.defineProperty(exports, "interpolateYlGnBu", {
-  enumerable: true,
-  get: function () {
-    return _YlGnBu.default;
-  }
-});
-Object.defineProperty(exports, "interpolateYlOrBr", {
-  enumerable: true,
-  get: function () {
-    return _YlOrBr.default;
-  }
-});
-Object.defineProperty(exports, "interpolateYlOrRd", {
-  enumerable: true,
-  get: function () {
-    return _YlOrRd.default;
-  }
-});
-Object.defineProperty(exports, "schemeAccent", {
-  enumerable: true,
-  get: function () {
-    return _Accent.default;
-  }
-});
-Object.defineProperty(exports, "schemeBlues", {
-  enumerable: true,
-  get: function () {
-    return _Blues.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeBrBG", {
-  enumerable: true,
-  get: function () {
-    return _BrBG.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeBuGn", {
-  enumerable: true,
-  get: function () {
-    return _BuGn.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeBuPu", {
-  enumerable: true,
-  get: function () {
-    return _BuPu.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeCategory10", {
-  enumerable: true,
-  get: function () {
-    return _category.default;
-  }
-});
-Object.defineProperty(exports, "schemeDark2", {
-  enumerable: true,
-  get: function () {
-    return _Dark.default;
-  }
-});
-Object.defineProperty(exports, "schemeGnBu", {
-  enumerable: true,
-  get: function () {
-    return _GnBu.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeGreens", {
-  enumerable: true,
-  get: function () {
-    return _Greens.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeGreys", {
-  enumerable: true,
-  get: function () {
-    return _Greys.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeOrRd", {
-  enumerable: true,
-  get: function () {
-    return _OrRd.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeOranges", {
-  enumerable: true,
-  get: function () {
-    return _Oranges.scheme;
-  }
-});
-Object.defineProperty(exports, "schemePRGn", {
-  enumerable: true,
-  get: function () {
-    return _PRGn.scheme;
-  }
-});
-Object.defineProperty(exports, "schemePaired", {
-  enumerable: true,
-  get: function () {
-    return _Paired.default;
-  }
-});
-Object.defineProperty(exports, "schemePastel1", {
-  enumerable: true,
-  get: function () {
-    return _Pastel.default;
-  }
-});
-Object.defineProperty(exports, "schemePastel2", {
-  enumerable: true,
-  get: function () {
-    return _Pastel2.default;
-  }
-});
-Object.defineProperty(exports, "schemePiYG", {
-  enumerable: true,
-  get: function () {
-    return _PiYG.scheme;
-  }
-});
-Object.defineProperty(exports, "schemePuBu", {
-  enumerable: true,
-  get: function () {
-    return _PuBu.scheme;
-  }
-});
-Object.defineProperty(exports, "schemePuBuGn", {
-  enumerable: true,
-  get: function () {
-    return _PuBuGn.scheme;
-  }
-});
-Object.defineProperty(exports, "schemePuOr", {
-  enumerable: true,
-  get: function () {
-    return _PuOr.scheme;
-  }
-});
-Object.defineProperty(exports, "schemePuRd", {
-  enumerable: true,
-  get: function () {
-    return _PuRd.scheme;
-  }
-});
-Object.defineProperty(exports, "schemePurples", {
-  enumerable: true,
-  get: function () {
-    return _Purples.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeRdBu", {
-  enumerable: true,
-  get: function () {
-    return _RdBu.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeRdGy", {
-  enumerable: true,
-  get: function () {
-    return _RdGy.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeRdPu", {
-  enumerable: true,
-  get: function () {
-    return _RdPu.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeRdYlBu", {
-  enumerable: true,
-  get: function () {
-    return _RdYlBu.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeRdYlGn", {
-  enumerable: true,
-  get: function () {
-    return _RdYlGn.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeReds", {
-  enumerable: true,
-  get: function () {
-    return _Reds.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeSet1", {
-  enumerable: true,
-  get: function () {
-    return _Set.default;
-  }
-});
-Object.defineProperty(exports, "schemeSet2", {
-  enumerable: true,
-  get: function () {
-    return _Set2.default;
-  }
-});
-Object.defineProperty(exports, "schemeSet3", {
-  enumerable: true,
-  get: function () {
-    return _Set3.default;
-  }
-});
-Object.defineProperty(exports, "schemeSpectral", {
-  enumerable: true,
-  get: function () {
-    return _Spectral.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeTableau10", {
-  enumerable: true,
-  get: function () {
-    return _Tableau.default;
-  }
-});
-Object.defineProperty(exports, "schemeYlGn", {
-  enumerable: true,
-  get: function () {
-    return _YlGn.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeYlGnBu", {
-  enumerable: true,
-  get: function () {
-    return _YlGnBu.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeYlOrBr", {
-  enumerable: true,
-  get: function () {
-    return _YlOrBr.scheme;
-  }
-});
-Object.defineProperty(exports, "schemeYlOrRd", {
-  enumerable: true,
-  get: function () {
-    return _YlOrRd.scheme;
-  }
-});
-
-var _category = _interopRequireDefault(require("./categorical/category10.js"));
-
-var _Accent = _interopRequireDefault(require("./categorical/Accent.js"));
-
-var _Dark = _interopRequireDefault(require("./categorical/Dark2.js"));
-
-var _Paired = _interopRequireDefault(require("./categorical/Paired.js"));
-
-var _Pastel = _interopRequireDefault(require("./categorical/Pastel1.js"));
-
-var _Pastel2 = _interopRequireDefault(require("./categorical/Pastel2.js"));
-
-var _Set = _interopRequireDefault(require("./categorical/Set1.js"));
-
-var _Set2 = _interopRequireDefault(require("./categorical/Set2.js"));
-
-var _Set3 = _interopRequireDefault(require("./categorical/Set3.js"));
-
-var _Tableau = _interopRequireDefault(require("./categorical/Tableau10.js"));
-
-var _BrBG = _interopRequireWildcard(require("./diverging/BrBG.js"));
-
-var _PRGn = _interopRequireWildcard(require("./diverging/PRGn.js"));
-
-var _PiYG = _interopRequireWildcard(require("./diverging/PiYG.js"));
-
-var _PuOr = _interopRequireWildcard(require("./diverging/PuOr.js"));
-
-var _RdBu = _interopRequireWildcard(require("./diverging/RdBu.js"));
-
-var _RdGy = _interopRequireWildcard(require("./diverging/RdGy.js"));
-
-var _RdYlBu = _interopRequireWildcard(require("./diverging/RdYlBu.js"));
-
-var _RdYlGn = _interopRequireWildcard(require("./diverging/RdYlGn.js"));
-
-var _Spectral = _interopRequireWildcard(require("./diverging/Spectral.js"));
-
-var _BuGn = _interopRequireWildcard(require("./sequential-multi/BuGn.js"));
-
-var _BuPu = _interopRequireWildcard(require("./sequential-multi/BuPu.js"));
-
-var _GnBu = _interopRequireWildcard(require("./sequential-multi/GnBu.js"));
-
-var _OrRd = _interopRequireWildcard(require("./sequential-multi/OrRd.js"));
-
-var _PuBuGn = _interopRequireWildcard(require("./sequential-multi/PuBuGn.js"));
-
-var _PuBu = _interopRequireWildcard(require("./sequential-multi/PuBu.js"));
-
-var _PuRd = _interopRequireWildcard(require("./sequential-multi/PuRd.js"));
-
-var _RdPu = _interopRequireWildcard(require("./sequential-multi/RdPu.js"));
-
-var _YlGnBu = _interopRequireWildcard(require("./sequential-multi/YlGnBu.js"));
-
-var _YlGn = _interopRequireWildcard(require("./sequential-multi/YlGn.js"));
-
-var _YlOrBr = _interopRequireWildcard(require("./sequential-multi/YlOrBr.js"));
-
-var _YlOrRd = _interopRequireWildcard(require("./sequential-multi/YlOrRd.js"));
-
-var _Blues = _interopRequireWildcard(require("./sequential-single/Blues.js"));
-
-var _Greens = _interopRequireWildcard(require("./sequential-single/Greens.js"));
-
-var _Greys = _interopRequireWildcard(require("./sequential-single/Greys.js"));
-
-var _Purples = _interopRequireWildcard(require("./sequential-single/Purples.js"));
-
-var _Reds = _interopRequireWildcard(require("./sequential-single/Reds.js"));
-
-var _Oranges = _interopRequireWildcard(require("./sequential-single/Oranges.js"));
-
-var _cividis = _interopRequireDefault(require("./sequential-multi/cividis.js"));
-
-var _cubehelix = _interopRequireDefault(require("./sequential-multi/cubehelix.js"));
-
-var _rainbow = _interopRequireWildcard(require("./sequential-multi/rainbow.js"));
-
-var _sinebow = _interopRequireDefault(require("./sequential-multi/sinebow.js"));
-
-var _turbo = _interopRequireDefault(require("./sequential-multi/turbo.js"));
-
-var _viridis = _interopRequireWildcard(require("./sequential-multi/viridis.js"));
-
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./categorical/category10.js":"../node_modules/d3-scale-chromatic/src/categorical/category10.js","./categorical/Accent.js":"../node_modules/d3-scale-chromatic/src/categorical/Accent.js","./categorical/Dark2.js":"../node_modules/d3-scale-chromatic/src/categorical/Dark2.js","./categorical/Paired.js":"../node_modules/d3-scale-chromatic/src/categorical/Paired.js","./categorical/Pastel1.js":"../node_modules/d3-scale-chromatic/src/categorical/Pastel1.js","./categorical/Pastel2.js":"../node_modules/d3-scale-chromatic/src/categorical/Pastel2.js","./categorical/Set1.js":"../node_modules/d3-scale-chromatic/src/categorical/Set1.js","./categorical/Set2.js":"../node_modules/d3-scale-chromatic/src/categorical/Set2.js","./categorical/Set3.js":"../node_modules/d3-scale-chromatic/src/categorical/Set3.js","./categorical/Tableau10.js":"../node_modules/d3-scale-chromatic/src/categorical/Tableau10.js","./diverging/BrBG.js":"../node_modules/d3-scale-chromatic/src/diverging/BrBG.js","./diverging/PRGn.js":"../node_modules/d3-scale-chromatic/src/diverging/PRGn.js","./diverging/PiYG.js":"../node_modules/d3-scale-chromatic/src/diverging/PiYG.js","./diverging/PuOr.js":"../node_modules/d3-scale-chromatic/src/diverging/PuOr.js","./diverging/RdBu.js":"../node_modules/d3-scale-chromatic/src/diverging/RdBu.js","./diverging/RdGy.js":"../node_modules/d3-scale-chromatic/src/diverging/RdGy.js","./diverging/RdYlBu.js":"../node_modules/d3-scale-chromatic/src/diverging/RdYlBu.js","./diverging/RdYlGn.js":"../node_modules/d3-scale-chromatic/src/diverging/RdYlGn.js","./diverging/Spectral.js":"../node_modules/d3-scale-chromatic/src/diverging/Spectral.js","./sequential-multi/BuGn.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/BuGn.js","./sequential-multi/BuPu.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/BuPu.js","./sequential-multi/GnBu.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/GnBu.js","./sequential-multi/OrRd.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/OrRd.js","./sequential-multi/PuBuGn.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/PuBuGn.js","./sequential-multi/PuBu.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/PuBu.js","./sequential-multi/PuRd.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/PuRd.js","./sequential-multi/RdPu.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/RdPu.js","./sequential-multi/YlGnBu.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/YlGnBu.js","./sequential-multi/YlGn.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/YlGn.js","./sequential-multi/YlOrBr.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/YlOrBr.js","./sequential-multi/YlOrRd.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/YlOrRd.js","./sequential-single/Blues.js":"../node_modules/d3-scale-chromatic/src/sequential-single/Blues.js","./sequential-single/Greens.js":"../node_modules/d3-scale-chromatic/src/sequential-single/Greens.js","./sequential-single/Greys.js":"../node_modules/d3-scale-chromatic/src/sequential-single/Greys.js","./sequential-single/Purples.js":"../node_modules/d3-scale-chromatic/src/sequential-single/Purples.js","./sequential-single/Reds.js":"../node_modules/d3-scale-chromatic/src/sequential-single/Reds.js","./sequential-single/Oranges.js":"../node_modules/d3-scale-chromatic/src/sequential-single/Oranges.js","./sequential-multi/cividis.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/cividis.js","./sequential-multi/cubehelix.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/cubehelix.js","./sequential-multi/rainbow.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/rainbow.js","./sequential-multi/sinebow.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/sinebow.js","./sequential-multi/turbo.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/turbo.js","./sequential-multi/viridis.js":"../node_modules/d3-scale-chromatic/src/sequential-multi/viridis.js"}],"../node_modules/d3-shape/src/constant.js":[function(require,module,exports) {
+},{"./band":"../node_modules/d3-scale/src/band.js","./identity":"../node_modules/d3-scale/src/identity.js","./linear":"../node_modules/d3-scale/src/linear.js","./log":"../node_modules/d3-scale/src/log.js","./symlog":"../node_modules/d3-scale/src/symlog.js","./ordinal":"../node_modules/d3-scale/src/ordinal.js","./pow":"../node_modules/d3-scale/src/pow.js","./quantile":"../node_modules/d3-scale/src/quantile.js","./quantize":"../node_modules/d3-scale/src/quantize.js","./threshold":"../node_modules/d3-scale/src/threshold.js","./time":"../node_modules/d3-scale/src/time.js","./utcTime":"../node_modules/d3-scale/src/utcTime.js","./sequential":"../node_modules/d3-scale/src/sequential.js","./sequentialQuantile":"../node_modules/d3-scale/src/sequentialQuantile.js","./diverging":"../node_modules/d3-scale/src/diverging.js","./tickFormat":"../node_modules/d3-scale/src/tickFormat.js"}],"../node_modules/d3-shape/src/constant.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29013,7 +37176,26 @@ Object.keys(_d3Zoom).forEach(function (key) {
     }
   });
 });
-},{"./dist/package.js":"../node_modules/d3/dist/package.js","d3-array":"../node_modules/d3-array/src/index.js","d3-axis":"../node_modules/d3-axis/src/index.js","d3-brush":"../node_modules/d3-brush/src/index.js","d3-chord":"../node_modules/d3-chord/src/index.js","d3-collection":"../node_modules/d3-collection/src/index.js","d3-color":"../node_modules/d3-color/src/index.js","d3-contour":"../node_modules/d3-contour/src/index.js","d3-dispatch":"../node_modules/d3-dispatch/src/index.js","d3-drag":"../node_modules/d3-drag/src/index.js","d3-dsv":"../node_modules/d3-dsv/src/index.js","d3-ease":"../node_modules/d3-ease/src/index.js","d3-fetch":"../node_modules/d3-fetch/src/index.js","d3-force":"../node_modules/d3-force/src/index.js","d3-format":"../node_modules/d3-format/src/index.js","d3-geo":"../node_modules/d3-geo/src/index.js","d3-hierarchy":"../node_modules/d3-hierarchy/src/index.js","d3-interpolate":"../node_modules/d3-interpolate/src/index.js","d3-path":"../node_modules/d3-path/src/index.js","d3-polygon":"../node_modules/d3-polygon/src/index.js","d3-quadtree":"../node_modules/d3-quadtree/src/index.js","d3-random":"../node_modules/d3-random/src/index.js","d3-scale":"../node_modules/d3-scale/src/index.js","d3-scale-chromatic":"../node_modules/d3-scale-chromatic/src/index.js","d3-selection":"../node_modules/d3-selection/src/index.js","d3-shape":"../node_modules/d3-shape/src/index.js","d3-time":"../node_modules/d3-time/src/index.js","d3-time-format":"../node_modules/d3-time-format/src/index.js","d3-timer":"../node_modules/d3-timer/src/index.js","d3-transition":"../node_modules/d3-transition/src/index.js","d3-voronoi":"../node_modules/d3-voronoi/src/index.js","d3-zoom":"../node_modules/d3-zoom/src/index.js"}],"../node_modules/d3-sankey/src/align.js":[function(require,module,exports) {
+},{"./dist/package.js":"../node_modules/d3/dist/package.js","d3-array":"../node_modules/d3-array/src/index.js","d3-axis":"../node_modules/d3-axis/src/index.js","d3-brush":"../node_modules/d3-brush/src/index.js","d3-chord":"../node_modules/d3-chord/src/index.js","d3-collection":"../node_modules/d3-collection/src/index.js","d3-color":"../node_modules/d3-color/src/index.js","d3-contour":"../node_modules/d3-contour/src/index.js","d3-dispatch":"../node_modules/d3-dispatch/src/index.js","d3-drag":"../node_modules/d3-drag/src/index.js","d3-dsv":"../node_modules/d3-dsv/src/index.js","d3-ease":"../node_modules/d3-ease/src/index.js","d3-fetch":"../node_modules/d3-fetch/src/index.js","d3-force":"../node_modules/d3-force/src/index.js","d3-format":"../node_modules/d3-format/src/index.js","d3-geo":"../node_modules/d3-geo/src/index.js","d3-hierarchy":"../node_modules/d3-hierarchy/src/index.js","d3-interpolate":"../node_modules/d3-interpolate/src/index.js","d3-path":"../node_modules/d3-path/src/index.js","d3-polygon":"../node_modules/d3-polygon/src/index.js","d3-quadtree":"../node_modules/d3-quadtree/src/index.js","d3-random":"../node_modules/d3-random/src/index.js","d3-scale":"../node_modules/d3-scale/src/index.js","d3-scale-chromatic":"../node_modules/d3-scale-chromatic/src/index.js","d3-selection":"../node_modules/d3-selection/src/index.js","d3-shape":"../node_modules/d3-shape/src/index.js","d3-time":"../node_modules/d3-time/src/index.js","d3-time-format":"../node_modules/d3-time-format/src/index.js","d3-timer":"../node_modules/d3-timer/src/index.js","d3-transition":"../node_modules/d3-transition/src/index.js","d3-voronoi":"../node_modules/d3-voronoi/src/index.js","d3-zoom":"../node_modules/d3-zoom/src/index.js"}],"scripts/tooltips.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getContents = getContents;
+
+var _d = require("d3");
+
+/**
+ * Defines the contents of the tooltip.
+ *
+ * @param {object} d The data associated to the hovered element
+ * @returns {string} The tooltip contents
+ */
+function getContents(d) {
+  return "<span id='tooltip-title'>" + d.name + '</span>';
+}
+},{"d3":"../node_modules/d3/index.js"}],"../node_modules/d3-sankey/src/align.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29607,7 +37789,7 @@ var _align = require("./align.js");
 var _sankeyLinkHorizontal = _interopRequireDefault(require("./sankeyLinkHorizontal.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./sankey.js":"../node_modules/d3-sankey/src/sankey.js","./align.js":"../node_modules/d3-sankey/src/align.js","./sankeyLinkHorizontal.js":"../node_modules/d3-sankey/src/sankeyLinkHorizontal.js"}],"scripts/viz.js":[function(require,module,exports) {
+},{"./sankey.js":"../node_modules/d3-sankey/src/sankey.js","./align.js":"../node_modules/d3-sankey/src/align.js","./sankeyLinkHorizontal.js":"../node_modules/d3-sankey/src/sankeyLinkHorizontal.js"}],"scripts/paralleleSetChart.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29645,6 +37827,11 @@ function setColorScaleDomain(colorScale, data) {
     return d.value;
   })]);
 }
+/**
+ * @param keys
+ * @param data
+ */
+
 
 function CreateGraphNodeAndLink(keys, data) {
   var index = -1;
@@ -29738,542 +37925,84 @@ function CreateGraphNodeAndLink(keys, data) {
     links: links
   };
 }
+/**
+ * @param g
+ * @param data
+ * @param nodes
+ * @param tip
+ * @param height
+ */
 
-function CreateSVGNodes(data, nodes, tip, height) {
+
+function CreateSVGNodes(g, data, nodes, tip, height) {
   var count = d3.sum(data, function (d) {
     return d.count;
   });
   var y = height;
-  console.log("count : ", count);
-  console.log("height : ", height);
-  d3.select("#graph-g").selectAll(".graph-node").data(nodes).enter().append("g").attr("class", "graph-node").append("rect").attr("x", function (d) {
+  console.log('count : ', count);
+  console.log('height : ', height);
+  g.selectAll('.graph-node').data(nodes).enter().append('g').attr('class', 'graph-node').append('rect').attr('x', function (d) {
     return d.x0;
-  }).attr("y", function (d) {
+  }).attr('y', function (d) {
     return d.y0;
-  }).attr("height", function (d) {
+  }).attr('height', function (d) {
     return d.y1 - d.y0;
-  }).attr("width", function (d) {
+  }).attr('width', function (d) {
     return d.x1 - d.x0;
-  }).attr("fill", "black").on("mouseover", tip.show).on("mouseout", tip.hide);
+  }).attr('fill', 'black').on('mouseover', tip.show).on('mouseout', tip.hide);
 }
+/**
+ * @param g
+ * @param links
+ * @param color
+ */
 
-function CreateSVGLines(links, color) {
-  d3.select("#graph-g").selectAll(".graph-line").data(links).enter().append("g").attr("fill", "none").attr("class", "graph-line").append("path").attr("d", (0, _d3Sankey.sankeyLinkHorizontal)()).attr("stroke", function (d) {
+
+function CreateSVGLines(g, links, color) {
+  g.selectAll('.graph-line').data(links).enter().append('g').attr('fill', 'none').attr('class', 'graph-line').append('path').attr('d', (0, _d3Sankey.sankeyLinkHorizontal)()).attr('stroke', function (d) {
     return color;
-  }).attr("stroke-width", function (d) {
+  }).attr('stroke-width', function (d) {
     return d.width;
-  }).style("mix-blend-mode", "multiply");
+  }).style('mix-blend-mode', 'multiply');
 }
+/**
+ * @param g
+ * @param width
+ */
 
-function CreateSVGTextInfo(width) {
-  d3.select("#graph-g").selectAll(".info").remove();
-  d3.select("#graph-g").selectAll(".graph-node").style("font", "10px sans-serif").append("text").attr("class", "info").attr("x", function (d) {
+
+function CreateSVGTextInfo(g, width) {
+  g.selectAll('.info').remove();
+  g.selectAll('.graph-node').style('font', '10px sans-serif').append('text').attr('class', 'info').attr('x', function (d) {
     return d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6;
-  }).attr("y", function (d) {
+  }).attr('y', function (d) {
     return (d.y1 + d.y0) / 2;
-  }).attr("dy", "0.35em").attr("text-anchor", function (d) {
-    return d.x0 < width / 2 ? "start" : "end";
+  }).attr('dy', '0.35em').attr('text-anchor', function (d) {
+    return d.x0 < width / 2 ? 'start' : 'end';
   }).text(function (d) {
     return d.name;
-  }).append("tspan").attr("class", "info").attr("fill-opacity", 0.7).text(function (d) {
+  }).append('tspan').attr('class', 'info').attr('fill-opacity', 0.7).text(function (d) {
     return " ".concat(d.value.toLocaleString());
   });
 }
-},{"d3":"../node_modules/d3/index.js","d3-sankey":"../node_modules/d3-sankey/src/index.js"}],"scripts/helper.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.appendAxes = appendAxes;
-exports.drawXAxis = drawXAxis;
-exports.generateG = generateG;
-exports.setCanvasSize = setCanvasSize;
-
-/**
- * Generates the SVG element g which will contain the data visualisation.
- *
- * @param {object} margin The desired margins around the graph
- * @returns {*} The d3 Selection for the created g element
- */
-function generateG(margin) {
-  return d3.select('.graph').select('svg').append('g').attr('id', 'graph-g').attr('transform', 'translate(' + 0 + ',' + margin.top + ')');
-}
-/**
- * Appends an SVG g element which will contain the y axis.
- *
- * @param {*} g The d3 Selection of the graph's g SVG element
- */
-
-
-function appendAxes(g) {
-  g.append('g').attr('class', 'x axis');
-}
-/**
- * Sets the size of the SVG canvas containing the graph.
- *
- * @param {number} width The desired width
- * @param {number} height The desired height
- */
-
-
-function setCanvasSize(width, height) {
-  d3.select('#bar-chart').select('svg').attr('width', width).attr('height', height);
-}
-/**
- * Draws the x axis at the bottom of the plot.
- *
- * @param {*} xScale The scale to use for the x axis
- * @param {number} height The height of the graph
- */
-
-
-function drawXAxis(xScale, height) {
-  d3.select('.x.axis').attr('transform', 'translate(0, ' + height + ')').call(d3.axisBottom(xScale).tickFormat(function (x) {
-    return "".concat(x);
-  }));
-}
-},{}],"scripts/tooltip.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getContents = getContents;
-
-var _d = require("d3");
-
-/**
- * Defines the contents of the tooltip.
- *
- * @param {object} d The data associated to the hovered element
- * @returns {string} The tooltip contents
- */
-function getContents(d) {
-  return "<span id='tooltip-title'>" + d.name + "</span>";
-}
-},{"d3":"../node_modules/d3/index.js"}],"scripts/event.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.AddSourceLinksKeys = AddSourceLinksKeys;
-exports.AddTargetLinksKeys = AddTargetLinksKeys;
-exports.onClickEvent = onClickEvent;
-exports.setEventHandler = setEventHandler;
-
-/**
- * Sets up an event handler for when the mouse enters and leaves the squares
- * in the heatmap. When the square is hovered, it enters the "selected" state.
- *
- * The tick labels for the year and neighborhood corresponding to the square appear
- * in bold.
- *
- * @param {*} xScale The xScale to be used when placing the text in the square
- * @param {*} yScale The yScale to be used when placing the text in the square
- * @param {Function} rectSelected The function to call to set the mode to "selected" on the square
- * @param {Function} rectUnselected The function to call to remove "selected" mode from the square
- * @param {Function} selectTicks The function to call to set the mode to "selected" on the ticks
- * @param {Function} unselectTicks The function to call to remove "selected" mode from the ticks
- */
-function setEventHandler(colorScale, otherColor) {
-  // TODO : Select the squares and set their event handlers
-  var nodes = d3.select('#graph-g').selectAll('.graph-node');
-  console.log("values : ", nodes);
-  nodes.on("click", function (d) {
-    onClickEvent(d, colorScale, otherColor);
-  });
-}
-
-function onClickEvent(data, colorScale, otherColor) {
-  var keys = [];
-  console.log("keys", keys);
-  console.log("data", data);
-  console.log("targetLinks", data.targetLinks);
-  AddSourceLinksKeys(keys, data.sourceLinks);
-  AddTargetLinksKeys(keys, data.targetLinks);
-  console.log("keys", keys);
-  d3.select("#graph-g").selectAll(".graph-line").select("path").attr("stroke", function (d) {
-    return keys.includes(d.index) ? colorScale(d.value) : otherColor;
-  });
-}
-
-function AddSourceLinksKeys(keys, sources) {
-  console.log("sources", sources);
-  sources.forEach(function (element) {
-    if (!keys.includes(element.index)) {
-      keys.push(element.index);
-    }
-
-    AddSourceLinksKeys(keys, element.target.sourceLinks);
-  });
-}
-
-function AddTargetLinksKeys(keys, targets) {
-  console.log("targets", targets);
-  targets.forEach(function (element) {
-    if (!keys.includes(element.index)) {
-      keys.push(element.index);
-    }
-
-    AddTargetLinksKeys(keys, element.source.targetLinks);
-  });
-}
-},{}],"../node_modules/d3-tip/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-var _d3Collection = require("d3-collection");
-
-var _d3Selection = require("d3-selection");
-
-/**
- * d3.tip
- * Copyright (c) 2013-2017 Justin Palmer
- *
- * Tooltips for d3.js SVG visualizations
- */
-// eslint-disable-next-line no-extra-semi
-// Public - constructs a new tooltip
-//
-// Returns a tip
-function _default() {
-  var direction = d3TipDirection,
-      offset = d3TipOffset,
-      html = d3TipHTML,
-      rootElement = document.body,
-      node = initNode(),
-      svg = null,
-      point = null,
-      target = null;
-
-  function tip(vis) {
-    svg = getSVGNode(vis);
-    if (!svg) return;
-    point = svg.createSVGPoint();
-    rootElement.appendChild(node);
-  } // Public - show the tooltip on the screen
-  //
-  // Returns a tip
-
-
-  tip.show = function () {
-    var args = Array.prototype.slice.call(arguments);
-    if (args[args.length - 1] instanceof SVGElement) target = args.pop();
-    var content = html.apply(this, args),
-        poffset = offset.apply(this, args),
-        dir = direction.apply(this, args),
-        nodel = getNodeEl(),
-        i = directions.length,
-        coords,
-        scrollTop = document.documentElement.scrollTop || rootElement.scrollTop,
-        scrollLeft = document.documentElement.scrollLeft || rootElement.scrollLeft;
-    nodel.html(content).style('opacity', 1).style('pointer-events', 'all');
-
-    while (i--) nodel.classed(directions[i], false);
-
-    coords = directionCallbacks.get(dir).apply(this);
-    nodel.classed(dir, true).style('top', coords.top + poffset[0] + scrollTop + 'px').style('left', coords.left + poffset[1] + scrollLeft + 'px');
-    return tip;
-  }; // Public - hide the tooltip
-  //
-  // Returns a tip
-
-
-  tip.hide = function () {
-    var nodel = getNodeEl();
-    nodel.style('opacity', 0).style('pointer-events', 'none');
-    return tip;
-  }; // Public: Proxy attr calls to the d3 tip container.
-  // Sets or gets attribute value.
-  //
-  // n - name of the attribute
-  // v - value of the attribute
-  //
-  // Returns tip or attribute value
-  // eslint-disable-next-line no-unused-vars
-
-
-  tip.attr = function (n, v) {
-    if (arguments.length < 2 && typeof n === 'string') {
-      return getNodeEl().attr(n);
-    }
-
-    var args = Array.prototype.slice.call(arguments);
-
-    _d3Selection.selection.prototype.attr.apply(getNodeEl(), args);
-
-    return tip;
-  }; // Public: Proxy style calls to the d3 tip container.
-  // Sets or gets a style value.
-  //
-  // n - name of the property
-  // v - value of the property
-  //
-  // Returns tip or style property value
-  // eslint-disable-next-line no-unused-vars
-
-
-  tip.style = function (n, v) {
-    if (arguments.length < 2 && typeof n === 'string') {
-      return getNodeEl().style(n);
-    }
-
-    var args = Array.prototype.slice.call(arguments);
-
-    _d3Selection.selection.prototype.style.apply(getNodeEl(), args);
-
-    return tip;
-  }; // Public: Set or get the direction of the tooltip
-  //
-  // v - One of n(north), s(south), e(east), or w(west), nw(northwest),
-  //     sw(southwest), ne(northeast) or se(southeast)
-  //
-  // Returns tip or direction
-
-
-  tip.direction = function (v) {
-    if (!arguments.length) return direction;
-    direction = v == null ? v : functor(v);
-    return tip;
-  }; // Public: Sets or gets the offset of the tip
-  //
-  // v - Array of [x, y] offset
-  //
-  // Returns offset or
-
-
-  tip.offset = function (v) {
-    if (!arguments.length) return offset;
-    offset = v == null ? v : functor(v);
-    return tip;
-  }; // Public: sets or gets the html value of the tooltip
-  //
-  // v - String value of the tip
-  //
-  // Returns html value or tip
-
-
-  tip.html = function (v) {
-    if (!arguments.length) return html;
-    html = v == null ? v : functor(v);
-    return tip;
-  }; // Public: sets or gets the root element anchor of the tooltip
-  //
-  // v - root element of the tooltip
-  //
-  // Returns root node of tip
-
-
-  tip.rootElement = function (v) {
-    if (!arguments.length) return rootElement;
-    rootElement = v == null ? v : functor(v);
-    return tip;
-  }; // Public: destroys the tooltip and removes it from the DOM
-  //
-  // Returns a tip
-
-
-  tip.destroy = function () {
-    if (node) {
-      getNodeEl().remove();
-      node = null;
-    }
-
-    return tip;
-  };
-
-  function d3TipDirection() {
-    return 'n';
-  }
-
-  function d3TipOffset() {
-    return [0, 0];
-  }
-
-  function d3TipHTML() {
-    return ' ';
-  }
-
-  var directionCallbacks = (0, _d3Collection.map)({
-    n: directionNorth,
-    s: directionSouth,
-    e: directionEast,
-    w: directionWest,
-    nw: directionNorthWest,
-    ne: directionNorthEast,
-    sw: directionSouthWest,
-    se: directionSouthEast
-  }),
-      directions = directionCallbacks.keys();
-
-  function directionNorth() {
-    var bbox = getScreenBBox(this);
-    return {
-      top: bbox.n.y - node.offsetHeight,
-      left: bbox.n.x - node.offsetWidth / 2
-    };
-  }
-
-  function directionSouth() {
-    var bbox = getScreenBBox(this);
-    return {
-      top: bbox.s.y,
-      left: bbox.s.x - node.offsetWidth / 2
-    };
-  }
-
-  function directionEast() {
-    var bbox = getScreenBBox(this);
-    return {
-      top: bbox.e.y - node.offsetHeight / 2,
-      left: bbox.e.x
-    };
-  }
-
-  function directionWest() {
-    var bbox = getScreenBBox(this);
-    return {
-      top: bbox.w.y - node.offsetHeight / 2,
-      left: bbox.w.x - node.offsetWidth
-    };
-  }
-
-  function directionNorthWest() {
-    var bbox = getScreenBBox(this);
-    return {
-      top: bbox.nw.y - node.offsetHeight,
-      left: bbox.nw.x - node.offsetWidth
-    };
-  }
-
-  function directionNorthEast() {
-    var bbox = getScreenBBox(this);
-    return {
-      top: bbox.ne.y - node.offsetHeight,
-      left: bbox.ne.x
-    };
-  }
-
-  function directionSouthWest() {
-    var bbox = getScreenBBox(this);
-    return {
-      top: bbox.sw.y,
-      left: bbox.sw.x - node.offsetWidth
-    };
-  }
-
-  function directionSouthEast() {
-    var bbox = getScreenBBox(this);
-    return {
-      top: bbox.se.y,
-      left: bbox.se.x
-    };
-  }
-
-  function initNode() {
-    var div = (0, _d3Selection.select)(document.createElement('div'));
-    div.style('position', 'absolute').style('top', 0).style('opacity', 0).style('pointer-events', 'none').style('box-sizing', 'border-box');
-    return div.node();
-  }
-
-  function getSVGNode(element) {
-    var svgNode = element.node();
-    if (!svgNode) return null;
-    if (svgNode.tagName.toLowerCase() === 'svg') return svgNode;
-    return svgNode.ownerSVGElement;
-  }
-
-  function getNodeEl() {
-    if (node == null) {
-      node = initNode(); // re-add node to DOM
-
-      rootElement.appendChild(node);
-    }
-
-    return (0, _d3Selection.select)(node);
-  } // Private - gets the screen coordinates of a shape
-  //
-  // Given a shape on the screen, will return an SVGPoint for the directions
-  // n(north), s(south), e(east), w(west), ne(northeast), se(southeast),
-  // nw(northwest), sw(southwest).
-  //
-  //    +-+-+
-  //    |   |
-  //    +   +
-  //    |   |
-  //    +-+-+
-  //
-  // Returns an Object {n, s, e, w, nw, sw, ne, se}
-
-
-  function getScreenBBox(targetShape) {
-    var targetel = target || targetShape;
-
-    while (targetel.getScreenCTM == null && targetel.parentNode != null) {
-      targetel = targetel.parentNode;
-    }
-
-    var bbox = {},
-        matrix = targetel.getScreenCTM(),
-        tbbox = targetel.getBBox(),
-        width = tbbox.width,
-        height = tbbox.height,
-        x = tbbox.x,
-        y = tbbox.y;
-    point.x = x;
-    point.y = y;
-    bbox.nw = point.matrixTransform(matrix);
-    point.x += width;
-    bbox.ne = point.matrixTransform(matrix);
-    point.y += height;
-    bbox.se = point.matrixTransform(matrix);
-    point.x -= width;
-    bbox.sw = point.matrixTransform(matrix);
-    point.y -= height / 2;
-    bbox.w = point.matrixTransform(matrix);
-    point.x += width;
-    bbox.e = point.matrixTransform(matrix);
-    point.x -= width / 2;
-    point.y -= height / 2;
-    bbox.n = point.matrixTransform(matrix);
-    point.y += height;
-    bbox.s = point.matrixTransform(matrix);
-    return bbox;
-  } // Private - replace D3JS 3.X d3.functor() function
-
-
-  function functor(v) {
-    return typeof v === 'function' ? v : function () {
-      return v;
-    };
-  }
-
-  return tip;
-}
-},{"d3-collection":"../node_modules/d3-collection/src/index.js","d3-selection":"../node_modules/d3-selection/src/index.js"}],"index.js":[function(require,module,exports) {
+},{"d3":"../node_modules/d3/index.js","d3-sankey":"../node_modules/d3-sankey/src/index.js"}],"scripts/initialize.js":[function(require,module,exports) {
 'use strict';
 
-var preproc = _interopRequireWildcard(require("./scripts/preprocess.js"));
+var helper = _interopRequireWildcard(require("./helper.js"));
 
-var viz = _interopRequireWildcard(require("./scripts/viz.js"));
+var line = _interopRequireWildcard(require("./lineChartViz.js"));
 
-var helper = _interopRequireWildcard(require("./scripts/helper.js"));
+var _d3Tip = _interopRequireDefault(require("d3-tip"));
 
-var tooltip = _interopRequireWildcard(require("./scripts/tooltip.js"));
-
-var event = _interopRequireWildcard(require("./scripts/event.js"));
-
-var _d3Sankey = require("d3-sankey");
+var event = _interopRequireWildcard(require("./event.js"));
 
 var d3Chromatic = _interopRequireWildcard(require("d3-scale-chromatic"));
 
-var _d3Tip = _interopRequireDefault(require("d3-tip"));
+var tooltip = _interopRequireWildcard(require("./tooltips"));
+
+var pset = _interopRequireWildcard(require("./paralleleSetChart"));
+
+var _d3Sankey = require("d3-sankey");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30282,51 +38011,97 @@ function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "functio
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 /**
- * @file This file is the entry-point for the the code.
- * @author Maxym Lamtohe
+ * @file This file is the entry-point for the code.
+ * @author Jérémie Tousignant
  * @version v1.0.0
  */
 (function (d3) {
   var margin = {
-    top: 80,
-    right: 0,
-    bottom: 80,
-    left: 55
+    top: 75,
+    right: 200,
+    bottom: 100,
+    left: 80
   };
-  var bounds;
-  var svgSize;
-  var graphSize;
-  var otherColor = "#CCC";
+  var svgSize, graphSize;
+  setSizing('#map-hexa');
+  setSizing('#line-chart1');
+  setSizing('#line-chart2');
+  setSizing('#line-chart3');
+  setSizing('#bar-chart');
+  setSizing('#pset1');
+  setSizing('#pset2');
+  setSizing('#pset3');
+  var g0 = helper.generateG(margin, '#viz0', 'graph-g0');
+  var g1 = helper.generateG(margin, '#viz1', 'graph-g1');
+  var g2 = helper.generateG(margin, '#viz2', 'graph-g2');
+  var g3 = helper.generateG(margin, '#viz3', 'graph-g3');
+  var g4 = helper.generateG(margin, '#viz4', 'graph-g4');
+  var g5 = helper.generateG(margin, '#viz5', 'graph-g5');
+  var g6 = helper.generateG(margin, '#viz6', 'graph-g6');
+  var g7 = helper.generateG(margin, '#viz7', 'graph-g7');
+  var xScale0, yScale0;
+  var xScale1, yScale1;
+  var xScale2, yScale2;
+  var xScale3, yScale3;
+  var xScale4, yScale4;
+  var xScale5, yScale5;
+  var xScale6, yScale6;
+  var xScale7, yScale7;
+  line.singleLineChart('./rolling7_viz1_all_vehicule_date.csv', g1, xScale1, yScale1, graphSize, margin, 'Accidents de tous les véhicules à Montréal par jour (Moyenne roulante sur 7 jours)', 'blue', 'viz1');
+  line.doubleLineChart('./rolling7_viz2_acc_by_type_date.csv', g2, xScale2, yScale2, graphSize, margin, 'Accidents des véhicules impliquant des camions ou les autres types de véhicules à Montréal par jour (Moyenne roulante sur 7 jours)', 'red', 'black');
+  line.singleLineChart('./rolling7_viz3_acc_camion_date.csv', g3, xScale3, yScale3, graphSize, margin, 'Accidents impliquant des camions à Montréal par jour (Moyenne roulante sur 7 jours)', 'red', 'viz3');
+  /**
+   * This function handles the graph's sizing.
+   *
+   * @param svgId
+   * @param margin
+   */
+
+  function setSizing(svgId) {
+    svgSize = {
+      width: 1000,
+      height: 600
+    };
+    graphSize = {
+      width: svgSize.width - margin.right - margin.left,
+      height: svgSize.height - margin.bottom - margin.top
+    };
+    helper.setCanvasSize(svgId, svgSize.width, svgSize.height);
+  }
+
+  var otherColor = '#CCC';
   var colorScale = d3.scaleSequential(d3Chromatic.interpolateYlGnBu);
   var tip = (0, _d3Tip.default)().attr('class', 'd3-tip').html(function (d) {
     return tooltip.getContents(d);
   });
-  d3.select('.main-svg').call(tip);
+  d3.select('#pset1 ').call(tip);
   d3.csv('./pset_env_route_vit.csv').then(function (data) {
-    console.log("data : ", data);
+    console.log('data : ', data);
     data = data.filter(function (d) {
-      return d.Gravite == "Grave ou Mortel";
+      return d.Gravite === 'Grave ou Mortel';
     });
-    console.log("data : ", data);
-    var g = helper.generateG(margin);
+    console.log('data : ', data);
     var keys = Object.keys(data[0]);
     keys.pop();
     console.log(keys);
-    var graph = viz.CreateGraphNodeAndLink(keys, data);
-    console.log("graph : ", graph);
-    viz.setColorScaleDomain(colorScale, graph.links);
+    var graph = pset.CreateGraphNodeAndLink(keys, data);
+    console.log('graph : ', graph);
+    pset.setColorScaleDomain(colorScale, graph.links);
     setSizing();
     build();
-    /*var first = d3.select("#graph-g")
+    /* var first = d3.select("#graph-g")
       .selectAll(".graph-node")
       .filter(d => d.name == "Grave ou Mortel")
       .data()
-      
-    console.log("first : ", first)*/
-    //event.onClickEvent(first[0], links, gravityKeys, lineColorScale, updateLineColorScale)
+     console.log("first : ", first) */
+    // event.onClickEvent(first[0], links, gravityKeys, lineColorScale, updateLineColorScale)
 
     /**
      *   This function builds the graph.
+     */
+
+    /**
+     *
      */
 
     function build() {
@@ -30343,36 +38118,26 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
           nodes = _sankey.nodes,
           links = _sankey.links;
 
-      viz.CreateSVGNodes(data, nodes, tip, graphSize.height);
-      viz.CreateSVGLines(links, otherColor);
-      viz.CreateSVGTextInfo(graphSize.width);
-      event.setEventHandler(colorScale, otherColor);
-    }
-    /**
-     *   This function handles the graph's sizing.
-     */
-
-
-    function setSizing() {
-      bounds = d3.select('.graph').node().getBoundingClientRect();
-      svgSize = {
-        width: bounds.width,
-        height: 720
-      };
-      graphSize = {
-        width: svgSize.width - margin.right - margin.left,
-        height: svgSize.height - margin.bottom - margin.top
-      };
-      helper.setCanvasSize(svgSize.width, svgSize.height);
+      pset.CreateSVGNodes(g5, data, nodes, tip, graphSize.height);
+      pset.CreateSVGLines(g5, links, otherColor);
+      pset.CreateSVGTextInfo(g5, graphSize.width);
+      event.setEventHandler(g5, colorScale, otherColor);
     }
 
     window.addEventListener('resize', function () {
-      setSizing();
       build();
     });
   });
 })(d3);
-},{"./scripts/preprocess.js":"scripts/preprocess.js","./scripts/viz.js":"scripts/viz.js","./scripts/helper.js":"scripts/helper.js","./scripts/tooltip.js":"scripts/tooltip.js","./scripts/event.js":"scripts/event.js","d3-sankey":"../node_modules/d3-sankey/src/index.js","d3-scale-chromatic":"../node_modules/d3-scale-chromatic/src/index.js","d3-tip":"../node_modules/d3-tip/index.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./helper.js":"scripts/helper.js","./lineChartViz.js":"scripts/lineChartViz.js","d3-tip":"../node_modules/d3-tip/index.js","./event.js":"scripts/event.js","d3-scale-chromatic":"../node_modules/d3-scale-chromatic/src/index.js","./tooltips":"scripts/tooltips.js","./paralleleSetChart":"scripts/paralleleSetChart.js","d3-sankey":"../node_modules/d3-sankey/src/index.js"}],"index.js":[function(require,module,exports) {
+'use strict';
+
+var init = _interopRequireWildcard(require("./scripts/initialize"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+},{"./scripts/initialize":"scripts/initialize.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -30400,7 +38165,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57264" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52169" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
